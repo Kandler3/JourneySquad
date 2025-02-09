@@ -4,7 +4,7 @@ import type { FC } from 'react';
 import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 
-import { NavBar } from '@/components/NavBar/NavBar'
+import { NavBar } from '@/components/NavBar/NavBar.tsx'
 
 export const IndexPage: FC = () => {
   return (
@@ -25,7 +25,6 @@ export const IndexPage: FC = () => {
           </Link>
         </Section>
       </List>
-      <NavBar/>
     </Page>
   );
 };

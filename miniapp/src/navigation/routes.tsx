@@ -1,9 +1,9 @@
 import type { ComponentType, JSX } from 'react';
 
-import { IndexPage } from '@/pages/IndexPage/IndexPage';
-import { InitDataPage } from '@/pages/InitDataPage.tsx';
-import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
-import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
+import { IndexPage } from '@/pages/template_pages/IndexPage/IndexPage';
+import { InitDataPage } from '@/pages/template_pages/InitDataPage.tsx';
+import { LaunchParamsPage } from '@/pages/template_pages/LaunchParamsPage.tsx';
+import { ThemeParamsPage } from '@/pages/template_pages/ThemeParamsPage.tsx';
 
 interface Route {
   path: string;

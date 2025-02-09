@@ -3,10 +3,7 @@ import { Icon28Home } from "@/iclons/Home";
 import { Icon28Search } from "@/iclons/Search"
 import { Icon28Profile } from "@/iclons/Profile";
 
-export interface INavBarProps {
-}
-
-export function NavBar(props: INavBarProps) {
+export function NavBar() {
     const navBarStyle: React.CSSProperties = {
       display: 'flex',
       justifyContent: 'space-around', // Распределяем кнопки равномерно
