@@ -1,0 +1,19 @@
+.nav-bar {
+    display: flex;
+    justify-content: space-around; /* Распределяем кнопки равномерно */
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    background-color: var(--tg-secondary-background-color);
+    position: absolute;
+    bottom: 0;
+}
+
+.nav-link {
+    color: var(--tg-hint-color);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+}

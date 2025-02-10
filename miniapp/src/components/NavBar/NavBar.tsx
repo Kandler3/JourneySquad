@@ -1,41 +1,27 @@
-import { Icon28AddCircle } from "@telegram-apps/telegram-ui/dist/icons/28/add_circle"
+import { Icon28AddCircle } from "@telegram-apps/telegram-ui/dist/icons/28/add_circle";
 import { Icon28Home } from "@/iclons/Home";
 import { Icon28Search } from "@/iclons/Search"
 import { Icon28Profile } from "@/iclons/Profile";
+import {NavLink} from "react-router-dom";
+
+import "./NavBar.css"
+
 
 export function NavBar() {
-    const navBarStyle: React.CSSProperties = {
-      display: 'flex',
-      justifyContent: 'space-around', // Распределяем кнопки равномерно
-      alignItems: 'center',
-      width: '100%',
-      padding: '10px 0',
-      backgroundColor: '#f2f2f2',
-      position:'absolute',
-      bottom: 0,
-    };
-  
-    const buttonStyle: React.CSSProperties = {
-      border: 'none',
-      background: 'transparent',
-      cursor: 'pointer',
-      outline: 'none',
-    };
-  
     return (
-      <div style={navBarStyle}>
-        <button style={buttonStyle}>
+      <div className="nav-bar">
+        <NavLink className="nav-link" to='/home'>
           <Icon28Home />
-        </button>
-        <button style={buttonStyle}>
+        </NavLink>
+        <NavLink className="nav-link" to='/travel-plans'>
           <Icon28Search />
-        </button>
-        <button style={buttonStyle}>
+        </NavLink>
+        <NavLink className="nav-link" to='/travel-plans/new'>
           <Icon28AddCircle />
-        </button>
-        <button style={buttonStyle}>
+        </NavLink>
+        <NavLink className="nav-link" to='/profile/-1'>
           <Icon28Profile />
-        </button>
+        </NavLink>
       </div>
     );
   }

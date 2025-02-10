@@ -3,6 +3,7 @@ import { AppRoot } from '@telegram-apps/telegram-ui';
 import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
 
 import { routes } from '@/navigation/routes.tsx';
+import {NavBar} from "@/components/NavBar/NavBar.tsx";
 
 export function App() {
   const lp = useLaunchParams();
@@ -18,6 +19,7 @@ export function App() {
           {routes.map((route) => <Route key={route.path} {...route} />)}
           <Route path="*" element={<Navigate to="/"/>}/>
         </Routes>
+        <NavBar/>
       </HashRouter>
     </AppRoot>
   );
