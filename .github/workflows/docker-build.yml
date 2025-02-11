@@ -1,0 +1,23 @@
+name: Docker Build Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout репозитория
+        uses: actions/checkout@v4
+
+      - name: Установить Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Сборка Docker-образа
+        run: |
+          docker-compose -f ./api/docker-compose.yml build
