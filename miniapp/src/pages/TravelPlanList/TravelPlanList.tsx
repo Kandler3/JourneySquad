@@ -6,6 +6,7 @@ import {TravelPlanCardHorizontal} from "@/components/TravelPlanCard/TravelPlanCa
 import {TravelPlan} from "@/models/TravelPlan.ts";
 
 import './TravelPlanList.css'
+import {SearchBar} from "@/components/SearchBar/SearchBar.tsx";
 
 export const TravelPlanListPage : FC = () => {
     const [travelPlans, setTravelPlans] = useState<TravelPlan[]>([]);
@@ -39,6 +40,7 @@ export const TravelPlanListPage : FC = () => {
     return (
         <Page>
             <div className="content">
+                <SearchBar/>
                 <div className="cards">
                 {
                     travelPlans.map(

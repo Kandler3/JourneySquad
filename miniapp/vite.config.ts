@@ -5,10 +5,10 @@ import mkcert from 'vite-plugin-mkcert';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
+console.log(process.env.NGROKHOST)
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/reactjs-template',
+  base: '/',
   plugins: [
     // Allows using React dev server along with building a React application with Vite.
     // https://npmjs.com/package/@vitejs/plugin-react-swc
