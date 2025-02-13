@@ -1,0 +1,40 @@
+.content {
+    /* content */
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 16px;
+    padding-top: 8px;
+    gap: 12px;
+
+    position: absolute;
+    width: calc(100% - 32px);
+    height: max-content;
+    left: 0px;
+    top: 0px;
+
+}
+
+.cards {
+    /* cards */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+    gap: 12px;
+
+    width: 100%;
+    height: 100%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    align-self: stretch;
+    flex-grow: 0;
+
+}

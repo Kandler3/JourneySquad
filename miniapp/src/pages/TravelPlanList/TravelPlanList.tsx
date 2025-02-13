@@ -5,6 +5,8 @@ import {fetchTravelPlans} from "@/services/travelPlanService.ts";
 import {TravelPlanCardHorizontal} from "@/components/TravelPlanCard/TravelPlanCard.tsx";
 import {TravelPlan} from "@/models/TravelPlan.ts";
 
+import './TravelPlanList.css'
+
 export const TravelPlanListPage : FC = () => {
     const [travelPlans, setTravelPlans] = useState<TravelPlan[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -36,14 +38,15 @@ export const TravelPlanListPage : FC = () => {
 
     return (
         <Page>
-            <h1>Travel Plan List</h1>
-            <div>
+            <div className="content">
+                <div className="cards">
                 {
                     travelPlans.map(
                         (travelPlan) =>
                             <TravelPlanCardHorizontal key={travelPlan.id} travelPlan={travelPlan}/>
                     )
                 }
+                </div>
             </div>
         </Page>
     )

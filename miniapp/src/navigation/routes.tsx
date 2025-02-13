@@ -6,7 +6,7 @@ import { LaunchParamsPage } from '@/pages/template_pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/template_pages/ThemeParamsPage.tsx';
 import {HomePage} from "@/pages/Home.tsx";
 import {ProfilePage} from "@/pages/Profile.tsx";
-import {TravelPlanListPage} from "@/pages/TravelPlanList.tsx";
+import {TravelPlanListPage} from "@/pages/TravelPlanList/TravelPlanList.tsx";
 import {TravelPlanViewPage} from "@/pages/TravelPlanView.tsx";
 import {TravelPlanEditPage} from "@/pages/TravelPlanEdit.tsx";
 

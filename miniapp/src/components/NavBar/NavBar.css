@@ -4,13 +4,13 @@
     align-items: center;
     width: 100%;
     padding: 10px 0;
-    background-color: var(--tg-secondary-background-color);
+    background-color: var(--tg-theme-secondary-bg-color);
     position: absolute;
     bottom: 0;
 }
 
 .nav-link {
-    color: var(--tg-hint-color);
+    color: var(--tg-theme-hint-color);
     border: none;
     background: transparent;
     cursor: pointer;

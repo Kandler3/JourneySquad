@@ -1,4 +1,6 @@
-import {TravelPlanPhoto, TravelPlanTag, User} from "@/models/types.ts";
+import {TravelPlanTag, User} from "@/models/types.ts";
+import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
+import { DifferentYearsFormat, DifferentMonthsFormat, SameMonthsFormat } from "@/utils/DateFormats.ts";
 
 export class TravelPlan {
     id : number;
@@ -34,18 +36,18 @@ export class TravelPlan {
     }
 
     getDatesString(): string {
-        if (this.startDate.getYear() !== this.endDate.getFullYear())
+        if (this.startDate.getFullYear() !== this.endDate.getFullYear())
         {
-            const options = { year: "2-digit", month: "long", day: "numeric" }
-            return this.startDate.toLocaleDateString("ru-RU", options) + " - " + this.endDate.toLocaleDateString("ru-RU", options);
+            return DifferentYearsFormat(this.startDate, this.endDate);
         }
 
         if (this.startDate.getMonth() !== this.endDate.getMonth())
         {
-            const options = { month: "long", day: "numeric" }
-            return this.startDate.toLocaleDateString("ru-RU", options) + " - " + this.endDate.toLocaleDateString("ru-RU", options);
+            return DifferentMonthsFormat(this.startDate, this.endDate);
         }
 
-        return `${this.startDate.getDay()} - ${this.endDate.getDay} ${this.startDate.toLocaleDateString("ru-Ru", { month: "long" })}`
+        return SameMonthsFormat(this.startDate, this.endDate);
     }
+
+
 }
