@@ -7,6 +7,8 @@ import {TravelPlan} from "@/models/TravelPlan.ts";
 
 import './TravelPlanList.css'
 import {SearchBar} from "@/components/SearchBar/SearchBar.tsx";
+import {TravelPlanFilter} from "@/components/TravelPlanFilter/TravelPlanFilter.tsx";
+import {Button} from "@telegram-apps/telegram-ui";
 
 export const TravelPlanListPage : FC = () => {
     const [travelPlans, setTravelPlans] = useState<TravelPlan[]>([]);
@@ -29,6 +31,9 @@ export const TravelPlanListPage : FC = () => {
         loadTravelPlans();
     }, []);
 
+    const [ isFilterOpened, setFilterOpened ] = useState<boolean>(false)
+    const setFilterOpenedOpposite = () => setFilterOpened(!isFilterOpened)
+
     if (isLoading) {
         return <Page><p>Загрузка...</p></Page>;
     }
@@ -41,6 +46,23 @@ export const TravelPlanListPage : FC = () => {
         <Page>
             <div className="content">
                 <SearchBar/>
+                <div className="buttons">
+                    <Button
+                        size="s"
+                        mode={isFilterOpened ? "filled" : "outline"}
+                        onClick={setFilterOpenedOpposite}
+                        className="upper-button"
+                    >
+                        Фильтр
+                    </Button>
+                    <Button
+                        size="s"
+                        mode="outline"
+                        className="upper-button"
+                    >
+                        Сортировка
+                    </Button>
+                </div>
                 <div className="cards">
                 {
                     travelPlans.map(
@@ -50,6 +72,7 @@ export const TravelPlanListPage : FC = () => {
                 }
                 </div>
             </div>
+            <TravelPlanFilter isFilterOpened={isFilterOpened} setIsFilterOpened={setFilterOpened}/>
         </Page>
     )
 }
