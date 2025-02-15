@@ -5,7 +5,6 @@ import mkcert from 'vite-plugin-mkcert';
 import dotenv from 'dotenv';
 
 dotenv.config();
-console.log(process.env.NGROKHOST)
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/',
@@ -25,6 +24,7 @@ export default defineConfig({
   server: {
     // Exposes your dev server and makes it accessible for the devices in the same network.
     host: true,
+    port: parseInt(process.env.PORT),
     allowedHosts: [process.env.NGROKHOST],
   },
 });
