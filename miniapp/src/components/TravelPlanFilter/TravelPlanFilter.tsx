@@ -1,20 +1,19 @@
-import {FC, Dispatch, SetStateAction} from "react";
-import {Divider, Text, Modal} from "@telegram-apps/telegram-ui";
-
-import "./TravelPlanFilter.css"
-import {
-    ModalHeader
-} from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
-import {
-    SectionHeader
-} from "@telegram-apps/telegram-ui/dist/components/Blocks/Section/components/SectionHeader/SectionHeader";
+import { useState, FC, Dispatch, SetStateAction } from "react";
+import { Divider, Text, Modal } from "@telegram-apps/telegram-ui";
+import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
+import { SectionHeader } from "@telegram-apps/telegram-ui/dist/components/Blocks/Section/components/SectionHeader/SectionHeader";
+import { DateInput } from "@/components/DateInput/DateInput.tsx";
+import "./TravelPlanFilter.css";
 
 type TravelPlanFilterProps = {
     isFilterOpened: boolean;
     setIsFilterOpened: Dispatch<SetStateAction<boolean>>;
-}
+};
 
-export const TravelPlanFilter : FC<TravelPlanFilterProps> = ({isFilterOpened, setIsFilterOpened}) => {
+export const TravelPlanFilter: FC<TravelPlanFilterProps> = ({ isFilterOpened, setIsFilterOpened }) => {
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+
     return (
         <Modal
             open={isFilterOpened}
@@ -28,17 +27,16 @@ export const TravelPlanFilter : FC<TravelPlanFilterProps> = ({isFilterOpened, se
                     <div className="dates-content-part">
                         <Text>От</Text>
                         <Divider className="divider"/>
-                        <Text Component="input" className="input" name="startDate"/>
+                        <DateInput value={startDate} onChange={setStartDate} />
                     </div>
                     <Divider className="divider"/>
                     <div className="dates-content-part">
                         <Text>До</Text>
                         <Divider className="divider"/>
-                        <Text Component="input" className="input" name="endDate"/>
+                        <DateInput value={endDate} onChange={setEndDate} />
                     </div>
                 </div>
             </div>
-
         </Modal>
-    )
-}
+    );
+};
