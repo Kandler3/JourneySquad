@@ -10,6 +10,9 @@ RUN go mod download
 # Копируем весь исходный код в контейнер
 COPY . .
 
+# Копируем миграции в контейнер
+COPY migrations /app/migrations
+
 # Переходим в директорию с основным файлом приложения
 WORKDIR /app/cmd/server
 
@@ -21,6 +24,9 @@ FROM alpine:latest
 
 # Копируем собранный бинарник из предыдущего этапа
 COPY --from=builder /app/cmd/server/server /server
+
+# Копируем миграции
+COPY --from=builder /app/migrations /migrations
 
 # Указываем порт, который будет использоваться приложением (например, 8080)
 EXPOSE 8080

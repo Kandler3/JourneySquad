@@ -36,20 +36,20 @@ type UserResponse struct {
 }
 
 type CreateUserInput struct {
-	Email     string `json:"email" binding:"required"`
-	Password  string `json:"password" binding:"required"`
-	IsAdmin   bool   `json:"is_admin"`
-	Name      string `json:"name"`
-	Avatar    string `json:"avatar"`
-	ProfileID int    `json:"profile_id"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	IsAdmin  bool   `json:"is_admin"`
+	Name     string `json:"name"`
+	Avatar   string `json:"avatar"`
+	Age      int    `json:"age"`
+	Gender   bool   `json:"gender"`
 }
 
 type UpdateUserInput struct {
-	Email     *string `json:"email,omitempty"`
-	Name      *string `json:"name,omitempty"`
-	Avatar    *string `json:"avatar,omitempty"`
-	IsAdmin   *bool   `json:"is_admin,omitempty"`
-	ProfileID *int    `json:"profile_id,omitempty"`
+	Email   *string `json:"email,omitempty"`
+	Name    *string `json:"name,omitempty"`
+	Avatar  *string `json:"avatar,omitempty"`
+	IsAdmin *bool   `json:"is_admin,omitempty"`
 }
 
 func GetUserByID(ctx context.Context, userID int) (*User, error) {
@@ -90,6 +90,11 @@ func GetAllUsers(ctx context.Context) ([]User, error) {
 }
 
 func CreateUser(ctx context.Context, input CreateUserInput) (*User, error) {
+	profile, err := createProfile(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
 	query := `
 		INSERT INTO users (email, password, is_admin, name, avatar, profile_id, created_at, edited_at)
 		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -97,7 +102,7 @@ func CreateUser(ctx context.Context, input CreateUserInput) (*User, error) {
 	`
 
 	// TODO: password hashing
-	row := db.QueryRow(ctx, query, input.Email, input.Password, input.IsAdmin, input.Name, input.Avatar, input.ProfileID)
+	row := db.QueryRow(ctx, query, input.Email, input.Password, input.IsAdmin, input.Name, input.Avatar, profile.ID)
 	var user User
 	if err := row.Scan(&user.ID, &user.Email, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
 		return nil, err
@@ -131,11 +136,6 @@ func UpdateUser(ctx context.Context, userID int, input UpdateUserInput) error {
 		args = append(args, *input.IsAdmin)
 		argID++
 	}
-	if input.ProfileID != nil {
-		fields = append(fields, fmt.Sprintf("profile_id = $%d", argID))
-		args = append(args, *input.ProfileID)
-		argID++
-	}
 
 	if len(fields) == 0 {
 		return fmt.Errorf("no fields to update")
@@ -165,6 +165,22 @@ func GetProfileByID(ctx context.Context, profileID int) (*Profile, error) {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
+		return nil, err
+	}
+
+	return &profile, nil
+}
+
+func createProfile(ctx context.Context, input CreateUserInput) (*Profile, error) {
+	query := `
+		INSERT INTO profiles (age, gender, created_at, edited_at)
+		VALUES ($1, $2, NOW(), NOW())
+		RETURNING id, age, gender
+	`
+
+	row := db.QueryRow(ctx, query, input.Age, input.Gender)
+	var profile Profile
+	if err := row.Scan(&profile.ID, &profile.Age, &profile.Gender); err != nil {
 		return nil, err
 	}
 

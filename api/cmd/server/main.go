@@ -1,25 +1,18 @@
 package main
 
 import (
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/Kandler3/JourneySquad/api/internal/db"
 	"github.com/Kandler3/JourneySquad/api/internal/handlers"
 	"github.com/gin-gonic/gin"
 )
 
-var dbConf = db.DBConfig{
-	Host:     os.Getenv("DATABASE_URL"),
-	Port:     5432,
-	User:     "postgres",
-	Password: "password",
-	DBName:   "mydb",
-	SSLMode:  "disable",
-}
-
 func main() {
-	db.InitDB(dbConf)
+	if err := db.InitDB(); err != nil {
+		log.Printf("Error initializing db: %v", err)
+	}
 	defer db.CloseDB()
 
 	r := initServer()

@@ -5,27 +5,19 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 )
 
-type DBConfig struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
-	DBName   string
-	SSLMode  string // SSL mode (disable, require)
-}
-
 var instance *sql.DB
 
-func InitDB(cfg DBConfig) error {
-	dsn := fmt.Sprintf(
-		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
-		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode,
-	)
+func InitDB() error {
+	dsn := os.Getenv("DATABASE_URL")
 
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
@@ -42,8 +34,33 @@ func InitDB(cfg DBConfig) error {
 		return fmt.Errorf("failed to verify database connection: %w", err)
 	}
 
+	if err := runMigrations(db); err != nil {
+		return fmt.Errorf("migration error: %w", err)
+	}
+
 	instance = db
 	log.Println("✅ Database connection successfully established")
+	return nil
+}
+
+func runMigrations(db *sql.DB) error {
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		return fmt.Errorf("failed to create migration driver: %w", err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://migrations",
+		"postgres", driver)
+	if err != nil {
+		return fmt.Errorf("failed to initialize migration: %w", err)
+	}
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("migration failed: %w", err)
+	}
+
+	log.Println("📜 Migrations applied successfully")
 	return nil
 }
 

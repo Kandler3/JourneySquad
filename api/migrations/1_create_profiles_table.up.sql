@@ -1,0 +1,7 @@
+CREATE TABLE profiles (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    edited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    age INT,
+    gender BOOLEAN
+);
