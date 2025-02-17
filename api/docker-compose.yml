@@ -6,7 +6,7 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgres://postgres:password@db:5432/mydb
+      - DATABASE_URL=host=db port=5432 user=postgres password=password dbname=mydb sslmode=disable
     restart: unless-stopped
 
   db:
