@@ -2,7 +2,7 @@ import {FC, useState, useEffect} from "react";
 
 import {Page} from "@/components/Page.tsx";
 import {fetchTravelPlans} from "@/services/travelPlanService.ts";
-import {TravelPlanCardHorizontal} from "@/components/TravelPlanCard/TravelPlanCard.tsx";
+import {TravelPlanCard} from "@/components/TravelPlanCard/TravelPlanCard.tsx";
 import {TravelPlan} from "@/models/TravelPlan.ts";
 
 import './TravelPlanList.css'
@@ -80,7 +80,11 @@ export const TravelPlanListPage : FC = () => {
                 {
                     travelPlans.map(
                         (travelPlan) =>
-                            <TravelPlanCardHorizontal key={travelPlan.id} travelPlan={travelPlan}/>
+                            <TravelPlanCard
+                                key={travelPlan.id}
+                                travelPlan={travelPlan}
+                                style="horizontal"
+                            />
                     )
                 }
                 </div>

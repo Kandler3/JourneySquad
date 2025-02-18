@@ -4,7 +4,7 @@ import { IndexPage } from '@/pages/template_pages/IndexPage/IndexPage';
 import { InitDataPage } from '@/pages/template_pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/template_pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/template_pages/ThemeParamsPage.tsx';
-import {HomePage} from "@/pages/Home.tsx";
+import {HomePage} from "@/pages/Home/Home.tsx";
 import {ProfilePage} from "@/pages/Profile.tsx";
 import {TravelPlanListPage} from "@/pages/TravelPlanList/TravelPlanList.tsx";
 import {TravelPlanViewPage} from "@/pages/TravelPlanView.tsx";
