@@ -1,16 +1,16 @@
 import {Button} from "@telegram-apps/telegram-ui";
 import {FC, ReactNode} from "react";
 
-import './SaveButton.css'
+import './ResetButton.css'
 
-type SaveButtonProps = {
+type ResetButtonProps = {
     onClick?: () => void,
     children?: ReactNode,
 }
 
-export const SaveButton: FC<SaveButtonProps> = ({ onClick, children }) => (
+export const ResetButton: FC<ResetButtonProps> = ({ onClick, children }) => (
     <Button
-        className="save-button"
+        className="reset-button"
         onClick={onClick}
     >
         {children}

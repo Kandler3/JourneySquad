@@ -42,7 +42,6 @@ export const TravelPlanSort: FC<TravelPlanSortProps> = ({
   return (
     <Modal
       open={isSortOpened}
-      className="travel-plan-sort-modal"
       header={<ModalHeader>Сортировка</ModalHeader>}
       onOpenChange={setIsSortOpened}
     >

@@ -1,4 +1,8 @@
-.travel-plan-filter-modal {
+.travel-plan-filter-modal{
+    height: 50%;
+}
+
+.travel-plan-filter-content {
     /* Content */
 
     /* Auto layout */
@@ -127,8 +131,9 @@
     flex-wrap: wrap;
     align-items: flex-start;
     align-content: flex-start;
-    padding: 0px;
+    padding: 0;
     gap: 8px;
+    margin-bottom: 100px;
 
     width: 100%;
     height: fit-content;
@@ -140,4 +145,16 @@
     align-self: stretch;
     flex-grow: 0;
 
+}
+
+.lower-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    width: calc(100% - 40px);
+    height: fit-content;
+    position: fixed;
+    bottom: 10px;
 }

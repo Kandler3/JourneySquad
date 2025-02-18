@@ -8,6 +8,7 @@ import {TravelPlanTag} from "@/models/types.ts";
 import {fetchTravelPlanTags} from "@/services/travelPlanService.ts";
 import {TravelPlanTagComponent} from "@/components/TravelPlanTag/TravelPlanTag.tsx";
 import {SaveButton} from "@/components/SaveButton/SaveButton.tsx";
+import {ResetButton} from "@/components/ResetButton/ResetButton.tsx";
 
 type TravelPlanFilterProps = {
     isFilterOpened: boolean;
@@ -48,15 +49,18 @@ export const TravelPlanFilter: FC<TravelPlanFilterProps> = ({ isFilterOpened, se
         setIsFilterOpened(false);
     }
 
-
+    const handleResetFilter = () => {
+        setIsFilterOpened(false);
+    }
 
     return (
         <Modal
             open={isFilterOpened}
             header={<ModalHeader>Фильтр</ModalHeader>}
             onOpenChange={setIsFilterOpened}
+            className="travel-plan-filter-modal"
         >
-            <div className="travel-plan-filter-modal">
+            <div className="travel-plan-filter-content">
                 <div className="dates">
                     <SectionHeader large={true}>Даты</SectionHeader>
                     <div className="dates-content">
@@ -87,9 +91,14 @@ export const TravelPlanFilter: FC<TravelPlanFilterProps> = ({ isFilterOpened, se
                     </div>
                 </div>
             </div>
-            <SaveButton onClick={handleSaveFilter}>
-                Сохранить
-            </SaveButton>
+            <div className="lower-buttons">
+                <SaveButton onClick={handleSaveFilter}>
+                    Сохранить
+                </SaveButton>
+                <ResetButton onClick={handleResetFilter}>
+                    Сбросить
+                </ResetButton>
+            </div>
         </Modal>
     );
 };
