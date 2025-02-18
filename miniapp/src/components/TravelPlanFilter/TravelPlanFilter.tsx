@@ -1,5 +1,5 @@
 import {useState, FC, Dispatch, SetStateAction, useEffect} from "react";
-import {Divider, Text, Modal, Button} from "@telegram-apps/telegram-ui";
+import {Divider, Text, Modal} from "@telegram-apps/telegram-ui";
 import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
 import { SectionHeader } from "@telegram-apps/telegram-ui/dist/components/Blocks/Section/components/SectionHeader/SectionHeader";
 import { DateInput } from "@/components/DateInput/DateInput.tsx";
