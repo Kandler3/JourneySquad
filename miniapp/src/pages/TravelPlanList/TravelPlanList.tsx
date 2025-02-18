@@ -85,7 +85,10 @@ export const TravelPlanListPage : FC = () => {
                 }
                 </div>
             </div>
-            <TravelPlanFilter isFilterOpened={isFilterOpened} setIsFilterOpened={setFilterOpened}/>
+            <TravelPlanFilter
+                isFilterOpened={isFilterOpened}
+                setIsFilterOpened={setFilterOpened}
+            />
             <TravelPlanSort
                 isSortOpened={isSortOpened}
                 setIsSortOpened={setSortOpened}

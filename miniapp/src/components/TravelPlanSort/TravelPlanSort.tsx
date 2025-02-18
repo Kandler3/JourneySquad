@@ -3,6 +3,7 @@ import { Modal, Button } from "@telegram-apps/telegram-ui";
 import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
 import { SectionHeader } from "@telegram-apps/telegram-ui/dist/components/Blocks/Section/components/SectionHeader/SectionHeader";
 import "./TravelPlanSort.css";
+import {SaveButton} from "@/components/SaveButton/SaveButton.tsx";
 
 type TravelPlanSortProps = {
   isSortOpened: boolean;
@@ -124,14 +125,9 @@ export const TravelPlanSort: FC<TravelPlanSortProps> = ({
         </div>
 
         {/* Контейнер для кнопки "Сохранить сортировку" */}
-        <div className="save-button-container">
-          <Button
-            className="save-button"
-            onClick={handleSaveSort}
-          >
-            Сохранить сортировку
-          </Button>
-        </div>
+        <SaveButton onClick={handleSaveSort}>
+          Сохранить сортировку
+        </SaveButton>
       </div>
     </Modal>
   );
