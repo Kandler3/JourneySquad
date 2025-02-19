@@ -12,6 +12,7 @@
     border-radius: 10px;
 
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .horizontal-card-mixin {
