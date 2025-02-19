@@ -48,6 +48,4 @@ export class TravelPlan {
 
         return SameMonthsFormat(this.startDate, this.endDate);
     }
-
-
 }
