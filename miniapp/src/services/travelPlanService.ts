@@ -2,12 +2,13 @@ import {createApiService} from './api/createApiService';
 
 import {TravelPlan} from "@/models/TravelPlan.ts";
 import {TravelPlanTag} from "@/models/types.ts";
+import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
 
 const apiService = createApiService();
 
-export async function fetchTravelPlans(): Promise<TravelPlan[]> {
+export async function fetchTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]> {
     try {
-        return await apiService.getTravelPlans();
+        return await apiService.getTravelPlans(query);
     } catch (error) {
         console.error('Ошибка при загрузке travel plans:', error);
         throw error;
