@@ -70,6 +70,10 @@ type UpdateTPInput struct {
 	AuthorId int `json:"author"`
 }
 
+type UpdateTpTagInput struct {
+	Name string `json:"name"`
+}
+
 type UpdateTPTPtagInput struct {
 	TravelPlanId int `json:"travel_plan_id"`
 	TravelPlanTagId int `json:"travel_plan_tag_id"`
@@ -187,7 +191,7 @@ func UserCreateTravelPlan(ctx context.Context, UserID int, input CreateTPInput) 
 // }
 
 // travel_plans/?user_id={id}&... - get
-func UserGetTravelPlans(ctx context.Context, queryParams map[string]interface{}) ([]TravelPlan, error) {
+func UserGetTravelPlans(ctx context.Context, queryParams map[string]any) ([]TravelPlan, error) {
 	query := `
 		SELECT id, created_at, edited_at, title, start_date, end_date, description, author_id
 		FROM travel_plans
@@ -439,7 +443,7 @@ func GetTPTPTagByID(ctx context.Context, TPTPTagID int) (*TravelPlanTravelPlanTa
 }
 
 //travel_plan_tags/{id} - patch
-func UpdateTPTagByID(ctx context.Context, TPTagID int, name string) error {
+func UpdateTPTagByID(ctx context.Context, TPTagID int, input UpdateTpTagInput) error {
 	query := `
 		UPDATE tp_tags
 		SET
@@ -450,7 +454,7 @@ func UpdateTPTagByID(ctx context.Context, TPTagID int, name string) error {
 	_, err := db.Exec(ctx,
 		query,
 		time.Now(),
-		name,
+		input.Name,
 		TPTagID,
 	)
 	if err != nil {
@@ -509,4 +513,61 @@ func DeleteTPTPTagByID(ctx context.Context, TPTPTagID int) (error) {
 	}
 
 	return nil
+}
+
+func GetAllTPParticipants(ctx context.Context) ([]TravelPlanParticipant, error) {
+	query := `
+		SELECT id, created_at, edited_at, travel_plan_id, user_id
+		FROM tp_participants
+	`
+
+	rows, err := db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var travelPlanParticipants []TravelPlanParticipant
+	for rows.Next() {
+		var tpParticipant TravelPlanParticipant
+		err := rows.Scan(&tpParticipant.ID, &tpParticipant.CreatedAt, &tpParticipant.EditedAt, &tpParticipant.TravelPlanId, &tpParticipant.User_id)
+		if err != nil {
+			return nil, err
+		}
+		travelPlanParticipants = append(travelPlanParticipants, tpParticipant)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return travelPlanParticipants, nil
+}
+
+
+func GetAllTpPhotos(ctx context.Context) ([]TravelPlanPhoto, error) {
+	query := `
+		SELECT id, created_at, edited_at, url, travel_plan_id
+		FROM tp_photos
+	`
+
+	rows, err := db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var travelPlanPhotos []TravelPlanPhoto
+	for rows.Next() {
+		var tpPhoto TravelPlanPhoto
+		err := rows.Scan(&tpPhoto.ID, &tpPhoto.CreatedAt, &tpPhoto.EditedAt, &tpPhoto.URL, &tpPhoto.TravelPlanId)
+		if err != nil {
+			return nil, err
+		}
+		travelPlanPhotos = append(travelPlanPhotos, tpPhoto)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return travelPlanPhotos, nil
 }
