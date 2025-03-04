@@ -12,8 +12,8 @@
     position: absolute;
     width: calc(100% - 32px);
     height: max-content;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
 
 }
 
@@ -36,6 +36,7 @@
     order: 2;
     align-self: stretch;
     flex-grow: 0;
+    margin-bottom: 60px;
 
 }
 

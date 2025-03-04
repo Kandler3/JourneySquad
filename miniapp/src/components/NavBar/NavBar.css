@@ -5,7 +5,7 @@
     width: 100%;
     padding: 10px 0;
     background-color: var(--tg-theme-secondary-bg-color);
-    position: absolute;
+    position: fixed;
     bottom: 0;
 }
 
