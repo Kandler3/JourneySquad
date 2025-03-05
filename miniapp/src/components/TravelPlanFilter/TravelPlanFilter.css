@@ -15,51 +15,6 @@
     height: 100%;
 }
 
-.dates {
-    /* Dates */
-
-    /* Auto layout */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0px;
-    gap: 4px;
-
-    width: calc(100% - 10px);
-    height: fit-content;
-
-
-    /* Inside auto layout */
-    flex: none;
-    order: 1;
-    align-self: stretch;
-    flex-grow: 0;
-
-}
-
-.dates-content {
-    /* Content */
-
-    /* Auto layout */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0px;
-
-    width: 100%;
-    height: fit-content;
-
-    background: var(--tg-theme-secondary-bg-color);
-    border-radius: 10px;
-
-    /* Inside auto layout */
-    flex: none;
-    order: 1;
-    align-self: stretch;
-    flex-grow: 0;
-
-}
-
 .dates-content-part {
     /* Start Date */
 
@@ -94,10 +49,6 @@
     box-sizing: border-box;
     text-overflow: ellipsis;
     color: var(--tg-theme-text-color);
-}
-
-.divider {
-    width: 100%;
 }
 
 .tags {

@@ -5,4 +5,5 @@ import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
 export interface ApiService {
     getTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]>;
     getTravelPlanTags(): Promise<TravelPlanTag[]>;
+    getTravelPlan(id: string): Promise<TravelPlan>;
 }

@@ -23,3 +23,12 @@ export async function fetchTravelPlanTags(): Promise<TravelPlanTag[]> {
         throw error;
     }
 }
+
+export async function fetchTravelPlan(id: string): Promise<TravelPlan> {
+    try {
+        return await apiService.getTravelPlan(id);
+    } catch (error) {
+        console.error('Ошибка при загрузке travel plans:', error);
+        throw error;
+    }
+}
