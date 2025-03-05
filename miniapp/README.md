@@ -1,5 +1,5 @@
 # Развертывание
-### Локально
+
 - склонировать репозиторий
 
     `git clone https://github.com/Kandler3/JourneySquad`
@@ -10,21 +10,51 @@
     `cd JourneySquad/miniapp`
 
 
+## Локально
+
 - установить зависимости
 
     `npm install`
 
 
-- запустить проекта
+- запустить проект
 
     `npm run dev`
 
-### Подключение к тг боту через ngrok
+## Подключение к тг боту через ngrok (нужен VPN)
+
+### Запуск через Docker
+
+- [получить ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken) 
+
+
+- в miniapp создать файл `.env`
+
+
+- в файле указать `NGROK_AUTHTOKEN=<your_auth_token>`
+
+
+- запустить проект
+
+  `docker-compose up -d`
+
+
+- получить публичный url
+
+  `(Invoke-RestMethod http://localhost:4040/api/tunnels).tunnels[0].public_url`
+
+
+- с помощью BotFather настроить Mini App URL = \<url>
+
+### Запуск вручную
 
 - в miniapp создать файл `.env`
 
 
 - в файле указать порт для локального запуска `PORT=<some_port>`
+
+
+- запустить проект локально
 
 
 - установить ngrok
@@ -38,10 +68,4 @@
 - получаем публичный url (далее \<url>)
 
 
-- в .env указать url `NGROKHOST=<url>`
-
-
 - с помощью BotFather настроить Mini App URL = \<url>
-
-
-- перезапустить проект
