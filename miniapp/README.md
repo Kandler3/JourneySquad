@@ -1,6 +1,6 @@
 # Развертывание
 
-- склонировать репозиторий
+- клонировать репозиторий
 
     `git clone https://github.com/Kandler3/JourneySquad`
 
@@ -39,7 +39,7 @@
   `docker-compose up -d`
 
 
-- получить публичный url
+- получить публичный url в PowerShell
 
   `(Invoke-RestMethod http://localhost:4040/api/tunnels).tunnels[0].public_url`
 

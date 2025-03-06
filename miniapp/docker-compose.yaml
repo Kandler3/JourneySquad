@@ -1,15 +1,9 @@
-networks:
-  journey-squad-network:
-    driver: bridge
-
 services:
   react-app:
     build: .
     image: frontend
     ports:
       - "3000:3000"
-    networks:
-      - journey-squad-network
 
   ngrok:
     image: ngrok/ngrok:latest
@@ -19,6 +13,4 @@ services:
     environment:
       NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
     ports:
-      - 4040:4040
-    networks:
-      - journey-squad-network
+      - "4040:4040"
