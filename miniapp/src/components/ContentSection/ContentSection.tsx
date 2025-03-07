@@ -17,7 +17,7 @@ export const ContentSection: FC<ContentSectionProps> = ({title, children}) => {
     Children.forEach(children, (child, index) => {
         contentList.push(child)
         if (index !== Children.count(children) - 1)
-            contentList.push(<Divider className="divider"/>)
+            contentList.push(<Divider className="divider" key={index}/>)
     })
 
     return (

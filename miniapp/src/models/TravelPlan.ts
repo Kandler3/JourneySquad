@@ -3,26 +3,26 @@ import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 import { DifferentYearsFormat, DifferentMonthsFormat, SameMonthsFormat } from "@/utils/DateFormats.ts";
 
 export class TravelPlan {
-    id : number;
-    title: string;
-    description: string;
-    startDate: Date;
-    endDate: Date;
-    author: User;
-    tags: TravelPlanTag[];
-    photos: TravelPlanPhoto[];
-    participants: User[];
+    id : number | undefined = undefined;
+    title: string | undefined = undefined;
+    description: string | undefined = undefined;
+    startDate: Date | undefined = undefined;
+    endDate: Date | undefined = undefined;
+    author: User | undefined = undefined;
+    tags: TravelPlanTag[] = [];
+    photos: TravelPlanPhoto[] = [];
+    participants: User[] = [];
 
     constructor(
-        id: number,
-        title: string,
-        description: string,
-        startDate: Date,
-        endDate: Date,
-        author: User,
-        tags: TravelPlanTag[],
-        photos: TravelPlanPhoto[],
-        participants: User[]
+        id?: number,
+        title?: string,
+        description?: string,
+        startDate?: Date,
+        endDate?: Date,
+        author?: User,
+        tags: TravelPlanTag[] = [],
+        photos: TravelPlanPhoto[] = [],
+        participants: User[] = []
     ) {
         this.id = id;
         this.title = title;
@@ -35,7 +35,11 @@ export class TravelPlan {
         this.participants = participants;
     }
 
-    getDatesString(): string {
+    getDatesString(): string | undefined {
+        if (!this.startDate || !this.endDate) {
+            return undefined;
+        }
+
         if (this.startDate.getFullYear() !== this.endDate.getFullYear())
         {
             return DifferentYearsFormat(this.startDate, this.endDate);
@@ -48,4 +52,19 @@ export class TravelPlan {
 
         return SameMonthsFormat(this.startDate, this.endDate);
     }
+
+    getStartDateString(): string | undefined {
+        if (!this.startDate)
+            return undefined;
+
+        return this.startDate.toLocaleDateString("ru-Ru");
+    }
+
+    getEndDateString(): string | undefined {
+        if (!this.endDate)
+            return undefined;
+
+        return this.endDate.toLocaleDateString("ru-Ru");
+    }
+
 }

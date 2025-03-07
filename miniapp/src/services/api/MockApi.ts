@@ -10,17 +10,17 @@ export class MockApiService implements ApiService {
         const filteredPlans = travelPlans
             .filter(plan => {
                 // Фильтрация по userId
-                if (query?.userId && plan.author.id !== query.userId) {
+                if (query?.userId && (!plan.author || plan.author.id !== query.userId)) {
                     return false;
                 }
 
                 // Фильтрация по дате начала
-                if (query?.startDate && new Date(plan.startDate) < query.startDate) {
+                if (query?.startDate && (!plan.startDate || new Date(plan.startDate) < query.startDate)) {
                     return false;
                 }
 
                 // Фильтрация по дате окончания
-                if (query?.endDate && new Date(plan.endDate) > query.endDate) {
+                if (query?.endDate && (!plan.endDate || new Date(plan.endDate) > query.endDate)) {
                     return false;
                 }
 
@@ -45,10 +45,26 @@ export class MockApiService implements ApiService {
                 let result: number;
                 if (query.sortBy === 'date') {
                     // Сортируем по startDate
-                    result = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+                    if (!a.startDate)
+                        if (!b.startDate)
+                            result = 0;
+                        else
+                            result = -1;
+                    else if (!b.startDate)
+                        result = 1;
+                    else
+                        result = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
                 } else {
                     // Сортируем по title
-                    result = a.title.localeCompare(b.title);
+                    if (!a.title)
+                        if (!b.title)
+                            result = 0;
+                        else
+                            result = -1;
+                    else if (!b.title)
+                        result = 1;
+                    else
+                        result = a.title.localeCompare(b.title);
                 }
 
                 // Если требуется убывающий порядок
@@ -60,5 +76,12 @@ export class MockApiService implements ApiService {
 
     async getTravelPlanTags(): Promise<TravelPlanTag[]> {
         return Promise.resolve(travelPlanTags);
+    }
+
+    async getTravelPlan(id: number): Promise<TravelPlan | null> {
+        return (await this.getTravelPlans()).find(p => {
+            if (p.id === undefined) return false;
+            return p.id === id;
+        }) ?? null;
     }
 }

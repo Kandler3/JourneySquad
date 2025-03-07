@@ -1,0 +1,11 @@
+.text-input {
+    background: transparent;
+    padding: 10px;
+    color: var(--tg-theme-text-color);
+    border: none;
+    outline: none;
+    width: calc(100% - 20px);
+    height: fit-content;
+    resize: none;
+
+}

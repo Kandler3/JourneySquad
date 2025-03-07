@@ -24,7 +24,7 @@ export async function fetchTravelPlanTags(): Promise<TravelPlanTag[]> {
     }
 }
 
-export async function fetchTravelPlan(id: string): Promise<TravelPlan> {
+export async function fetchTravelPlan(id: number): Promise<TravelPlan | null> {
     try {
         return await apiService.getTravelPlan(id);
     } catch (error) {
