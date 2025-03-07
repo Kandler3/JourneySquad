@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { PhotoCarousel } from "@/components/PhotoCarousel/PhotoCarousel.tsx";
 import { ContentSection } from "@/components/ContentSection/ContentSection";
@@ -27,6 +27,7 @@ const mockTravelPlan: TravelPlan = {
 export const TravelPlanViewPage: FC = () => {
     const { travelPlanId } = useParams<{ travelPlanId: string }>();
     const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null);
+    const navigate = useNavigate(); // Хук для навигации
 
     useEffect(() => {
         setTravelPlan(mockTravelPlan);
@@ -35,6 +36,9 @@ export const TravelPlanViewPage: FC = () => {
     if (!travelPlan) {
         return <Page>Loading...</Page>;
     }
+    const handleParticipantClick = (participantId: string) => {
+        navigate(`/profile/${participantId}`);
+    };
 
     return (
         <Page>
@@ -53,7 +57,9 @@ export const TravelPlanViewPage: FC = () => {
                         <h2 className="participantsTitle">Участники</h2>
                         <ContentSection>
                             {travelPlan.participants.map((participant) => (
-                                <div key={participant.id} className="participant">
+                                <div key={participant.id} className="participant"  onClick={() => handleParticipantClick(participant.id)}
+                                style={{ cursor: "pointer" }}
+                            >
                                     <img src={participant.photoUrl} alt={participant.name} className="participantPhoto" />
                                     <span className="participantName">{participant.name}</span>
                                 </div>
