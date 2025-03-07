@@ -1,0 +1,101 @@
+.userProfileContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%; 
+    min-height: 100vh;
+    padding: 24px;
+    background-color: #ffffff; 
+    color: #000000; 
+    font-family: 'San Francisco', sans-serif;
+    box-sizing: border-box;
+    overflow-x: hidden; 
+}
+
+.userInfoRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.userAvatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.userInfo {
+    flex: 1;
+}
+
+.userName {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    color: #000000; 
+}
+
+.userBio {
+    font-size: 14px;
+    color: #666666; 
+    line-height: 1.5;
+    margin: 0;
+}
+
+.additionalInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%; 
+    margin-bottom: 24px;
+}
+
+.infoItem {
+    font-size: 14px;
+    color: #666666;
+    width: 100%; 
+}
+
+.infoItem strong {
+    margin-left: 12px;
+    font-size: 14px;
+    color: #000000; 
+    display: block;
+    margin-bottom: 20px;
+}
+
+.infoItem div {
+    margin-left: 12px;
+    font-size: 14px;
+    color: #666666; 
+    line-height: 1.7;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 7px;
+}
+
+.sectionTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 0 0;
+    text-align: left;
+    width: 100%;
+    color: #000000; 
+}
+
+.travelPlansScroll {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2px;
+    width: 100%; 
+}
+.customDivider {
+    background-color: #e0e0e0; 
+    height: 1px; 
+    width: 100%; 
+    margin: 8px 0;
+}
