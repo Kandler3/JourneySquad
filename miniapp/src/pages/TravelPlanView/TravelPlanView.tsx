@@ -2,59 +2,77 @@ import { FC, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { PhotoCarousel } from "@/components/PhotoCarousel/PhotoCarousel.tsx";
-import { TravelPlan } from "@/types/TravelPlan";
+import { TravelPlan } from "@/models/TravelPlan";
 import "./TravelPlanViewPage.css";
 import { ParticipantsList } from "@/components/ParticipantList/ParticipantList.tsx";
-
-const mockTravelPlan: TravelPlan = {
-    id: "1",
-    name: "Путешествие в горы",
-    description: "Незабываемое путешествие в горы с друзьями",
-    dates: "19 - 21 сентября",
-    photos: [
-        "https://cs9.pikabu.ru/post_img/big/2020/02/26/11/1582741757190718681.jpg", 
-        "https://krasnayapolyanaresort.ru/assets/upload/10_foto_gor_ot_kotoryix_zaxvatyivaet_dux_8.jpg.webp",
-        "https://s1.1zoom.me/b4149/638/Mountains_Forests_Alps_549350_1920x1080.jpg", 
-        "https://7themes.su/_ph/27/507274575.jpg"
-    ],
-    participants: [
-        { id: "1", name: "Анна", photoUrl: "https://randomuser.me/api/portraits/women/44.jpg" },
-        { id: "2", name: "Иван", photoUrl: "https://randomuser.me/api/portraits/men/33.jpg" },
-        { id: "3", name: "Мария", photoUrl: "https://randomuser.me/api/portraits/women/22.jpg" },
-    ],
-};
+import { fetchTravelPlan } from "@/services/travelPlanService";
 
 export const TravelPlanViewPage: FC = () => {
     const { travelPlanId } = useParams<{ travelPlanId: string }>();
     const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null);
-    const navigate = useNavigate(); // Хук для навигации
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        setTravelPlan(mockTravelPlan);
+        const loadTravelPlan = async () => {
+            if (!travelPlanId) {
+                setError("ID путешествия не указан");
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const plan = await fetchTravelPlan(Number(travelPlanId));
+                setTravelPlan(plan);
+            } catch (err) {
+                setError("Ошибка при загрузке данных");
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        console.log("travelPlanId из useParams:", travelPlanId);
+        loadTravelPlan();
     }, [travelPlanId]);
 
-    if (!travelPlan) {
-        return <Page>Loading...</Page>;
-    }
-    const handleParticipantClick = (participantId: string) => {
+    const handleParticipantClick = (participantId: number) => {
         navigate(`/profile/${participantId}`);
     };
 
+    if (isLoading) {
+        return <Page>Загрузка...</Page>;
+    }
+
+    if (error) {
+        return <Page>{error}</Page>;
+    }
+
+    if (!travelPlan) {
+        return <Page>Путешествие не найдено</Page>;
+    }
+    const photoUrls = travelPlan.photos.map(photo => photo.getAbsoluteUrl());
+    const participants = travelPlan.participants.map(user => ({
+        id: user.id,
+        name: user.name || "Unknown",
+        photoUrl: user.avatarUrl || "default-avatar-url",
+    }));
+
     return (
         <Page>
-            <PhotoCarousel photos={travelPlan.photos} />
+            <PhotoCarousel photos={photoUrls} />
             <div className="pageContainer">
                 <div className="container">
                     <div className="header">
                         <div>
-                            <h1 className="title">{travelPlan.name}</h1>
-                            <p className="dates">{travelPlan.dates}</p>
+                            <h1 className="title">{travelPlan.title}</h1>
+                            <p className="dates">{travelPlan.getDatesString()}</p>
                         </div>
                         <button className="joinButton">Присоединиться</button>
                     </div>
                     <p className="description">{travelPlan.description}</p>
                     <ParticipantsList
-                        participants={travelPlan.participants}
+                        participants={participants}
                         onParticipantClick={handleParticipantClick}
                     />
                 </div>

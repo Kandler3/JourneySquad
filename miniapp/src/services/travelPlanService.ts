@@ -1,5 +1,5 @@
 import {createApiService} from './api/createApiService';
-
+import { User } from "@/models/User.ts";
 import {TravelPlan} from "@/models/TravelPlan.ts";
 import {TravelPlanTag} from "@/models/types.ts";
 import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
@@ -11,6 +11,15 @@ export async function fetchTravelPlans(query?: TravelPlanQuery): Promise<TravelP
         return await apiService.getTravelPlans(query);
     } catch (error) {
         console.error('Ошибка при загрузке travel plans:', error);
+        throw error;
+    }
+}
+
+export async function fetchUser(id: number): Promise<User> {
+    try {
+        return await apiService.getUser(id);
+    } catch (error) {
+        console.error('Ошибка при загрузке пользователя:', error);
         throw error;
     }
 }

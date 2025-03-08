@@ -3,50 +3,48 @@ import { useParams } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { Divider } from "@telegram-apps/telegram-ui";
 import { User } from "@/models/User.ts";
-import { TravelPlan } from "@/models/TravelPlan.ts";
 import { TravelPlansCarousel } from "@/components/TravelPlanCarousel/TravelPlanCarousel.tsx";
+import { fetchUser } from "@/services/travelPlanService";
 import "./Profile.css";
-
-// Моковые данные для примера
-const mockUser: User = {
-    id: 1,
-    name: "Иван Иванов",
-    age: 28,
-    bio: "Люблю путешествовать, фотографировать и исследовать новые культуры. Мечтаю побывать в Японии и Исландии",
-    gender: "Мужской",
-    preferredCountries: ["Япония", "Исландия", "Италия", "Франция", "Испания", "Германия", "Швейцария"],
-    hobbies: ["Фотография", "Горные походы", "Кулинария", "Чтение", "Велоспорт"],
-    interests: ["История", "Архитектура", "Природа", "Искусство", "Технологии"],
-    avatarUrl: "https://randomuser.me/api/portraits/men/33.jpg",
-    activeTravelPlans: [
-        new TravelPlan(
-            1,
-            "Путешествие в горы",
-            "Незабываемое путешествие в горы с друзьями",
-            new Date("2023-09-19"),
-            new Date("2023-09-21")
-        ),
-        new TravelPlan(
-            2,
-            "Отдых на море",
-            "Релакс на пляжах Греции",
-            new Date("2023-10-10"),
-            new Date("2023-10-15")
-        ),
-    ],
-};
 
 export const UserProfilePage: FC = () => {
     const { userId } = useParams<{ userId: string }>();
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // потом реализуем
-        setUser(mockUser);
+        const loadUserData = async () => {
+            if (!userId) {
+                setError("ID пользователя не указан");
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const userData = await fetchUser(Number(userId));
+                setUser(userData);
+            } catch (err) {
+                setError("Ошибка при загрузке данных пользователя");
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadUserData();
     }, [userId]);
 
-    if (!user) {
+    if (isLoading) {
         return <Page>Загрузка...</Page>;
+    }
+
+    if (error) {
+        return <Page>{error}</Page>;
+    }
+
+    if (!user) {
+        return <Page>Пользователь не найден</Page>;
     }
 
     return (
