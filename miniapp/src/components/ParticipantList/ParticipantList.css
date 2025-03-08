@@ -1,5 +1,15 @@
-.list-participant {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
+.headerContainer {
+    display: flex;
+    width: 95%;
+    flex-direction: column;
+    gap: 0px;
+}
+.participantsTitle {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'San Francisco', sans-serif;
+    color: var(--tg-theme-text-color);
+    text-align: left;
+    margin: 0;
+    margin-bottom: 10px;
 }

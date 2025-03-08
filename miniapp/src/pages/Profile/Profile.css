@@ -6,8 +6,8 @@
     width: 100%; 
     min-height: 100vh;
     padding: 24px;
-    background-color: #ffffff; 
-    color: #000000; 
+    background-color: var(--tg-theme-bg-color); 
+    color: var(--tg-theme-text-color); 
     font-family: 'San Francisco', sans-serif;
     box-sizing: border-box;
     overflow-x: hidden; 
@@ -36,12 +36,12 @@
     font-size: 20px;
     font-weight: bold;
     margin: 0 0 8px 0;
-    color: #000000; 
+    color: var(--tg-theme-text-color); 
 }
 
 .userBio {
     font-size: 14px;
-    color: #666666; 
+    color: var(--tg-theme-hint-color); 
     line-height: 1.5;
     margin: 0;
 }
@@ -56,14 +56,14 @@
 
 .infoItem {
     font-size: 14px;
-    color: #666666;
+    color: var(--tg-theme-hint-color);
     width: 100%; 
 }
 
 .infoItem strong {
     margin-left: 12px;
     font-size: 14px;
-    color: #000000; 
+    color: var(--tg-theme-text-color); 
     display: block;
     margin-bottom: 20px;
 }
@@ -71,7 +71,7 @@
 .infoItem div {
     margin-left: 12px;
     font-size: 14px;
-    color: #666666; 
+    color: var(--tg-theme-hint-color); 
     line-height: 1.7;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -84,7 +84,7 @@
     margin: 0 0 0 0;
     text-align: left;
     width: 100%;
-    color: #000000; 
+    color: var(--tg-theme-text-color); 
 }
 
 .travelPlansScroll {
@@ -94,7 +94,7 @@
     width: 100%; 
 }
 .customDivider {
-    background-color: #e0e0e0; 
+    background-color: var(--tg-theme-hint-color); 
     height: 1px; 
     width: 100%; 
     margin: 8px 0;

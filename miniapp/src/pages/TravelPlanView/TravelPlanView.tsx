@@ -2,9 +2,9 @@ import { FC, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { PhotoCarousel } from "@/components/PhotoCarousel/PhotoCarousel.tsx";
-import { ContentSection } from "@/components/ContentSection/ContentSection";
 import { TravelPlan } from "@/types/TravelPlan";
 import "./TravelPlanViewPage.css";
+import { ParticipantsList } from "@/components/ParticipantList/ParticipantList.tsx";
 
 const mockTravelPlan: TravelPlan = {
     id: "1",
@@ -53,19 +53,10 @@ export const TravelPlanViewPage: FC = () => {
                         <button className="joinButton">Присоединиться</button>
                     </div>
                     <p className="description">{travelPlan.description}</p>
-                    <div className="headerContainer">
-                        <h2 className="participantsTitle">Участники</h2>
-                        <ContentSection>
-                            {travelPlan.participants.map((participant) => (
-                                <div key={participant.id} className="participant"  onClick={() => handleParticipantClick(participant.id)}
-                                style={{ cursor: "pointer" }}
-                            >
-                                    <img src={participant.photoUrl} alt={participant.name} className="participantPhoto" />
-                                    <span className="participantName">{participant.name}</span>
-                                </div>
-                            ))}
-                        </ContentSection>
-                    </div>
+                    <ParticipantsList
+                        participants={travelPlan.participants}
+                        onParticipantClick={handleParticipantClick}
+                    />
                 </div>
             </div>
         </Page>
