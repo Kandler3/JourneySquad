@@ -61,7 +61,7 @@ type TravelPlanEditPageProps = {
 }
 
 const TravelPlanEditPage : FC<TravelPlanEditPageProps> = ({editingTravelPlan}) => {
-    const [travelPlan, setTravelPlan] = useState<TravelPlan>(editingTravelPlan)
+    const [travelPlan] = useState<TravelPlan>(editingTravelPlan)
 
     const navigate = useNavigate();
 
@@ -100,8 +100,9 @@ const TravelPlanEditPage : FC<TravelPlanEditPageProps> = ({editingTravelPlan}) =
     };
 
     const handleDelete = async (tp: TravelPlan) => {
-        if (!travelPlan.id)
+        if (!tp.id) {
             throw error
+        }
 
         await deleteTravelPlan(tp.id);
         navigate("/travel-plans");

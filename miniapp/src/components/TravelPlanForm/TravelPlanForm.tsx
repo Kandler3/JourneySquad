@@ -8,7 +8,7 @@ import {TextInput} from "@/components/TextInput/TextInput.tsx";
 import {ContentInlineSection} from "@/components/ContentInlineSection/ContentInlineSection.tsx";
 import {DateInput} from "@/components/DateInput/DateInput.tsx";
 import {TravelPlanTagsSelector} from "@/components/TravelPlanTagsSelector/TravelPlanTagsSelector.tsx";
-import {Cell, FileInput} from "@telegram-apps/telegram-ui";
+import {FileInput} from "@telegram-apps/telegram-ui";
 import {fetchTravelPlanTags} from "@/services/travelPlanService.ts";
 import {SaveButton} from "@/components/SaveButton/SaveButton.tsx";
 import {toDatetimeFormat} from "@/utils/DateFormats.ts";
@@ -16,7 +16,6 @@ import {toDatetimeFormat} from "@/utils/DateFormats.ts";
 import "./TravelPlanForm.css"
 import {PhotoEditCard} from "@/components/PhotoEditCard/PhotoEditCard.tsx";
 import {ParticipantCard} from "@/components/ParticipantCard/ParticipantCard.tsx";
-import {useNavigate} from "react-router-dom";
 import {ResetButton} from "@/components/ResetButton/ResetButton.tsx";
 
 type TravelPlanFormProps = {
@@ -44,8 +43,6 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, 
     const [activeTags, setActiveTags] = useState<TravelPlanTag[]>(travelPlan.tags);
     const [photos, setPhotos] = useState<TravelPlanPhoto[]>(travelPlan.photos);
     const [participants, setParticipants] = useState<User[]>(travelPlan.participants);
-
-    const navigate = useNavigate()
 
     useEffect(() => {
         const loadTags = async () => {
@@ -127,7 +124,7 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, 
             <ContentSection title="Фотографии">
                 {photos.map(
                     photo =>
-                        <PhotoEditCard photo={photo} onDeleteClick={photo => {handleDeletePhoto}} key={photo.id}/>
+                        <PhotoEditCard photo={photo} onDeleteClick={handleDeletePhoto} key={photo.id}/>
                 )}
                 <FileInput label="Добавить"/>
             </ContentSection>

@@ -32,7 +32,7 @@ export const TravelPlanCreatePage : FC = () => {
         navigate(`/travel-plans/${travelPlan.id}`)
     }
 
-    const handleDelete = (tp: TravelPlan) => {navigate("/travel-plans")}
+    const handleDelete = () => {navigate("/travel-plans")}
 
     return (
         <Page>
