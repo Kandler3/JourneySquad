@@ -12,10 +12,7 @@
   align-items: center;
   justify-content: flex-start;
   padding: 4px 6px;
-  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 150px;
   text-align: left;
   gap: 6px;
@@ -24,11 +21,12 @@
 }
 
 .participant-photo {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
+  margin-right: 5px;
 }
 
 .participant-photo img {
@@ -39,7 +37,7 @@
 
 .participant-name {
   font-size: 14px;
-  color: black;
+  color: var(--tg-theme-text-color);
   font-family: inherit;
   margin-left: 5px;
   white-space: nowrap;
