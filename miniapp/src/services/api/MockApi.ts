@@ -4,6 +4,7 @@ import { TravelPlanTag } from '@/models/types.ts';
 import { travelPlans } from '@/services/api/mocks/TravelPlanMocks.ts';
 import { travelPlanTags } from '@/services/api/mocks/TravelPlanTagMocks.ts';
 import { TravelPlanQuery } from '@/services/api/TravelPlanQuery.ts';
+import {users} from "@/services/api/mocks/UserMocks.ts";
 
 export class MockApiService implements ApiService {
     async getTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]> {
@@ -83,5 +84,25 @@ export class MockApiService implements ApiService {
             if (p.id === undefined) return false;
             return p.id === id;
         }) ?? null;
+    }
+
+    async updateTravelPlan(id: number, updates: Partial<TravelPlan>): Promise<void> {
+        const travelPlan = travelPlans.find(tp => tp.id === id);
+        if (!travelPlan) {
+            return Promise.reject("Travel plan не найден");
+        }
+
+        Object.assign(travelPlan, updates); // Обновляем только измененные поля
+        return Promise.resolve();
+    }
+
+    async createTravelPlan(travelPlan: TravelPlan): Promise<TravelPlan> {
+        travelPlan.id = Math.max(...travelPlans.map(p => p.id ?? 0), 0) + 1;
+        travelPlan.author = users[0];
+        if (travelPlan.isValid()) {
+            travelPlans.push(travelPlan);
+            return travelPlan;
+        }
+        return Promise.reject()
     }
 }

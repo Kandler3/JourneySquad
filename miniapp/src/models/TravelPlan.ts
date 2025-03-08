@@ -67,4 +67,13 @@ export class TravelPlan {
         return this.endDate.toLocaleDateString("ru-Ru");
     }
 
+    isValid(): boolean {
+        return (
+            (this.title !== undefined && this.title.length > 0)
+            && this.startDate !== undefined
+            && this.endDate !== undefined
+            && this.author !== undefined
+        )
+    }
+
 }

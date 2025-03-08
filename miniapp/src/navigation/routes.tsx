@@ -8,7 +8,8 @@ import {HomePage} from "@/pages/Home/Home.tsx";
 import {ProfilePage} from "@/pages/Profile.tsx";
 import {TravelPlanListPage} from "@/pages/TravelPlanList/TravelPlanList.tsx";
 import {TravelPlanViewPage} from "@/pages/TravelPlanView.tsx";
-import {TravelPlanEditPage} from "@/pages/TravelPlanEdit.tsx";
+import {TravelPlanValidateEditPage} from "@/pages/TravelPlanEdit.tsx";
+import {TravelPlanCreatePage} from "@/pages/TravelPlanCreate.tsx";
 
 interface Route {
   path: string;
@@ -26,6 +27,6 @@ export const routes: Route[] = [
   { path: '/profile/:id', Component: ProfilePage, title: 'Profile' },
   { path: '/travel-plans', Component: TravelPlanListPage, title: 'Travel Plans' },
   { path: '/travel-plans/:id', Component: TravelPlanViewPage, title: 'Travel Plan' },
-  { path: '/travel-plans/:id/edit', Component: TravelPlanEditPage, title: 'Travel Plan' },
-  { path: '/travel-plans/new', Component: TravelPlanEditPage, title: 'Travel Plan Creation' },
+  { path: '/travel-plans/:id/edit', Component: TravelPlanValidateEditPage, title: 'Travel Plan' },
+  { path: '/travel-plans/new', Component: TravelPlanCreatePage, title: 'Travel Plan Creation' },
 ];

@@ -7,5 +7,6 @@
     width: calc(100% - 20px);
     height: fit-content;
     resize: none;
+    field-sizing: content;
 
 }

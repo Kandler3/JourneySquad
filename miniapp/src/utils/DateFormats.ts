@@ -30,3 +30,7 @@ export function SameMonthsFormat(startDate : Date, endDate : Date) : string
 
     return `${startDay} - ${endDayMonth} ${endYear}`;
 }
+
+export function toDatetimeFormat(date : string) : string {
+    return date.split(".").reverse().join("-");
+}

@@ -1,47 +1,34 @@
 import {FC, useEffect, useState} from "react";
 import {Page} from "@/components/Page.tsx";
-import {ContentSection} from "@/components/ContentSection/ContentSection.tsx";
-import {Cell, FileInput} from "@telegram-apps/telegram-ui";
-import {ContentInlineSection} from "@/components/ContentInlineSection/ContentInlineSection.tsx";
-import {DateInput} from "@/components/DateInput/DateInput.tsx";
 import {useParams} from "react-router-dom";
+
 import {TravelPlan} from "@/models/TravelPlan.ts";
-import {fetchTravelPlan, fetchTravelPlanTags} from "@/services/travelPlanService.ts";
+import {fetchTravelPlan, updateTravelPlan} from "@/services/travelPlanService.ts";
+import {NotFoundPage} from "@/pages/NotFound.tsx";
+import {LoadingPage} from "@/pages/Loading.tsx";
 import {TravelPlanTag, User} from "@/models/types.ts";
-import {TravelPlanTagsSelector} from "@/components/TravelPlanTagsSelector/TravelPlanTagsSelector.tsx";
 import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
-import {TextInput} from "@/components/TextInput/TextInput.tsx";
+import {areSetsEqual, getIdSet} from "@/utils/Sets.ts";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
+import {TravelPlanForm} from "@/components/TravelPlanForm/TravelPlanForm.tsx";
 
-export const TravelPlanEditPage : FC = () => {
-    const {id} = useParams()
-    let travelPlanId : number | undefined
-    if (id !== undefined)
-        travelPlanId = Number(id)
-    else
-        travelPlanId = undefined
+export const TravelPlanValidateEditPage : FC = () => {
+    const params = useParams()
+    const travelPlanId = params.id?.match(/\d+/) ?? null;
 
-    const [travelPlan, setTravelPlan] = useState<TravelPlan>(new TravelPlan());
+    if (!travelPlanId)
+        return <NotFoundPage/>
+
+    const [travelPlan, setTravelPlan] = useState<TravelPlan>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-
-    const [tags, setTags] = useState<TravelPlanTag[]>([])
-
-    const [title, setTitle] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [startDate, setStartDate] = useState<string>("");
-    const [endDate, setEndDate] = useState<string>("");
-    const [activeTags, setActiveTags] = useState<TravelPlanTag[]>([]);
-    const [photos, setPhotos] = useState<TravelPlanPhoto[]>([]);
-    const [participants, setParticipants] = useState<User[]>([]);
-
-
 
     useEffect(() => {
         const loadTravelPlan = async (id : number) => {
             try {
                 const plan = await fetchTravelPlan(id);
-                if (plan)
-                    setTravelPlan(plan);
+                setTravelPlan(plan ?? undefined);
             } catch (err) {
                 console.error('Ошибка при загрузке travel plans:', err);
                 setError("Ошибка загрузки данных");
@@ -50,89 +37,68 @@ export const TravelPlanEditPage : FC = () => {
             }
         };
 
-        if (travelPlanId !== undefined)
-        {
-            loadTravelPlan(travelPlanId);
-
-            setTitle(travelPlan.title ?? title);
-            setDescription(travelPlan.description ?? description);
-            setStartDate(travelPlan.getStartDateString() ?? startDate);
-            setEndDate(travelPlan.getEndDateString() ?? endDate);
-            setActiveTags(travelPlan.tags ?? activeTags);
-            setPhotos(travelPlan.photos ?? photos);
-            setParticipants(travelPlan.participants ?? participants);
-        }
+        loadTravelPlan(Number(params.id))
     }, []);
 
-    useEffect(() => {
-        const loadTags = async () => {
-            const tags = await fetchTravelPlanTags()
-            setTags(tags)
-        }
-
-        loadTags();
-    }, [])
-
-    const tagIsActive = (tag: TravelPlanTag) =>
-        activeTags.some(arr_tag => arr_tag.id === tag.id)
-
-
-    const handleTagClick = (tag: TravelPlanTag) => {
-        if (activeTags.includes(tag))
-        {
-            setActiveTags(activeTags.filter((t) => t.id !== tag.id));
-        }
-        else
-        {
-            setActiveTags([...activeTags, tag]);
-        }
-        console.log(activeTags)
-    }
-
-    const handleSubmit = () => {
-        travelPlan.title = title;
-        travelPlan.description = description;
-        travelPlan.startDate = new Date(startDate);
-        travelPlan.endDate = new Date(endDate);
-        travelPlan.tags = activeTags;
-        travelPlan.photos = photos;
-        travelPlan.participants = participants;
-    }
 
     if (isLoading) {
-        return <Page><p>Загрузка...</p></Page>;
+        return <LoadingPage/>;
+    }
+
+    if (!travelPlan) {
+        return <NotFoundPage/>
     }
 
     if (error) {
         return <Page><p>{error}</p></Page>;
     }
 
+    return <TravelPlanEditPage editingTravelPlan={travelPlan}/>
+}
+
+type TravelPlanEditPageProps = {
+    editingTravelPlan: TravelPlan
+}
+
+const TravelPlanEditPage : FC<TravelPlanEditPageProps> = ({editingTravelPlan}) => {
+    const [travelPlan, setTravelPlan] = useState<TravelPlan>(editingTravelPlan)
+
+    const handleSubmit = async (
+        title: string,
+        description: string,
+        startDate: Date,
+        endDate: Date,
+        activeTags: TravelPlanTag[],
+        photos: TravelPlanPhoto[],
+        participants: User[],
+    ) => {
+        if (!travelPlan.id)
+            throw error
+
+        const updates: Partial<TravelPlan> = {};
+
+        if (title !== travelPlan.title) updates.title = title;
+        if (description !== travelPlan.description) updates.description = description;
+        if (startDate !== travelPlan.startDate) updates.startDate = startDate;
+        if (endDate !== travelPlan.endDate) updates.endDate = endDate;
+        if (!areSetsEqual(getIdSet(activeTags), getIdSet(travelPlan.tags))) updates.tags = activeTags;
+        if (!areSetsEqual(getIdSet(photos), getIdSet(travelPlan.photos))) updates.photos = photos;
+        if (!areSetsEqual(getIdSet(participants), getIdSet(travelPlan.participants))) updates.participants = participants;
+
+        if (Object.keys(updates).length === 0) {
+            return;
+        }
+
+        try {
+            await updateTravelPlan(travelPlan.id, updates)
+        } catch (error) {
+            console.error("Ошибка при сохранении travel plan:", error);
+        }
+    };
+
     return (
         <Page>
-            <ContentSection title="Информация">
-                <TextInput value={title} onChange={setTitle}/>
-                <TextInput value={description} onChange={setDescription} multiline={true}/>
-            </ContentSection>
-            <ContentSection title="Даты">
-                <ContentInlineSection title="Прибытие">
-                    <DateInput value={startDate} onChange={setStartDate} />
-                </ContentInlineSection>
-                <ContentInlineSection title="Отъезд">
-                    <DateInput value={endDate} onChange={setEndDate} />
-                </ContentInlineSection>
-            </ContentSection>
-            <TravelPlanTagsSelector
-                tags={tags}
-                title="Теги"
-                isActivePredicate={tagIsActive}
-                onClick={handleTagClick}
-            />
-            <FileInput label="Добавить">
-                {photos.map(
-                    photo =>
-                        <Cell key={photo.id}>{photo.url}</Cell>
-                )}
-            </FileInput>
+            <TravelPlanForm travelPlan={travelPlan} onSubmit={handleSubmit}/>
         </Page>
     )
 }

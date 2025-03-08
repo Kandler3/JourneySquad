@@ -32,3 +32,21 @@ export async function fetchTravelPlan(id: number): Promise<TravelPlan | null> {
         throw error;
     }
 }
+
+export async function createTravelPlan(travelPlan: TravelPlan) {
+    try {
+        return await apiService.createTravelPlan(travelPlan);
+    } catch (error) {
+        console.error('Ошибка при создании travel plan:', error);
+        throw error;
+    }
+}
+
+export async function updateTravelPlan(id: number, updates: Partial<TravelPlan>) {
+    try {
+        return await apiService.updateTravelPlan(id, updates);
+    } catch (error) {
+        console.error('Ошибка при обновлении travel plan:', error);
+        throw error;
+    }
+}
