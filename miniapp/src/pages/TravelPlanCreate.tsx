@@ -29,12 +29,14 @@ export const TravelPlanCreatePage : FC = () => {
         travelPlan.participants = participants;
 
         setTravelPlan(await createTravelPlan(travelPlan))
-        navigate(`/travel_plans/${travelPlan.id}`)
+        navigate(`/travel-plans/${travelPlan.id}`)
     }
+
+    const handleDelete = (tp: TravelPlan) => {navigate("/travel-plans")}
 
     return (
         <Page>
-            <TravelPlanForm travelPlan={travelPlan} onSubmit={handleSubmit}/>
+            <TravelPlanForm travelPlan={travelPlan} onSubmit={handleSubmit} onDelete={handleDelete}/>
         </Page>
     )
 }

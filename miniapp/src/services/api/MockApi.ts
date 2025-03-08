@@ -120,4 +120,10 @@ export class MockApiService implements ApiService {
         }
         return Promise.reject()
     }
+
+    async deleteTravelPlan(id: number): Promise<void> {
+        const index = travelPlans.findIndex(tp => tp.id === id);
+        if (index !== -1)
+            travelPlans.splice(index, 1);
+    }
 }

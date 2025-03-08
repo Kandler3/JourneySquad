@@ -1,9 +1,9 @@
 import {FC, useEffect, useState} from "react";
 import {Page} from "@/components/Page.tsx";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {TravelPlan} from "@/models/TravelPlan.ts";
-import {fetchTravelPlan, updateTravelPlan} from "@/services/travelPlanService.ts";
+import {fetchTravelPlan, updateTravelPlan, deleteTravelPlan} from "@/services/travelPlanService.ts";
 import {NotFoundPage} from "@/pages/NotFound.tsx";
 import {LoadingPage} from "@/pages/Loading.tsx";
 import {TravelPlanTag, User} from "@/models/types.ts";
@@ -63,6 +63,8 @@ type TravelPlanEditPageProps = {
 const TravelPlanEditPage : FC<TravelPlanEditPageProps> = ({editingTravelPlan}) => {
     const [travelPlan, setTravelPlan] = useState<TravelPlan>(editingTravelPlan)
 
+    const navigate = useNavigate();
+
     const handleSubmit = async (
         title: string,
         description: string,
@@ -91,14 +93,23 @@ const TravelPlanEditPage : FC<TravelPlanEditPageProps> = ({editingTravelPlan}) =
 
         try {
             await updateTravelPlan(travelPlan.id, updates)
+            navigate(`/travel-plans/${travelPlan.id}`)
         } catch (error) {
             console.error("Ошибка при сохранении travel plan:", error);
         }
     };
 
+    const handleDelete = async (tp: TravelPlan) => {
+        if (!travelPlan.id)
+            throw error
+
+        await deleteTravelPlan(tp.id);
+        navigate("/travel-plans");
+    }
+
     return (
         <Page>
-            <TravelPlanForm travelPlan={travelPlan} onSubmit={handleSubmit}/>
+            <TravelPlanForm travelPlan={travelPlan} onSubmit={handleSubmit} onDelete={handleDelete}/>
         </Page>
     )
 }
