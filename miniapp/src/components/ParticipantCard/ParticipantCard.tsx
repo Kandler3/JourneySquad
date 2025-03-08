@@ -1,9 +1,9 @@
 import { FC } from "react";
-import "./ParticipantCard.css"; // Подключаем стили
+import "./ParticipantCard.css"; 
 
 type ParticipantCardProps = {
-  name: string; // Имя участника
-  photoUrl: string; // Ссылка на фото участника
+  name: string; 
+  photoUrl: string;
 };
 
 export const ParticipantCard: FC<ParticipantCardProps> = ({ name, photoUrl }) => {
