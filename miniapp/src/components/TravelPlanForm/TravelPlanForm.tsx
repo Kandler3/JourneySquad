@@ -8,13 +8,15 @@ import {TextInput} from "@/components/TextInput/TextInput.tsx";
 import {ContentInlineSection} from "@/components/ContentInlineSection/ContentInlineSection.tsx";
 import {DateInput} from "@/components/DateInput/DateInput.tsx";
 import {TravelPlanTagsSelector} from "@/components/TravelPlanTagsSelector/TravelPlanTagsSelector.tsx";
-import {Cell, FileInput} from "@telegram-apps/telegram-ui";
+import {FileInput} from "@telegram-apps/telegram-ui";
 import {fetchTravelPlanTags} from "@/services/travelPlanService.ts";
 import {SaveButton} from "@/components/SaveButton/SaveButton.tsx";
 import {toDatetimeFormat} from "@/utils/DateFormats.ts";
 
 import "./TravelPlanForm.css"
 import {PhotoEditCard} from "@/components/PhotoEditCard/PhotoEditCard.tsx";
+import {ParticipantCard} from "@/components/ParticipantCard/ParticipantCard.tsx";
+import {ResetButton} from "@/components/ResetButton/ResetButton.tsx";
 
 type TravelPlanFormProps = {
     travelPlan: TravelPlan
@@ -27,9 +29,11 @@ type TravelPlanFormProps = {
         photos: TravelPlanPhoto[],
         participants: User[],
     ) => void
+
+    onDelete: (travelPlan: TravelPlan) => void;
 }
 
-export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit}) => {
+export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, onDelete}) => {
     const [tags, setTags] = useState<TravelPlanTag[]>([])
 
     const [title, setTitle] = useState<string>(travelPlan.title ?? "");
@@ -76,6 +80,14 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit})
         onSubmit(title, description, new Date(start), new Date(end), activeTags, photos, participants)
     }
 
+    const handleDeleteParticipant = (participant: User) => {
+        setParticipants(participants.filter(p => p.id !== participant.id))
+    }
+
+    const handleDeletePhoto = (photo: TravelPlanPhoto) => {
+        setPhotos(photos.filter(p => p.id !== photo.id))
+    }
+
     return (
         <div className="travel-plan-form">
             <ContentSection title="Информация">
@@ -96,16 +108,34 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit})
                 isActivePredicate={tagIsActive}
                 onClick={handleTagClick}
             />
+            <ContentSection title="Участники">
+                <ParticipantCard name={travelPlan.author?.name ?? ""} photoUrl={travelPlan.author?.avatarUrl ?? ""}/>
+                {
+                    participants.map(
+                        p => <ParticipantCard
+                            name={p.name}
+                            photoUrl={p.avatarUrl ?? ""}
+                            onDelete={() => handleDeleteParticipant(p)}
+                            key={p.id}
+                        />
+                    )
+                }
+            </ContentSection>
             <ContentSection title="Фотографии">
                 {photos.map(
                     photo =>
-                        <PhotoEditCard photo={photo} onDeleteClick={photo => {}} key={photo.id}/>
+                        <PhotoEditCard photo={photo} onDeleteClick={handleDeletePhoto} key={photo.id}/>
                 )}
                 <FileInput label="Добавить"/>
             </ContentSection>
-            <SaveButton onClick={handleSaveClick}>
-                Сохранить
-            </SaveButton>
+            <div style={{gap: "10px", display: "flex", flexDirection: "row", paddingTop: "10px"}}>
+                <SaveButton onClick={handleSaveClick}>
+                    Сохранить
+                </SaveButton>
+                <ResetButton onClick={() => onDelete(travelPlan)}>
+                    Удалить
+                </ResetButton>
+            </div>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-.section  {
+.content-section  {
     /* Auto layout */
     display: flex;
     flex-direction: column;
@@ -6,7 +6,7 @@
     padding: 0px;
     gap: 4px;
 
-    width: calc(100% - 10px);
+    width: 100%;
     height: fit-content;
 
 
@@ -18,7 +18,7 @@
 
 }
 
-.section-content {
+.content-section-content {
     /* Content */
 
     /* Auto layout */

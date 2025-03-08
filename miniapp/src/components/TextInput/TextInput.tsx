@@ -1,8 +1,6 @@
 import {FC, FormEvent} from "react";
 import {Text} from "@telegram-apps/telegram-ui";
-
-import './TextInput.css'
-import {themeParams} from "@telegram-apps/sdk-react";
+import './TextInput.css';
 
 type TextInputProps = {
     value: string

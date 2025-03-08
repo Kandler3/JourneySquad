@@ -23,7 +23,7 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ participants
                     <div
                         key={participant.id}
                         onClick={() => onParticipantClick(participant.id)}
-                        style={{ cursor: "pointer" }}
+                        style={{ cursor: "pointer", width: "100%" }}
                     >
                         <ParticipantCard
                             name={participant.name}

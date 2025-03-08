@@ -21,9 +21,9 @@ export const ContentSection: FC<ContentSectionProps> = ({title, children}) => {
     })
 
     return (
-        <div className="section">
+        <div className="content-section">
             <SectionHeader large={true}>{ title }</SectionHeader>
-            <div className="section-content">
+            <div className="content-section-content">
                 { contentList }
             </div>
         </div>
