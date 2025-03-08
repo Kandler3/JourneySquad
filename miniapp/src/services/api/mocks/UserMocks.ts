@@ -1,5 +1,4 @@
 import {User} from "@/models/types.ts";
-
 export const users: User[] = [
     {  id: 1, 
         name: "Александр", 
@@ -47,4 +46,14 @@ export const users: User[] = [
     { id: 8, name: "Наталья", avatarUrl: "https://via.placeholder.com/150" },
     { id: 9, name: "Михаил", avatarUrl: "https://via.placeholder.com/150" },
     { id: 10, name: "Анна", avatarUrl: "https://via.placeholder.com/150" },
+    { id: -1, 
+        name: "Иван", 
+        age: 18, 
+        bio: "Люблю шахматы", 
+        gender: "Мужской", 
+        preferredCountries: ["Новая Зеландия", "Австралия", "Южная Африка"], 
+        hobbies: ["скалолазание", "серфинг"], 
+        interests: ["спорт", "приключения"], 
+        avatarUrl: "https://via.placeholder.com/150", 
+        activeTravelPlans: [] }
 ];
