@@ -6,7 +6,7 @@ import { User } from "@/models/User.ts";
 import { TravelPlansCarousel } from "@/components/TravelPlanCarousel/TravelPlanCarousel.tsx";
 import { fetchUser } from "@/services/travelPlanService";
 import "@/services/api/mocks/initData.ts";
-import { Icon28Pencil } from "@/iclons/Edit.tsx";
+import { Icon28Pencil } from "@/icons/Edit.tsx";
 import "./Profile.css";
 
 export const UserProfilePage: FC = () => {

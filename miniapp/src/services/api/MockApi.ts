@@ -86,6 +86,11 @@ export class MockApiService implements ApiService {
             throw new Error(`Пользователь с ID ${id} не найден`);
         }
 
+        user.activeTravelPlans = travelPlans.filter(
+            tp =>
+                tp.author?.id === user.id
+                || tp.participants.map(p => p.id).includes(id)
+        );
         return Promise.resolve(user);
     }
 

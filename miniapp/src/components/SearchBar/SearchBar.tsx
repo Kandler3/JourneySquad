@@ -1,7 +1,7 @@
 import {FC} from "react";
 import { themeParams } from "@telegram-apps/sdk-react";
 
-import {Icon28Search} from "@/iclons/Search.tsx";
+import {Icon28Search} from "@/icons/Search.tsx";
 import {Icon24Close} from "@telegram-apps/telegram-ui/dist/icons/24/close";
 import "./SearchBar.css"
 import {Text} from "@telegram-apps/telegram-ui";
