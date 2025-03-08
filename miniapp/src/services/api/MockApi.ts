@@ -5,6 +5,7 @@ import { travelPlans } from '@/services/api/mocks/TravelPlanMocks.ts';
 import { travelPlanTags } from '@/services/api/mocks/TravelPlanTagMocks.ts';
 import { TravelPlanQuery } from '@/services/api/TravelPlanQuery.ts';
 import {users} from "@/services/api/mocks/UserMocks.ts";
+import { User } from "@/models/User.ts";
 
 export class MockApiService implements ApiService {
     async getTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]> {
@@ -77,6 +78,15 @@ export class MockApiService implements ApiService {
 
     async getTravelPlanTags(): Promise<TravelPlanTag[]> {
         return Promise.resolve(travelPlanTags);
+    }
+    async getUser(id: number): Promise<User> {
+        const user = users.find((u) => u.id === id);
+
+        if (!user) {
+            throw new Error(`Пользователь с ID ${id} не найден`);
+        }
+
+        return Promise.resolve(user);
     }
 
     async getTravelPlan(id: number): Promise<TravelPlan | null> {
