@@ -99,3 +99,21 @@
     width: 100%; 
     margin: 8px 0;
 }
+.nameAndEditButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%; 
+}
+
+.editButton {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.editButton svg {
+    width: 32px; 
+    height: 32px;
+}
