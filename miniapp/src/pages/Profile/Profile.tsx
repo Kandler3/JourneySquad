@@ -1,10 +1,12 @@
 import { FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { Divider } from "@telegram-apps/telegram-ui";
 import { User } from "@/models/User.ts";
 import { TravelPlansCarousel } from "@/components/TravelPlanCarousel/TravelPlanCarousel.tsx";
 import { fetchUser } from "@/services/travelPlanService";
+import "@/services/api/mocks/initData.ts";
+import { Icon28Pencil } from "@/iclons/Edit.tsx";
 import "./Profile.css";
 
 export const UserProfilePage: FC = () => {
@@ -12,6 +14,7 @@ export const UserProfilePage: FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -35,6 +38,10 @@ export const UserProfilePage: FC = () => {
         loadUserData();
     }, [userId]);
 
+    const handleEditProfile = () => {
+        navigate("/edit-profile"); // Переход на страницу редактирования
+    };
+
     if (isLoading) {
         return <Page>Загрузка...</Page>;
     }
@@ -57,13 +64,23 @@ export const UserProfilePage: FC = () => {
                         className="userAvatar"
                     />
                     <div className="userInfo">
-                        <h1 className="userName">
-                            {user.name}, {user.age}
-                        </h1>
+                        <div className="nameAndEditButton">
+                            <h1 className="userName">
+                                {user.name}, {user.age}
+                            </h1>
+                            {Number(userId) === -1 && (
+                                <button
+                                    className="editButton"
+                                    onClick={handleEditProfile}
+                                    style={{ background: "none", border: "none", cursor: "pointer" }}
+                                >
+                                    <Icon28Pencil /> {/* Иконка карандаша */}
+                                </button>
+                            )}
+                        </div>
                         <p className="userBio">{user.bio}</p>
                     </div>
                 </div>
-
                 <div className="additionalInfo">
                 <Divider className="customDivider" />
                     <div className="infoItem">
