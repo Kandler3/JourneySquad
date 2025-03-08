@@ -4,14 +4,14 @@ import { ContentSection } from "@/components/ContentSection/ContentSection";
 import "./ParticipantList.css"; 
 
 interface Participant {
-    id: string;
+    id: number;
     name: string;
     photoUrl: string;
 }
 
 interface ParticipantsListProps {
     participants: Participant[];
-    onParticipantClick: (participantId: string) => void;
+    onParticipantClick: (participantId: number) => void;
 }
 
 export const ParticipantsList: React.FC<ParticipantsListProps> = ({ participants, onParticipantClick }) => {
