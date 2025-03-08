@@ -10,3 +10,7 @@
     field-sizing: content;
 
 }
+
+.text-input::placeholder {
+    color: var(--tg-theme-hint-color);
+}

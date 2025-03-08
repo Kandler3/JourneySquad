@@ -14,6 +14,7 @@ import {SaveButton} from "@/components/SaveButton/SaveButton.tsx";
 import {toDatetimeFormat} from "@/utils/DateFormats.ts";
 
 import "./TravelPlanForm.css"
+import {PhotoEditCard} from "@/components/PhotoEditCard/PhotoEditCard.tsx";
 
 type TravelPlanFormProps = {
     travelPlan: TravelPlan
@@ -78,8 +79,8 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit})
     return (
         <div className="travel-plan-form">
             <ContentSection title="Информация">
-                <TextInput value={title} onChange={setTitle}/>
-                <TextInput value={description} onChange={setDescription} multiline={true}/>
+                <TextInput value={title} onChange={setTitle} placeholder="Название"/>
+                <TextInput value={description} onChange={setDescription} multiline={true} placeholder="Описание"/>
             </ContentSection>
             <ContentSection title="Даты">
                 <ContentInlineSection title="Прибытие">
@@ -95,12 +96,13 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit})
                 isActivePredicate={tagIsActive}
                 onClick={handleTagClick}
             />
-            <FileInput label="Добавить">
+            <ContentSection title="Фотографии">
                 {photos.map(
                     photo =>
-                        <Cell key={photo.id}>{photo.url}</Cell>
+                        <PhotoEditCard photo={photo} onDeleteClick={photo => {}} key={photo.id}/>
                 )}
-            </FileInput>
+                <FileInput label="Добавить"/>
+            </ContentSection>
             <SaveButton onClick={handleSaveClick}>
                 Сохранить
             </SaveButton>
