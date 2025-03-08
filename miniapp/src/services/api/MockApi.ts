@@ -126,4 +126,14 @@ export class MockApiService implements ApiService {
         if (index !== -1)
             travelPlans.splice(index, 1);
     }
+    
+    async updateUser(id: number, updates: Partial<User>): Promise<void> {
+        const user = users.find((u) => u.id === id);
+        if (!user) {
+            return Promise.reject(`Пользователь с ID ${id} не найден`);
+        }
+
+        Object.assign(user, updates);
+        return Promise.resolve();
+    }
 }

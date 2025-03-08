@@ -5,7 +5,6 @@ import { Divider } from "@telegram-apps/telegram-ui";
 import { User } from "@/models/User.ts";
 import { TravelPlansCarousel } from "@/components/TravelPlanCarousel/TravelPlanCarousel.tsx";
 import { fetchUser } from "@/services/travelPlanService";
-import "@/services/api/mocks/initData.ts";
 import { Icon28Pencil } from "@/icons/Edit.tsx";
 import "./Profile.css";
 
@@ -39,7 +38,8 @@ export const UserProfilePage: FC = () => {
     }, [userId]);
 
     const handleEditProfile = () => {
-        navigate("/edit-profile");
+        if (!userId) return;
+        navigate(`/edit-profile/${userId}`); 
     };
 
     if (isLoading) {
@@ -105,7 +105,7 @@ export const UserProfilePage: FC = () => {
                     <Divider className="customDivider" />
                 </div>
 
-                <h2 className="sectionTitle">Ваши активные поездки</h2>
+                <h2 className="sectionTitle"> Активные поездки</h2>
                 <TravelPlansCarousel travelPlans={user.activeTravelPlans || []} />
             </div>
         </Page>

@@ -65,6 +65,13 @@ export async function deleteTravelPlan(id: number): Promise<void> {
         return await apiService.deleteTravelPlan(id);
     } catch (error) {
         console.error('Ошибка при удалении travel plan:', error);
+    }
+}
+export async function updateUser(id: number, updates: Partial<User>) {
+    try {
+        return await apiService.updateUser(id, updates);
+    } catch (error) {
+        console.error('Ошибка при обновлении пользователя:', error);
         throw error;
     }
 }

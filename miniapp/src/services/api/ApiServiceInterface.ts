@@ -11,4 +11,5 @@ export interface ApiService {
     updateTravelPlan(id: number, updates: Partial<TravelPlan>): Promise<void>;
     deleteTravelPlan(id: number): Promise<void>;
     getUser(id: number): Promise<User>;
+    updateUser(id: number, updates: Partial<User>): Promise<void>;
 }
