@@ -6,6 +6,7 @@
     flex-direction: column;
     gap: 12px;
     min-height: 100vh;
+    background-color: var(--tg-theme-bg-color);
 }
 
 .container {
@@ -30,12 +31,13 @@
     font-family: 'San Francisco', sans-serif;
     margin: 0;
     padding: 0;
+    color: var(--tg-theme-text-color);
     text-align: left;
 }
 
 .dates {
     font-size: 14px;
-    color: #666;
+    color: var(--tg-theme-hint-color);
     font-family: 'San Francisco', sans-serif;
     margin: 4px 0 0;
 }
@@ -63,24 +65,9 @@
 
 .description {
     font-size: 16px;
-    color: #fff3f3;
+    color: var(--tg-theme-text-color);
     font-family: 'San Francisco', sans-serif;
     line-height: 1.5;
-}
-
-.headerContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 0px;
-}
-
-.participantsTitle {
-    font-size: 20px;
-    font-weight: bold;
-    font-family: 'San Francisco', sans-serif;
-    color: #fefbfb;
-    text-align: left;
-    margin: 0;
 }
 
 .section {
@@ -88,37 +75,9 @@
 }
 
 .section-content {
-    padding: 3px 0;
+    padding: 1px 0;
     max-width: 100%;
     margin: 0;
-}
-
-.divider {
-    margin: 3px 0;
-}
-
-.participant {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-}
-
-.participantPhoto {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-left: 8px;
-}
-
-.participantName {
-    font-size: 16px;
-    font-family: 'San Francisco', sans-serif;
-    color: #fefbfb;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding-left: 16px; 
+    padding-right: 16px; 
 }
