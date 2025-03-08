@@ -1,0 +1,136 @@
+.editProfileContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px;
+    padding-bottom: 100px;
+    background-color: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.twoColumnsSection {
+    display: flex;
+    width: 100%;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 48px;
+}
+
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    width: 160px;
+}
+
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+}
+
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+}
+
+.userAvatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.avatarUploadLabel {
+    display: inline-block;
+    width: 160px;
+    background-color: var(--tg-theme-button-color, #007BFF);
+    color: var(--tg-theme-button-text-color, white);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+.avatarUploadLabel:hover {
+    background-color: var(--tg-theme-button-hover-color, #0056b3);
+}
+
+.inlineFieldsContainer {
+    width: 90%;
+}
+
+.inlineFieldsContainerForColumn {
+    width: 88.5%;
+}
+
+.saveButton {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 48px);
+    max-width: 400px;
+    background-color: var(--tg-theme-button-color, #007BFF);
+    color: var(--tg-theme-button-text-color, white);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+.saveButton:hover {
+    background-color: var(--tg-theme-button-hover-color, #0056b3);
+}
+
+@media (max-width: 768px) {
+    .twoColumnsSection {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .leftColumn {
+        width: 100%;
+        align-items: center;
+    }
+
+    .rightColumn {
+        width: 100%;
+    }
+
+    .userAvatar {
+        width: 120px;
+        height: 120px;
+    }
+
+    .avatarUploadLabel {
+        width: 120px;
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .inlineFieldsContainer {
+        max-width: 85%; 
+    }
+     
+}
