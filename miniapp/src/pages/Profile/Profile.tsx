@@ -39,7 +39,7 @@ export const UserProfilePage: FC = () => {
     }, [userId]);
 
     const handleEditProfile = () => {
-        navigate("/edit-profile"); // Переход на страницу редактирования
+        navigate("/edit-profile");
     };
 
     if (isLoading) {
@@ -74,7 +74,7 @@ export const UserProfilePage: FC = () => {
                                     onClick={handleEditProfile}
                                     style={{ background: "none", border: "none", cursor: "pointer" }}
                                 >
-                                    <Icon28Pencil /> {/* Иконка карандаша */}
+                                    <Icon28Pencil />
                                 </button>
                             )}
                         </div>
