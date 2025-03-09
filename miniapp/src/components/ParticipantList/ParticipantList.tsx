@@ -1,16 +1,11 @@
 import React from "react";
 import { ParticipantCard } from "@/components/ParticipantCard/ParticipantCard";
 import { ContentSection } from "@/components/ContentSection/ContentSection";
+import { User } from "@/models/User.ts";
 import "./ParticipantList.css"; 
 
-interface Participant {
-    id: number;
-    name: string;
-    photoUrl: string;
-}
-
 interface ParticipantsListProps {
-    participants: Participant[];
+    participants: User[];
     onParticipantClick: (participantId: number) => void;
 }
 
@@ -27,7 +22,7 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ participants
                     >
                         <ParticipantCard
                             name={participant.name}
-                            photoUrl={participant.photoUrl}
+                            photoUrl={participant.avatarUrl || ""}
                         />
                     </div>
                 ))}
