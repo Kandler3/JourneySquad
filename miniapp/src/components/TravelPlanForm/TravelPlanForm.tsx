@@ -128,7 +128,7 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, 
                             name={p.name}
                             photoUrl={p.avatarUrl ?? ""}
                             onDelete={() => handleDeleteParticipant(p)}
-                            key={p.id}
+                            key={`participant-${p.id}`}
                         />
                     )
                 }
@@ -136,7 +136,7 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, 
             <ContentSection title="Фотографии">
                 {photos.map(
                     photo =>
-                        <PhotoEditCard photo={photo} onDeleteClick={handleDeletePhoto} key={photo.id}/>
+                        <PhotoEditCard photo={photo} onDeleteClick={handleDeletePhoto} key={`photo-${photo.id}`}/>
                 )}
                 <FileInput label="Добавить" onChange={handlerFileInput}/>
             </ContentSection>

@@ -1,1 +1,1 @@
-export const FILES_BASE_URL = "/files";
+export const FILES_BASE_URL = "";

@@ -29,7 +29,7 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - file-server-volume:/data
+      - file-server-volume:/files
     networks:
       - journey-squad-network
 
