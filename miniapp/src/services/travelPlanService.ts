@@ -1,5 +1,5 @@
 import {createApiService} from './api/createApiService';
-import { User } from "@/models/User.ts";
+import {User} from "@/models/User.ts";
 import {TravelPlan} from "@/models/TravelPlan.ts";
 import {TravelPlanTag} from "@/models/types.ts";
 import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";

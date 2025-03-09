@@ -1,31 +1,37 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import react from '@vitejs/plugin-react-swc';
 import mkcert from 'vite-plugin-mkcert';
-import dotenv from 'dotenv';
 
-dotenv.config();
 // https://vitejs.dev/config/
-export default defineConfig({
-  base: '/',
-  plugins: [
-    // Allows using React dev server along with building a React application with Vite.
-    // https://npmjs.com/package/@vitejs/plugin-react-swc
-    react(),
-    // Allows using the compilerOptions.paths property in tsconfig.json.
-    // https://www.npmjs.com/package/vite-tsconfig-paths
-    tsconfigPaths(),
-    // Creates a custom SSL certificate valid for the local machine.
-    // Using this plugin requires admin rights on the first dev-mode launch.
-    // https://www.npmjs.com/package/vite-plugin-mkcert
-    process.env.HTTPS && mkcert(),
-  ],
-  publicDir: './public',
-  server: {
-    // Exposes your dev server and makes it accessible for the devices in the same network.
-    host: true,
-    port: parseInt(process.env.PORT),
-    allowedHosts: [".ngrok-free.app"],
-  },
+export default defineConfig(({mode} ) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  console.log(`VITE_FILE_SERVER_URL=${process.env.VITE_FILE_SERVER_URL}`);
+  return {
+    base: '/',
+    plugins: [
+      // Allows using React dev server along with building a React application with Vite.
+      // https://npmjs.com/package/@vitejs/plugin-react-swc
+      react(),
+      // Allows using the compilerOptions.paths property in tsconfig.json.
+      // https://www.npmjs.com/package/vite-tsconfig-paths
+      tsconfigPaths(),
+      // Creates a custom SSL certificate valid for the local machine.
+      // Using this plugin requires admin rights on the first dev-mode launch.
+      // https://www.npmjs.com/package/vite-plugin-mkcert
+      process.env.HTTPS && mkcert(),
+    ],
+    publicDir: './public',
+    server: {
+      // Exposes your dev server and makes it accessible for the devices in the same network.
+      host: true,
+      port: parseInt(process.env.PORT),
+      allowedHosts: [".ngrok-free.app"],
+      proxy: {
+        '/files': process.env.VITE_FILE_SERVER_URL,
+      }
+    },
+    define: {'process.env': env}
+  }
 });
 

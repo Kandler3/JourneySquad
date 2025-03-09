@@ -6,6 +6,7 @@ import { travelPlanTags } from '@/services/api/mocks/TravelPlanTagMocks.ts';
 import { TravelPlanQuery } from '@/services/api/TravelPlanQuery.ts';
 import {users} from "@/services/api/mocks/UserMocks.ts";
 import { User } from "@/models/User.ts";
+import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 
 export class MockApiService implements ApiService {
     async getTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]> {
@@ -105,6 +106,12 @@ export class MockApiService implements ApiService {
         const travelPlan = travelPlans.find(tp => tp.id === id);
         if (!travelPlan) {
             return Promise.reject("Travel plan не найден");
+        }
+
+        if (updates.photos)
+        {
+            let id = Math.max(...travelPlan.photos.map(p => p.id));
+            updates.photos = updates.photos.map(p => new TravelPlanPhoto(id++, p.url))
         }
 
         Object.assign(travelPlan, updates); // Обновляем только измененные поля

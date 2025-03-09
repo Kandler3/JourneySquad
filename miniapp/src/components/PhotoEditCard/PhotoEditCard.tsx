@@ -12,8 +12,8 @@ type PhotoEditCardProps = {
 export const PhotoEditCard = ({photo, onDeleteClick}: PhotoEditCardProps) => {
     return (
         <div className="photo-edit-card">
-            <Image src={photo.url}/>
-            <Text>{photo.url.split('/')[-1]}</Text>
+            <Image src={photo.getAbsoluteUrl()}/>
+            <Text>Фото {photo.id}</Text>
             <Icon24Cancel onClick={() => onDeleteClick(photo)} />
         </div>
     )

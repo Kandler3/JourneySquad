@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from "react";
+import {ChangeEvent, FC, useEffect, useState} from "react";
 
 import {TravelPlan} from "@/models/TravelPlan.ts";
 import {TravelPlanTag, User} from "@/models/types.ts";
@@ -17,6 +17,7 @@ import "./TravelPlanForm.css"
 import {PhotoEditCard} from "@/components/PhotoEditCard/PhotoEditCard.tsx";
 import {ParticipantCard} from "@/components/ParticipantCard/ParticipantCard.tsx";
 import {ResetButton} from "@/components/ResetButton/ResetButton.tsx";
+import {uploadFile} from "@/services/fileService.ts";
 
 type TravelPlanFormProps = {
     travelPlan: TravelPlan
@@ -88,6 +89,17 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, 
         setPhotos(photos.filter(p => p.id !== photo.id))
     }
 
+    const handlerFileInput = async (e : ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0)
+        {
+            for (let i = 0; i < e.target.files.length; i++)
+            {
+                const resp = await uploadFile(e.target.files[i])
+                photos.push(new TravelPlanPhoto(photos.length, resp))
+            }
+        }
+    }
+
     return (
         <div className="travel-plan-form">
             <ContentSection title="Информация">
@@ -126,7 +138,7 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, 
                     photo =>
                         <PhotoEditCard photo={photo} onDeleteClick={handleDeletePhoto} key={photo.id}/>
                 )}
-                <FileInput label="Добавить"/>
+                <FileInput label="Добавить" onChange={handlerFileInput}/>
             </ContentSection>
             <div style={{gap: "10px", display: "flex", flexDirection: "row", paddingTop: "10px"}}>
                 <SaveButton onClick={handleSaveClick}>

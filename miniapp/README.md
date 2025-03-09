@@ -36,7 +36,7 @@
 
 - запустить проект
 
-  `docker-compose up -d`
+  `docker-compose up -d --build`
 
 
 - получить публичный url в PowerShell

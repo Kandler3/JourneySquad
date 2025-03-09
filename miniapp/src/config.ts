@@ -1,1 +1,1 @@
-export const FILES_BASE_URL = "https://i.pinimg.com";
+export const FILES_BASE_URL = "/files";
