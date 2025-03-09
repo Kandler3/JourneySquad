@@ -32,7 +32,6 @@ export const TravelPlanViewPage: FC = () => {
                 setIsLoading(false);
             }
         };
-        console.log("travelPlanId из useParams:", travelPlanId);
         loadTravelPlan();
     }, [travelPlanId]);
 
@@ -55,9 +54,9 @@ export const TravelPlanViewPage: FC = () => {
     const participants = travelPlan.participants.map(user => ({
         id: user.id,
         name: user.name || "Unknown",
-        photoUrl: user.avatarUrl || "default-avatar-url",
+        avatarUrl: user.avatarUrl || "default-avatar-url",
     }));
-
+    
     return (
         <Page>
             <PhotoCarousel photos={photoUrls} />
@@ -65,16 +64,25 @@ export const TravelPlanViewPage: FC = () => {
                 <div className="container">
                     <div className="header">
                         <div>
+                            <div className="tags">
+                                <div className="tags-content">
+                                    {travelPlan.tags.map((tag, index) => (
+                                        <div key={index} className="tag">
+                                            {tag.name}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                             <h1 className="title">{travelPlan.title}</h1>
                             <p className="dates">{travelPlan.getDatesString()}</p>
                         </div>
-                        <button className="joinButton">Присоединиться</button>
                     </div>
                     <p className="description">{travelPlan.description}</p>
                     <ParticipantsList
                         participants={participants}
                         onParticipantClick={handleParticipantClick}
                     />
+                    <button className="joinButton">Присоединиться</button>
                 </div>
             </div>
         </Page>
