@@ -30,6 +30,7 @@
 
 .userInfo {
     flex: 1;
+    width: 80%;
 }
 
 .userName {
@@ -41,9 +42,13 @@
 
 .userBio {
     font-size: 14px;
-    color: var(--tg-theme-hint-color); 
+    color: var(--tg-theme-hint-color);
     line-height: 1.5;
     margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-line;
+    max-width: 80%;
 }
 
 .additionalInfo {
