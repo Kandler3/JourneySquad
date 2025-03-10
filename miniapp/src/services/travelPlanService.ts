@@ -85,3 +85,12 @@ export async function fetchTravelPlanTag(id: number): Promise<TravelPlanTag | nu
         throw error;
     }
 }
+
+export async function fetchCurrentUser() : Promise<User> {
+    try {
+        return await apiService.getCurrentUser();
+    } catch (error) {
+        console.error('Ошибка при получении текущего пользователя:', error);
+        throw error;
+    }
+}

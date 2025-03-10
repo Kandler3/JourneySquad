@@ -3,6 +3,7 @@ import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
 import {TravelPlan} from "@/models/TravelPlan.ts";
 import {initDataRaw} from "@telegram-apps/sdk-react";
 import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
+import {User} from "@/models/User.ts";
 
 export class DevApi implements ApiService {
     headers = {
@@ -16,8 +17,13 @@ export class DevApi implements ApiService {
         }
         const resp = await fetch(url, {
             method: "GET",
-            headers: this.headers,
+            headers: this.headers
         });
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+
         return (await resp.json()).map(tp => TravelPlan.fromJSON(tp));
     }
 
@@ -28,34 +34,64 @@ export class DevApi implements ApiService {
             headers: this.headers,
         })
 
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+
         return (TravelPlan.fromJSON(await resp.json()))
     }
 
     async updateTravelPlan(id: number, updates: Partial<TravelPlanPhoto>): Promise<void> {
         const url = `/api/travel_plans/${id}`;
-        await fetch(url, {
+        const resp = await fetch(url, {
             method: "PUT",
-            headers: this.headers,
+            headers: {...this.headers, "Content-Type": "application/json"},
             body: JSON.stringify(updates),
         });
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
     }
 
     async createTravelPlan(travelPlan: TravelPlan): Promise<TravelPlan> {
         const url = `/api/travel_plans`;
         const resp = await fetch(url, {
             method: "POST",
-            headers: this.headers,
+            headers: {...this.headers, "Content-Type": "application/json"},
             body: JSON.stringify(travelPlan),
         })
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
 
         return TravelPlan.fromJSON(await resp.json());
     }
 
     async deleteTravelPlan(id: number): Promise<void> {
         const url = `/api/travel_plans/${id}`;
-        await fetch(url, {
+        const resp = await fetch(url, {
             method: "DELETE",
             headers: this.headers,
         })
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+    }
+
+    async getCurrentUser(): Promise<User> {
+        const url = `/api/users/login`;
+        const resp = await fetch(url, {
+            method: "GET",
+            headers: this.headers,
+        })
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+
+        return resp.json();
     }
 }

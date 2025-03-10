@@ -87,6 +87,8 @@ export class TravelPlan {
         tp.tags = json.tags;
         tp.photos = json.photos.map((photo: any) => TravelPlanPhoto.fromJSON(photo));
         tp.participants = json.participants;
+
+        return tp;
     }
 
 }
