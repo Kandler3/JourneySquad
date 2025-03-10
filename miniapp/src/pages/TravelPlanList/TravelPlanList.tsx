@@ -36,13 +36,10 @@ export const TravelPlanListPage : FC = () => {
     const setFilterOpenedOpposite = () => setFilterOpened(!isFilterOpened)
 
     const [isSortOpened, setSortOpened] = useState<boolean>(false);
-
-    const [ageSortOrder, setAgeSortOrder] = useState<string>("");
-    const [countrySortOrder, setCountrySortOrder] = useState<string>("");
+    const [titleSortOrder, setTitleSortOrder] = useState<string>("");
     const [dateSortOrder, setDateSortOrder] = useState<string>("");
 
-    const saveSortChanges = (ageSortOrder: string, countrySortOrder: string, dateSortOrder: string) => {
-        console.log("Сортировка сохранена:", { ageSortOrder, countrySortOrder, dateSortOrder });
+    const saveSortChanges = (titleSortOrder: string, dateSortOrder: string) => {
         // Можно добавить логику для сохранения на сервере или в локальном хранилище
     };
 
@@ -96,10 +93,8 @@ export const TravelPlanListPage : FC = () => {
             <TravelPlanSort
                 isSortOpened={isSortOpened}
                 setIsSortOpened={setSortOpened}
-                ageSortOrder={ageSortOrder}
-                setAgeSortOrder={setAgeSortOrder}
-                countrySortOrder={countrySortOrder}
-                setCountrySortOrder={setCountrySortOrder}
+                titleSortOrder={titleSortOrder}
+                setTitleSortOrder={setTitleSortOrder}
                 dateSortOrder={dateSortOrder}
                 setDateSortOrder={setDateSortOrder}
                 saveSortChanges={saveSortChanges}

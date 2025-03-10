@@ -8,34 +8,29 @@ import {SaveButton} from "@/components/SaveButton/SaveButton.tsx";
 type TravelPlanSortProps = {
   isSortOpened: boolean;
   setIsSortOpened: Dispatch<SetStateAction<boolean>>;
-  ageSortOrder: string;
-  setAgeSortOrder: Dispatch<SetStateAction<string>>;
-  countrySortOrder: string;
-  setCountrySortOrder: Dispatch<SetStateAction<string>>;
+  titleSortOrder: string;
+  setTitleSortOrder: Dispatch<SetStateAction<string>>;
   dateSortOrder: string;
   setDateSortOrder: Dispatch<SetStateAction<string>>;
-  saveSortChanges: (ageSortOrder: string, countrySortOrder: string, dateSortOrder: string) => void;
+  saveSortChanges: (countrySortOrder: string, dateSortOrder: string) => void;
 };
 
 export const TravelPlanSort: FC<TravelPlanSortProps> = ({
   isSortOpened,
   setIsSortOpened,
-  ageSortOrder,
-  setAgeSortOrder,
-  countrySortOrder,
-  setCountrySortOrder,
+  titleSortOrder,
+  setTitleSortOrder,
   dateSortOrder,
   setDateSortOrder,
   saveSortChanges
 }) => {
   const resetOtherSorts = (currentSort: string) => {
-    if (currentSort !== "age") setAgeSortOrder("");
-    if (currentSort !== "country") setCountrySortOrder("");
+    if (currentSort !== "title") setTitleSortOrder("");
     if (currentSort !== "date") setDateSortOrder("");
   };
 
   const handleSaveSort = () => {
-    saveSortChanges(ageSortOrder, countrySortOrder, dateSortOrder);
+    saveSortChanges(titleSortOrder, dateSortOrder);
     setIsSortOpened(false); 
   };
 
@@ -47,49 +42,24 @@ export const TravelPlanSort: FC<TravelPlanSortProps> = ({
     >
       <div className="travel-plan-sort-modal">
         <div className="sort-columns">
-          {/* Сортировка по возрасту */}
-          <div className="sort-section">
-            <SectionHeader large={true}>Сортировка по возрасту</SectionHeader>
-            <div className="button-group">
-              <Button
-                mode={ageSortOrder === "asc" ? "filled" : "outline"}
-                onClick={() => {
-                  setAgeSortOrder(ageSortOrder === "asc" ? "" : "asc");
-                  resetOtherSorts("age");
-                }}
-              >
-                По возрастанию
-              </Button>
-              <Button
-                mode={ageSortOrder === "desc" ? "filled" : "outline"}
-                onClick={() => {
-                  setAgeSortOrder(ageSortOrder === "desc" ? "" : "desc");
-                  resetOtherSorts("age");
-                }}
-              >
-                По убыванию
-              </Button>
-            </div>
-          </div>
-
           {/* Сортировка по стране */}
           <div className="sort-section">
-            <SectionHeader large={true}>Сортировка по стране</SectionHeader>
+            <SectionHeader large={true}>Сортировка по названию  </SectionHeader>
             <div className="button-group">
               <Button
-                mode={countrySortOrder === "asc" ? "filled" : "outline"}
+                mode={titleSortOrder === "asc" ? "filled" : "outline"}
                 onClick={() => {
-                  setCountrySortOrder(countrySortOrder === "asc" ? "" : "asc");
-                  resetOtherSorts("country");
+                  setTitleSortOrder(titleSortOrder === "asc" ? "" : "asc");
+                  resetOtherSorts("title");
                 }}
               >
                 По алфавиту (А-Я)
               </Button>
               <Button
-                mode={countrySortOrder === "desc" ? "filled" : "outline"}
+                mode={titleSortOrder === "desc" ? "filled" : "outline"}
                 onClick={() => {
-                  setCountrySortOrder(countrySortOrder === "desc" ? "" : "desc");
-                  resetOtherSorts("country");
+                  setTitleSortOrder(titleSortOrder === "desc" ? "" : "desc");
+                  resetOtherSorts("title");
                 }}
               >
                 По алфавиту (Я-А)
