@@ -13,4 +13,8 @@ export class TravelPlanPhoto {
     getAbsoluteUrl() {
         return `${FILES_BASE_URL}${this.url}`
     }
+
+    static fromJSON(json: any) : TravelPlanPhoto {
+        return new TravelPlanPhoto(json.id, json.url);
+}
 }

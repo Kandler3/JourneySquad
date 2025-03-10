@@ -5,11 +5,12 @@ import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
 
 export interface ApiService {
     getTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]>;
-    getTravelPlanTags(): Promise<TravelPlanTag[]>;
     getTravelPlan(id: number): Promise<TravelPlan | null>;
     createTravelPlan(travelPlan: TravelPlan): Promise<TravelPlan>;
     updateTravelPlan(id: number, updates: Partial<TravelPlan>): Promise<void>;
     deleteTravelPlan(id: number): Promise<void>;
+    getTravelPlanTags(): Promise<TravelPlanTag[]>;
+    getTravelPlanTag(id: number): Promise<TravelPlanTag | null>;
     getUser(id: number): Promise<User>;
     updateUser(id: number, updates: Partial<User>): Promise<void>;
 }

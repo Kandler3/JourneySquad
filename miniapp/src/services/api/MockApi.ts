@@ -71,7 +71,7 @@ export class MockApiService implements ApiService {
                 }
 
                 // Если требуется убывающий порядок
-                return query.sortDescending ? -result : result;
+                return query.sortAscending ? result : -result;
             });
 
         return Promise.resolve(filteredPlans);
@@ -142,5 +142,9 @@ export class MockApiService implements ApiService {
 
         Object.assign(user, updates);
         return Promise.resolve();
+    }
+
+    async getTravelPlanTag(id: number): Promise<TravelPlanTag | null> {
+        return travelPlanTags.find(p => p.id === id) ?? null;
     }
 }

@@ -76,4 +76,17 @@ export class TravelPlan {
         )
     }
 
+    static fromJSON(json: any): TravelPlan {
+        const tp = new TravelPlan();
+        tp.id = json.id;
+        tp.title = json.title;
+        tp.description = json.description;
+        tp.startDate = new Date(json.startDate) ?? undefined;
+        tp.endDate = new Date(json.endDate) ?? undefined;
+        tp.author = json.author;
+        tp.tags = json.tags;
+        tp.photos = json.photos.map((photo: any) => TravelPlanPhoto.fromJSON(photo));
+        tp.participants = json.participants;
+    }
+
 }
