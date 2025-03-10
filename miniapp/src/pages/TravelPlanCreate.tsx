@@ -1,4 +1,4 @@
-import {FC, useState} from "react";
+import {FC, useContext, useEffect, useState} from "react";
 import {TravelPlan} from "@/models/TravelPlan.ts";
 import {TravelPlanTag, User} from "@/models/types.ts";
 import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
@@ -6,10 +6,14 @@ import {useNavigate} from "react-router-dom";
 import {createTravelPlan} from "@/services/travelPlanService.ts";
 import {TravelPlanForm} from "@/components/TravelPlanForm/TravelPlanForm.tsx";
 import {Page} from "@/components/Page.tsx";
+import {UserContext} from "@/contexts/UserContext.ts";
 
 export const TravelPlanCreatePage : FC = () => {
+    const currentUser = useContext(UserContext)
     const [travelPlan, setTravelPlan] = useState<TravelPlan>(new TravelPlan())
     const navigate = useNavigate()
+
+    useEffect(() => {travelPlan.author = currentUser}, [currentUser])
 
     const handleSubmit = async (
         title: string,

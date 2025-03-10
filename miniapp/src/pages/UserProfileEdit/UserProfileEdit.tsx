@@ -14,7 +14,7 @@ export const EditProfilePage: FC = () => {
     const currentUser = useContext(UserContext);
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error] = useState<string | null>(null);
     const [selectedGender, setSelectedGender] = useState<string>("");
     const navigate = useNavigate();
 

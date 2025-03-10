@@ -13,6 +13,7 @@
 
     width: calc(100% - 20px);
     height: 100%;
+    margin-bottom: 60px;
 }
 
 .dates-content-part {

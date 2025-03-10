@@ -34,3 +34,8 @@ export function SameMonthsFormat(startDate : Date, endDate : Date) : string
 export function toDatetimeFormat(date : string) : string {
     return date.split(".").reverse().join("-");
 }
+
+export function DateFromLocaleString(value : string): Date | undefined {
+    const timestamp = Date.parse(toDatetimeFormat(value));
+    return isNaN(timestamp) ? undefined : new Date(timestamp);
+}

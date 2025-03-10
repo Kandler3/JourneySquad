@@ -10,13 +10,17 @@ import {ContentSection} from "@/components/ContentSection/ContentSection.tsx";
 import {ContentInlineSection} from "@/components/ContentInlineSection/ContentInlineSection.tsx";
 import {Modal} from "@telegram-apps/telegram-ui";
 import {TravelPlanTagsSelector} from "@/components/TravelPlanTagsSelector/TravelPlanTagsSelector.tsx";
+import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
+import {DateFromLocaleString} from "@/utils/DateFormats.ts";
 
 type TravelPlanFilterProps = {
     isFilterOpened: boolean;
     setIsFilterOpened: Dispatch<SetStateAction<boolean>>;
+    query: TravelPlanQuery;
+    setQuery: Dispatch<SetStateAction<TravelPlanQuery>>;
 };
 
-export const TravelPlanFilter: FC<TravelPlanFilterProps> = ({ isFilterOpened, setIsFilterOpened }) => {
+export const TravelPlanFilter: FC<TravelPlanFilterProps> = ({ isFilterOpened, setIsFilterOpened, query, setQuery }) => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [tags, setTags] = useState<TravelPlanTag[]>([])
@@ -48,10 +52,35 @@ export const TravelPlanFilter: FC<TravelPlanFilterProps> = ({ isFilterOpened, se
 
     const handleSaveFilter = () => {
         setIsFilterOpened(false);
+        const newQuery = query.clone();
+
+        if (!startDate) {
+            newQuery.startDate = undefined;
+        } else {
+            const start = DateFromLocaleString(startDate);
+            if (start)
+                newQuery.startDate = start;
+        }
+        if (!endDate) {
+            newQuery.endDate = undefined;
+        } else {
+            const end = DateFromLocaleString(endDate);
+            if (end)
+                newQuery.endDate = end;
+        }
+        newQuery.tags = activeTags;
+
+        setQuery(newQuery);
     }
 
     const handleResetFilter = () => {
         setIsFilterOpened(false);
+        const newQuery = query.clone();
+
+        newQuery.startDate = undefined;
+        newQuery.endDate = undefined
+        newQuery.tags = undefined;
+        setQuery(newQuery)
     }
 
     return (

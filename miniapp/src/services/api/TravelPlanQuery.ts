@@ -4,6 +4,7 @@ import {fetchTravelPlanTag} from "@/services/travelPlanService.ts";
 type sortParameters = "date" | "title";
 
 export class TravelPlanQuery {
+    query?: string;
     userId?: number;
     startDate?: Date;
     endDate?: Date;
@@ -13,14 +14,17 @@ export class TravelPlanQuery {
 
     toSearchParams() : URLSearchParams {
         const searchParams = new URLSearchParams();
+        if (this.query)
+            searchParams.append("query", this.query);
+
         if (this.userId)
             searchParams.append("user_id", this.userId.toString());
 
         if (this.startDate)
-            searchParams.append("startDate", this.startDate.toString());
+            searchParams.append("start_date", this.startDate.toString());
 
         if (this.endDate)
-            searchParams.append("endDate", this.endDate.toString());
+            searchParams.append("end_date", this.endDate.toString());
 
         if (this.tags)
             this.tags.map(tag => searchParams.append("tag", tag.id.toString()));
@@ -37,6 +41,9 @@ export class TravelPlanQuery {
     static fromSearchParams(params: URLSearchParams) : TravelPlanQuery {
         const query = new TravelPlanQuery();
 
+        if (params.has("query"))
+            query.query = params.get("query") ?? undefined;
+
         if (params.has("user_id"))
             query.userId = Number(params.get("user_id"));
 
@@ -46,9 +53,9 @@ export class TravelPlanQuery {
         if (params.has("end_date"))
             query.endDate = new Date(params.get("end_date") ?? "");
 
-        if (params.has("tags")) {
+        if (params.has("tag")) {
             query.tags = [];
-            params.getAll("tags").forEach((id) => {
+            params.getAll("tag").forEach((id) => {
                 const tag = fetchTravelPlanTag(Number(id));
                 tag.then(tag => {
                     if (tag) query.tags?.push(tag)
@@ -62,5 +69,17 @@ export class TravelPlanQuery {
         }
 
         return query;
+    }
+
+    clone(): TravelPlanQuery {
+        const copy = new TravelPlanQuery();
+        copy.query = this.query;
+        copy.userId = this.userId;
+        copy.startDate = this.startDate;
+        copy.endDate = this.endDate;
+        copy.tags = this.tags;
+        copy.sortBy = this.sortBy;
+        copy.sortAscending = this.sortAscending;
+        return copy;
     }
 }

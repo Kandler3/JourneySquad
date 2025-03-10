@@ -12,6 +12,9 @@ export class MockApiService implements ApiService {
     async getTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]> {
         const filteredPlans = travelPlans
             .filter(plan => {
+                if (query?.query && (!plan.title || !plan.title.toLowerCase().includes(query?.query.toLowerCase()))) {
+                    return false;
+                }
                 // Фильтрация по userId
                 if (query?.userId && (!plan.author || plan.author.id !== query.userId)) {
                     return false;
@@ -27,13 +30,11 @@ export class MockApiService implements ApiService {
                     return false;
                 }
 
-                // Фильтрация по тегам (если нужно, чтобы TravelPlan содержал все указанные теги)
+                // Фильтрация по тегам
                 if (query?.tags?.length) {
-                    // Если у плана нет тегов, отбрасываем сразу
                     if (!plan.tags?.length) return false;
-                    // Проверяем, что каждый тег из query.tags есть в plan.tags
-                    const hasAllTags = query.tags.every(tag => plan.tags.includes(tag));
-                    if (!hasAllTags) {
+                    const hasAnyTags = query.tags.some(tag => plan.tags.includes(tag));
+                    if (!hasAnyTags) {
                         return false;
                     }
                 }
