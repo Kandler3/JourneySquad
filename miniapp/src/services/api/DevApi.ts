@@ -94,4 +94,30 @@ export class DevApi implements ApiService {
 
         return resp.json();
     }
+
+    async updateUser(id: number, updates: Partial<User>): Promise<void> {
+        const url = `/api/edit-profile/${id}`;
+        const resp = await fetch(url, {
+            method: "PUT",
+            headers: {...this.headers, "Content-Type": "application/json"},
+            body: JSON.stringify(updates),
+        });
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+    }
+
+    async getUser(id: number): Promise<User> {
+        const url = `/api/profile/${id}`;
+        const resp = await fetch(url, {
+            method: "GET",
+            headers: this.headers,
+        })
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+        return resp.json();
+    }
 }
