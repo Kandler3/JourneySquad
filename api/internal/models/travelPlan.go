@@ -91,13 +91,12 @@ type CreateTPTPTagInput struct {
 	TravelPlanTagId int `json:"travel_plan_tag_id"`
 }
 
-type myErr struct {
-	message string
+type TPParticipantInput struct {
+	ID           int       `json:"id"`
+	CreatedAt    time.Time `json:"created_at"`
+	User_id int `json:"user_id"`
 }
 
-func (err myErr) Error() string {
-	return err.message
-}
 
 // travel_plans/ - get
 func GetAllTravelPlans(ctx context.Context) ([]TravelPlan, error){
@@ -564,6 +563,43 @@ func GetAllTPParticipants(ctx context.Context) ([]TravelPlanParticipant, error) 
 	return travelPlanParticipants, nil
 }
 
+func AddParticipantToTP(ctx context.Context, TpId int, input TPParticipantInput) (*TravelPlanParticipant, error) {
+	var TpParticipant TravelPlanParticipant
+	query := `
+		INSERT INTO tp_participants (id, created_at, edited_at, travel_plan_id, user_id)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, travel_plan_id, user_id
+	`
+	err := db.QueryRow(
+		ctx,
+		query,
+		input.ID,
+		time.Now(),
+		time.Now(),
+		TpId,
+		input.User_id,
+	).Scan(&TpParticipant.ID, &TpParticipant.TravelPlanId, &TpParticipant.User_id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	TpParticipant.CreatedAt, TpParticipant.EditedAt = time.Now(), time.Now()
+	return &TpParticipant, err
+}
+
+func DeleteParticipantfromTP(ctx context.Context, TPid int, Participanttag int) error {
+	query := `
+		DELETE FROM tp_participants
+		WHERE travel_plan_id = $1 AND user_id = $2
+	`
+	_, err := db.Exec(ctx, query, TPid, Participanttag)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func GetAllTpPhotos(ctx context.Context) ([]TravelPlanPhoto, error) {
 	query := `

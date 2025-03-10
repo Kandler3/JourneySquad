@@ -243,3 +243,44 @@ func DeleteTPTagHandler(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+
+// POST /travel_plans/{id}/participants
+func AddParticipantHandler(c *gin.Context) {
+	tpID, err := GetQueryParam(c, "id")
+	if err != nil {
+		return
+	}
+	ctx := c.Request.Context()
+
+	var input models.TPParticipantInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	TPparticipant, err := models.AddParticipantToTP(ctx, tpID, input) 
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, TPparticipant)
+}
+
+// DELETE /travel_plans/{id}/participants/{participant_id}
+func DeleteParticipant(c *gin.Context) {
+	ID, err := GetQueryParam(c, "id")
+	if err != nil {
+		return
+	}
+	participantID, err := GetQueryParam(c, "participant_id") 
+	if err != nil {
+		return
+	}
+
+	ctx := c.Request.Context()
+	if err := models.DeleteParticipantfromTP(ctx, ID, participantID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.Status(http.StatusNoContent)
+}
