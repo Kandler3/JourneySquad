@@ -46,7 +46,7 @@ export const users: User[] = [
     { id: 8, name: "Наталья", avatarUrl: "https://via.placeholder.com/150" },
     { id: 9, name: "Михаил", avatarUrl: "https://via.placeholder.com/150" },
     { id: 10, name: "Анна", avatarUrl: "https://via.placeholder.com/150" },
-    { id: -1, 
+    { id: 11,
         name: "Иван", 
         age: 18, 
         bio: "Люблю шахматы", 

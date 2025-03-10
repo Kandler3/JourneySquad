@@ -32,6 +32,14 @@ services:
       - file-server-volume:/files
     networks:
       - journey-squad-network
+  
+  bot:
+    build: ../bot
+    image: bot
+    env_file: ../bot/.env
+    environment:
+      API_URL: "http://your-api-url.com"
+    restart: always
 
 volumes:
   file-server-volume:

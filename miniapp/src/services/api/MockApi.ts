@@ -147,4 +147,8 @@ export class MockApiService implements ApiService {
     async getTravelPlanTag(id: number): Promise<TravelPlanTag | null> {
         return travelPlanTags.find(p => p.id === id) ?? null;
     }
+
+    async getCurrentUser(): Promise<User> {
+        return users[0];
+    }
 }

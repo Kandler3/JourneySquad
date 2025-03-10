@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import {FC, useContext, useEffect, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { Divider } from "@telegram-apps/telegram-ui";
@@ -7,6 +7,7 @@ import { TravelPlansCarousel } from "@/components/TravelPlanCarousel/TravelPlanC
 import { fetchUser } from "@/services/travelPlanService";
 import { Icon28Pencil } from "@/icons/Edit.tsx";
 import "./Profile.css";
+import {UserContext} from "@/contexts/UserContext.ts";
 
 export const UserProfilePage: FC = () => {
     const { userId } = useParams<{ userId: string }>();
@@ -14,6 +15,7 @@ export const UserProfilePage: FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const currentUser = useContext(UserContext) ?? null;
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -21,6 +23,11 @@ export const UserProfilePage: FC = () => {
                 setError("ID пользователя не указан");
                 setIsLoading(false);
                 return;
+            }
+            if (userId === "-1") {
+                setUser(currentUser)
+                setIsLoading(false)
+                return
             }
 
             try {
@@ -35,11 +42,10 @@ export const UserProfilePage: FC = () => {
         };
 
         loadUserData();
-    }, [userId]);
+    }, [userId, currentUser]);
 
     const handleEditProfile = () => {
-        if (!userId) return;
-        navigate(`/edit-profile/${userId}`); 
+        navigate(`/edit-profile`);
     };
 
     if (isLoading) {
@@ -68,7 +74,7 @@ export const UserProfilePage: FC = () => {
                             <h1 className="userName">
                                 {user.name}, {user.age}
                             </h1>
-                            {Number(userId) === -1 && (
+                            {(Number(userId) === -1 || Number(userId) === currentUser?.id) && (
                                 <button
                                     className="editButton"
                                     onClick={handleEditProfile}

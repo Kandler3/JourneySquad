@@ -4,10 +4,22 @@ import {Navigate, Route, Routes, BrowserRouter} from 'react-router-dom';
 
 import { routes } from '@/navigation/routes.tsx';
 import {NavBar} from "@/components/NavBar/NavBar.tsx";
+import {UserContext} from "@/contexts/UserContext.ts";
+import {User} from "@/models/User.ts";
+import {useEffect, useState} from "react";
+import {fetchCurrentUser} from "@/services/travelPlanService.ts";
 
 export function App() {
   const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);
+  const [user, setUser] = useState<User | undefined>(undefined);
+
+  useEffect(() => {
+    (async () => {
+      const currentUser = await fetchCurrentUser();
+      setUser(currentUser);
+    })();
+  }, []);
 
   return (
     <AppRoot
@@ -15,11 +27,13 @@ export function App() {
       platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
     >
       <BrowserRouter>
+        <UserContext.Provider value={user}>
         <Routes>
           {routes.map((route) => <Route key={route.path} {...route} />)}
           <Route path="*" element={<Navigate to="/"/>}/>
         </Routes>
         <NavBar/>
+        </UserContext.Provider>
       </BrowserRouter>
     </AppRoot>
   );

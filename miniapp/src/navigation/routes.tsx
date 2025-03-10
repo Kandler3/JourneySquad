@@ -33,5 +33,5 @@ export const routes: Route[] = [
   { path: '/travel-plans/:travelPlanId', Component: TravelPlanViewPage, title: 'Travel Plan' },
   { path: '/travel-plans/:id/edit', Component: TravelPlanValidateEditPage, title: 'Travel Plan' },
   { path: '/travel-plans/new', Component: TravelPlanCreatePage, title: 'Travel Plan Creation' },
-  { path: '/edit-profile/:userId', Component: EditProfilePage, title: 'Edit Profile' },
+  { path: '/edit-profile', Component: EditProfilePage, title: 'Edit Profile' },
 ];

@@ -1,16 +1,17 @@
-import { FC, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {FC, useContext, useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { User } from "@/models/User.ts";
 import { TextInput } from "@/components/TextInput/TextInput";
-import { fetchUser, updateUser } from "@/services/travelPlanService";
+import { updateUser } from "@/services/travelPlanService";
 import { SaveButton } from "@/components/SaveButton/SaveButton";
 import { ContentInlineSection } from "@/components/ContentInlineSection/ContentInlineSection";
 import { Button } from "@telegram-apps/telegram-ui";
 import "./UserProfileEdit.css";
+import {UserContext} from "@/contexts/UserContext.ts";
 
 export const EditProfilePage: FC = () => {
-    const { userId } = useParams<{ userId: string }>();
+    const currentUser = useContext(UserContext);
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -19,45 +20,28 @@ export const EditProfilePage: FC = () => {
 
     useEffect(() => {
         const loadUserData = async () => {
-            if (!userId) {
-                setError("ID пользователя не указан");
-                setIsLoading(false);
-                return;
-            }
+            if (currentUser) {
+                setUser(currentUser);
+                setIsLoading(false)
 
-            if (Number(userId) !== -1) {
-                setError("Доступ к редактированию запрещен");
-                setIsLoading(false);
-                return;
-            }
-    
-            try {
-                const userData = await fetchUser(Number(userId));
-                setUser(userData);
-                setSelectedGender(userData.gender || "");
-            } catch (err) {
-                setError("Ошибка при загрузке данных пользователя");
-                console.error(err);
-            } finally {
-                setIsLoading(false);
             }
         };
     
         loadUserData();
-    }, [userId]);
+    }, [currentUser]);
 
     const handleSave = async () => {
-        if (!user || !userId) return;
+        if (!user) return;
 
         try {
-            await updateUser(Number(userId), {
+            await updateUser(Number(user.id), {
                 name: user.name,
                 age: user.age,
                 gender: selectedGender || user.gender,
                 bio: user.bio,
                 avatarUrl: user.avatarUrl,
             });
-            navigate(`/profile/${userId}`);
+            navigate(`/profile/-1`);
         } catch (err) {
             console.error("Ошибка при сохранении данных:", err);
         }

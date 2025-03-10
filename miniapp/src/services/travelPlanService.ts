@@ -86,9 +86,11 @@ export async function fetchTravelPlanTag(id: number): Promise<TravelPlanTag | nu
     }
 }
 
-export async function fetchCurrentUser() : Promise<User> {
+export async function fetchCurrentUser(): Promise<User> {
     try {
-        return await apiService.getCurrentUser();
+        const user = await apiService.getCurrentUser();
+        console.log("Текущий пользователь получен")
+        return user;
     } catch (error) {
         console.error('Ошибка при получении текущего пользователя:', error);
         throw error;
