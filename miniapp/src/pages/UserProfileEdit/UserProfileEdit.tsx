@@ -53,9 +53,6 @@ export const EditProfilePage: FC = () => {
                 gender: user.gender,
                 bio: user.bio,
                 avatarUrl: user.avatarUrl,
-                preferredCountries: user.preferredCountries,
-                hobbies: user.hobbies,
-                interests: user.interests,
             });
             navigate(`/profile/${userId}`);
         } catch (err) {
@@ -170,36 +167,6 @@ export const EditProfilePage: FC = () => {
                             value={user.gender || ""}
                             onChange={(value) => handleChange("gender", value)}
                             placeholder="Пол"
-                        />
-                    </ContentInlineSection>
-
-                    <ContentInlineSection title="Предпочитаемые страны">
-                        <TextInput
-                            value={user.preferredCountries?.join(", ") || ""}
-                            onChange={(value) =>
-                                handleChange("preferredCountries", value.split(", "))
-                            }
-                            placeholder="Предпочитаемые страны"
-                        />
-                    </ContentInlineSection>
-
-                    <ContentInlineSection title="Увлечения">
-                        <TextInput
-                            value={user.hobbies?.join(", ") || ""}
-                            onChange={(value) =>
-                                handleChange("hobbies", value.split(", "))
-                            }
-                            placeholder="Увлечения"
-                        />
-                    </ContentInlineSection>
-
-                    <ContentInlineSection title="Интересы">
-                        <TextInput
-                            value={user.interests?.join(", ") || ""}
-                            onChange={(value) =>
-                                handleChange("interests", value.split(", "))
-                            }
-                            placeholder="Интересы"
                         />
                     </ContentInlineSection>
                 </div>

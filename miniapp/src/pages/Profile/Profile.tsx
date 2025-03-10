@@ -88,23 +88,7 @@ export const UserProfilePage: FC = () => {
                         <div>{user.gender}</div>
                     </div>
                     <Divider className="customDivider" />
-                    <div className="infoItem">
-                        <strong>Предпочитаемые страны:</strong>
-                        <div>{user.preferredCountries?.join(", ")}</div>
-                    </div>
-                    <Divider className="customDivider" />
-                    <div className="infoItem">
-                        <strong>Увлечения:</strong>
-                        <div>{user.hobbies?.join(", ")}</div>
-                    </div>
-                    <Divider className="customDivider" />
-                    <div className="infoItem">
-                        <strong>Интересы:</strong>
-                        <div>{user.interests?.join(", ")}</div>
-                    </div>
-                    <Divider className="customDivider" />
                 </div>
-
                 <h2 className="sectionTitle"> Активные поездки</h2>
                 <TravelPlansCarousel travelPlans={user.activeTravelPlans || []} />
             </div>
