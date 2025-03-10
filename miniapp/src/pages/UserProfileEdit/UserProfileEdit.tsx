@@ -6,6 +6,7 @@ import { TextInput } from "@/components/TextInput/TextInput";
 import { fetchUser, updateUser } from "@/services/travelPlanService";
 import { SaveButton } from "@/components/SaveButton/SaveButton";
 import { ContentInlineSection } from "@/components/ContentInlineSection/ContentInlineSection";
+import { Button } from "@telegram-apps/telegram-ui";
 import "./UserProfileEdit.css";
 
 export const EditProfilePage: FC = () => {
@@ -13,6 +14,7 @@ export const EditProfilePage: FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [selectedGender, setSelectedGender] = useState<string>("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,6 +34,7 @@ export const EditProfilePage: FC = () => {
             try {
                 const userData = await fetchUser(Number(userId));
                 setUser(userData);
+                setSelectedGender(userData.gender || "");
             } catch (err) {
                 setError("Ошибка при загрузке данных пользователя");
                 console.error(err);
@@ -50,7 +53,7 @@ export const EditProfilePage: FC = () => {
             await updateUser(Number(userId), {
                 name: user.name,
                 age: user.age,
-                gender: user.gender,
+                gender: selectedGender || user.gender,
                 bio: user.bio,
                 avatarUrl: user.avatarUrl,
             });
@@ -94,6 +97,10 @@ export const EditProfilePage: FC = () => {
             reader.readAsDataURL(file);
         }
     };
+
+    const handleGenderSelect = (gender: string) => {
+        setSelectedGender((prevGender) => (prevGender === gender ? "" : gender));
+    };    
 
     if (isLoading) {
         return <Page>Загрузка...</Page>;
@@ -163,11 +170,20 @@ export const EditProfilePage: FC = () => {
                     </ContentInlineSection>
 
                     <ContentInlineSection title="Пол">
-                        <TextInput
-                            value={user.gender || ""}
-                            onChange={(value) => handleChange("gender", value)}
-                            placeholder="Пол"
-                        />
+                        <div className="button-group">
+                            <Button
+                                mode={selectedGender === "Мужской" ? "filled" : "outline"}
+                                onClick={() => handleGenderSelect("Мужской")}
+                            >
+                                Мужской
+                            </Button>
+                            <Button
+                                mode={selectedGender === "Женский" ? "filled" : "outline"}
+                                onClick={() => handleGenderSelect("Женский")}
+                            >
+                                Женский
+                            </Button>
+                        </div>
                     </ContentInlineSection>
                 </div>
                 <SaveButton onClick={handleSave}>
