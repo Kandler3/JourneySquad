@@ -96,3 +96,21 @@ export async function fetchCurrentUser(): Promise<User> {
         throw error;
     }
 }
+
+export async function joinTravelPlan(travelPlanId: number): Promise<void> {
+    try {
+        await apiService.joinTravelPlan(travelPlanId);
+    } catch (error) {
+        console.error('Ошибка при присоединении к путешествию:', error);
+        throw error;
+    }
+}
+
+export async function deleteParticipant(travelPlanId: number, participantId: number): Promise<void> {
+    try {
+        await apiService.deleteParticipant(travelPlanId, participantId);
+    } catch (error) {
+        console.error('Ошибка при удалении участника:', error);
+        throw error;
+    }
+}

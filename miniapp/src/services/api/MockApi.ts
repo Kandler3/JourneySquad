@@ -151,4 +151,31 @@ export class MockApiService implements ApiService {
     async getCurrentUser(): Promise<User> {
         return users[0];
     }
+
+    async joinTravelPlan(travelPlanId: number): Promise<void> {
+        const travelPlan = travelPlans.find(tp => tp.id === travelPlanId);
+        if (!travelPlan) {
+            return Promise.reject("Travel plan не найден");
+        }
+        const currentUser = await this.getCurrentUser();
+        const isAlreadyParticipant = travelPlan.participants.some(p => p.id === currentUser.id);
+        if (isAlreadyParticipant) {
+            return Promise.reject("Пользователь уже является участником");
+        }
+        travelPlan.participants.push(currentUser);
+        return Promise.resolve();
+    }
+
+    async deleteParticipant(travelPlanId: number, participantId: number): Promise<void> {
+        const travelPlan = travelPlans.find(tp => tp.id === travelPlanId);
+        if (!travelPlan) {
+            return Promise.reject("Travel plan не найден");
+        }
+        const participantIndex = travelPlan.participants.findIndex(p => p.id === participantId);
+        if (participantIndex === -1) {
+            return Promise.reject("Участник не найден");
+        }
+        travelPlan.participants.splice(participantIndex, 1);
+        return Promise.resolve();
+    }
 }

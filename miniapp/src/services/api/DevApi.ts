@@ -120,4 +120,30 @@ export class DevApi implements ApiService {
         }
         return resp.json();
     }
+
+    async joinTravelPlan(travelPlanId: number): Promise<void> {
+        const currentUser = await this.getCurrentUser(); 
+        const url = `/api/travel_plans/${travelPlanId}/participants`;
+        const resp = await fetch(url, {
+            method: "POST",
+            headers: this.headers,
+            body: JSON.stringify({ userId: currentUser.id }),
+        });
+    
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+    }
+
+    async deleteParticipant(travelPlanId: number, participantId: number): Promise<void> {
+        const url = `/api/travel_plans/${travelPlanId}/participants/${participantId}`;
+        const resp = await fetch(url, {
+            method: "DELETE",
+            headers: this.headers,
+        });
+    
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+    }
 }
