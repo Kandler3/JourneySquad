@@ -6,7 +6,7 @@ import (
 	"sort"
 
 	//"fmt"
-	//"strings"
+	"strings"
 	"time"
 
 	"github.com/Kandler3/JourneySquad/api/internal/db"
@@ -181,13 +181,14 @@ func UserCreateTravelPlan(ctx context.Context, UserID int, input CreateTPInput) 
 // sort by и ascending не реализовано!!!! ДОДЕЛАТЬ ДО СДАЧИ 
 func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParams map[string]interface{}) ([]TravelPlan, error) {
 	filteredTravelPlans := make([]TravelPlan, 0) 
-	var UserID, ok0 = queryParams["user_id"].(int)
-	var TagIDs, ok1 = queryParams["tag_id"].([]int)
+	var UserID = queryParams["user_id"].(int)
+	var Query = queryParams["query"].(string)
+	var TagIDs = queryParams["tag_id"].([]int)
 	//var sortBy, ok2 = queryParams["sort_by"].(string)
 	//var ascending, ok3 = queryParams["ascending"].(bool)
-	var startDate, ok4 = queryParams["start_date"].(time.Time)
-	var endDate, ok5 = queryParams["end_date"].(time.Time)
-	if ok0 {
+	var startDate = queryParams["start_date"].(time.Time)
+	var endDate = queryParams["end_date"].(time.Time)
+	if UserID != -1 {
 		for _, el := range TravelPlans {
 			if el.AuthorId == UserID {
 				filteredTravelPlans = append(filteredTravelPlans, el)
@@ -195,7 +196,22 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 		}
 		return filteredTravelPlans, nil
 	} else {
-		if ok1 {
+		if Query != "" {
+			newFiltered := make([]TravelPlan, 0)
+			var oldFiltered []TravelPlan 
+			if len(filteredTravelPlans) == 0 {
+				oldFiltered = TravelPlans
+			} else {
+				oldFiltered = filteredTravelPlans
+			}
+			for _, el := range oldFiltered {
+				if strings.Contains(el.Title, Query) {
+					newFiltered = append(newFiltered, el)
+				}
+			}
+			filteredTravelPlans = newFiltered
+		}
+		if len(TagIDs) != 0 {
 			TPtoTags, err := GetAllTPTPTags(ctx)
 			if err != nil {
 				return nil, err
@@ -216,6 +232,8 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 				}
 			}
 		}
+		ok4 := (startDate == time.Time{})
+		ok5 := (endDate == time.Time{})
 		if ok4 || ok5 {
 			newFiltered := make([]TravelPlan, 0)
 			var oldFiltered []TravelPlan 
@@ -238,6 +256,7 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 			filteredTravelPlans = newFiltered
 		}
 	}
+	
 	return filteredTravelPlans, nil
 }
 
@@ -627,4 +646,41 @@ func GetAllTpPhotos(ctx context.Context) ([]TravelPlanPhoto, error) {
 		return nil, err
 	}
 	return travelPlanPhotos, nil
+}
+
+func CreateTpPhoto(ctx context.Context, tpID int, ID int, url string) (*TravelPlanPhoto, error) {
+	var tpPhoto TravelPlanPhoto
+	query := `
+		INSERT INTO tp_photos (id, created_at, edited_at, travel_plan_id, url)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, travel_plan_id, url
+	`
+	err := db.QueryRow(
+		ctx,
+		query,
+		ID,
+		time.Now(),
+		time.Now(),
+		tpID,
+		url,
+	).Scan(&tpPhoto.ID, &tpPhoto.TravelPlanId, &tpPhoto.URL)
+
+	if err != nil {
+		return nil, err
+	}
+	tpPhoto.CreatedAt, tpPhoto.EditedAt = time.Now(), time.Now()
+	return &tpPhoto, nil
+}
+
+func DeleteTpPhoto(ctx context.Context, tpId int, photoId int) error {
+	query := `
+		DELETE FROM tp_photos
+		WHERE id = $1 AND travel_plan_id = $2
+	`
+	_, err := db.Exec(ctx, query, photoId, tpId)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
