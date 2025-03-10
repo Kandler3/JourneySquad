@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/Kandler3/JourneySquad/api/internal/models"
 	"github.com/gin-gonic/gin"
@@ -15,9 +16,44 @@ func GetQueryParam(c *gin.Context, s string) (int, error) {
 	Param, err := strconv.Atoi(ParamStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error":  fmt.Sprintf("invalid %s", s)})
-		return 0, errors.New("smth wrong")
+		return 0, errors.New("smth wrong with query param")
 	}
 	return Param, nil
+}
+
+func GetBoolQueryParam(c *gin.Context, s string) (bool, error) {
+	ParamStr := c.Param(s)
+	Param, err := strconv.ParseBool(ParamStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error":  fmt.Sprintf("invalid %s", s)})
+		return false, errors.New("smth wrong with query param")
+	}
+	return Param, nil
+}
+
+func GetDateQueryParam(c *gin.Context, s string) (time.Time, error) {
+	ParamStr := c.Param(s)
+	Param, err := time.Parse("2006-01-01", ParamStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error":  fmt.Sprintf("invalid %s", s)})
+		return time.Time{}, errors.New("smth wrong with query param")
+	}
+	return Param, nil
+}
+
+func GetArrayQueryParam(c *gin.Context, s string) ([]int, error) {
+	ParamStrArr := c.QueryArray(s)
+	ParamArr := make([]int, 0)
+	for _, el := range ParamStrArr {
+		elem, err := strconv.Atoi(el)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error":  fmt.Sprintf("invalid %s", s)})
+			return nil, errors.New("smth wrong with query param")
+		}
+		ParamArr = append(ParamArr, elem)
+	}
+	
+	return ParamArr, nil
 }
 
 // GET /travel_plans
@@ -31,15 +67,19 @@ func GetTPsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, TravelPlans)
 }
 
-// POST /travel_plans/
+// POST /travel_plans/:user_id
 func CreateTravelPlan(c *gin.Context) {
+	userID, err := GetQueryParam(c, "user_id")
+	if err != nil {
+		return
+	}
 	var input models.CreateTPInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	ctx := c.Request.Context()
-	travelPlan, err := models.UserCreateTravelPlan(ctx, input.ID, input)
+	travelPlan, err := models.UserCreateTravelPlan(ctx, userID, input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -54,7 +94,26 @@ func UserGetTPHandler(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	userTP, err := models.UserGetTravelPlans(ctx, map[string]any{"user_id" : userID})
+	sortBy := c.Param("sort_by")
+	ascending, err := GetBoolQueryParam(c, "ascending")
+	if err != nil {
+		return
+	}
+	startDate, err := GetDateQueryParam(c, "start_date")
+	if err != nil {
+		return
+	}
+	endDate, err := GetDateQueryParam(c, "end_date")
+	if err != nil {
+		return
+	}
+
+	tags, err := GetArrayQueryParam(c, "tag")
+	if err != nil {
+		return
+	}
+
+	userTP, err := models.UserGetTravelPlans(ctx, map[string]any{"user_id" : userID, "ascending" : ascending, "sort_by" : sortBy, "start_date" : startDate, "end_date" : endDate, "tag_id" : tags})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

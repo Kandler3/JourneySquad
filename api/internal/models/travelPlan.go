@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"sort"
 
 	//"fmt"
 	//"strings"
@@ -178,61 +179,80 @@ func UserCreateTravelPlan(ctx context.Context, UserID int, input CreateTPInput) 
 	return &tp, err
 }
 
-// func FilterTravelPlans(TravelPlans []TravelPlan, queryParams map[string]interface{}) ([]TravelPlan, error) {
-// 	var filteredTravelPlans []TravelPlan
-// 	var TagIDs, ok1 = queryParams["tag_id"].([]int)
-// 	var sortBy, ok2 = queryParams["sort_by"].(bool)
-// 	var ascending, ok3 = queryParams["ascending"].(bool)
-// 	var startDate, ok4 = queryParams["start_date"].(time.Time)
-// 	var endDate, ok5 = queryParams["end_date"].(time.Time)
-// 	if ok1 && ok4 && ok5 {
-
-// 	}
-// }
+// sort by и ascending не реализовано!!!! ДОДЕЛАТЬ ДО СДАЧИ 
+func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParams map[string]interface{}) ([]TravelPlan, error) {
+	filteredTravelPlans := make([]TravelPlan, 0) 
+	var UserID, ok0 = queryParams["user_id"].(int)
+	var TagIDs, ok1 = queryParams["tag_id"].([]int)
+	//var sortBy, ok2 = queryParams["sort_by"].(string)
+	//var ascending, ok3 = queryParams["ascending"].(bool)
+	var startDate, ok4 = queryParams["start_date"].(time.Time)
+	var endDate, ok5 = queryParams["end_date"].(time.Time)
+	if ok0 {
+		for _, el := range TravelPlans {
+			if el.AuthorId == UserID {
+				filteredTravelPlans = append(filteredTravelPlans, el)
+			}
+		}
+		return filteredTravelPlans, nil
+	} else {
+		if ok1 {
+			TPtoTags, err := GetAllTPTPTags(ctx)
+			if err != nil {
+				return nil, err
+			}
+			sort.Ints(TagIDs)
+			for _, el := range TravelPlans {
+				j := 0
+				k := 0
+				arr1 := TPtoTags[el.AuthorId]
+				for j < len(arr1) && k < len(TagIDs) {
+					if arr1[j] == TagIDs[k] {
+						k++
+					}
+					j++
+				}
+				if k == len(TagIDs) {
+					filteredTravelPlans = append(filteredTravelPlans, el)
+				}
+			}
+		}
+		if ok4 || ok5 {
+			newFiltered := make([]TravelPlan, 0)
+			var oldFiltered []TravelPlan 
+			if len(filteredTravelPlans) == 0 {
+				oldFiltered = TravelPlans
+			} else {
+				oldFiltered = filteredTravelPlans
+			}
+			for _, el := range oldFiltered {
+				if ok4 && ok5 && (el.StartDate.After(startDate) || el.StartDate.Equal(startDate)) && (el.EndDate.After(endDate) || el.EndDate.Equal(endDate)) {
+					newFiltered = append(newFiltered, el)
+				}
+				if ok4 && !ok5 && (el.StartDate.After(startDate) || el.StartDate.Equal(startDate)){
+					newFiltered = append(newFiltered, el)
+				}
+				if !ok4 && ok5 && (el.EndDate.After(endDate) || el.EndDate.Equal(endDate)) {
+					newFiltered = append(newFiltered, el)
+				}
+			}
+			filteredTravelPlans = newFiltered
+		}
+	}
+	return filteredTravelPlans, nil
+}
 
 // travel_plans/?user_id={id}&... - get
 func UserGetTravelPlans(ctx context.Context, queryParams map[string]any) ([]TravelPlan, error) {
-	query := `
-		SELECT id, created_at, edited_at, title, start_date, end_date, description, author_id
-		FROM travel_plans
-		WHERE id = $1
-	`
-
-	UserID, ok := queryParams["user_id"].(int)
-	if !ok {
-		return nil, myErr{"can't send request without user_id"}
-	}
-
-	rows, err := db.Query(ctx, query, UserID)
+	travelPlans, err := GetAllTravelPlans(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	var travelPlans []TravelPlan
-	for rows.Next() {
-		var tp TravelPlan
-		err := rows.Scan(
-			&tp.ID,
-			&tp.CreatedAt,
-			&tp.EditedAt,
-			&tp.Title,
-			&tp.StartDate,
-			&tp.EndDate,
-			&tp.Description,
-			&tp.AuthorId,
-		)
-		if err != nil {
-			return nil, err
-		}
-		travelPlans = append(travelPlans, tp)
-	}
-
-	if err = rows.Err(); err != nil {
+	filteredTravelPlans, err := FilterTravelPlans(ctx, travelPlans, queryParams)
+	if err != nil {
 		return nil, err
 	}
-
-	return travelPlans, nil
+	return filteredTravelPlans, nil
 }
 
 // travel_plans/{id} - patch
@@ -309,19 +329,14 @@ func GetAllTPTags(ctx context.Context) ([]TravelPlanTag, error) {
 }
 
 // travel_plan_tags - get
-func GetAllTPTPTags(ctx context.Context) ([]TravelPlanTravelPlanTag, []string, error) {
-	TPTags, err := GetAllTPTags(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func GetAllTPTPTags(ctx context.Context) (map[int][]int, error) {
 	query := `
 		SELECT id, created_at, edited_at, title, travel_plan_id, travel_plan_tag_id
 		FROM tp_tp_tags
 	`
 	rows, err := db.Query(ctx, query)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -330,24 +345,30 @@ func GetAllTPTPTags(ctx context.Context) ([]TravelPlanTravelPlanTag, []string, e
 		var tpTpTag TravelPlanTravelPlanTag
 		err := rows.Scan(&tpTpTag.ID, &tpTpTag.CreatedAt, &tpTpTag.EditedAt, &tpTpTag.TravelPlanId, &tpTpTag.TravelPlanTagId)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 		tpTpTags = append(tpTpTags, tpTpTag)
 	}
 	
 	if err = rows.Err(); err != nil {
-		return nil, nil, err
-	}
-	IdsToTagNames := make(map[int]string)
-	for _, el := range TPTags {
-		IdsToTagNames[el.ID] = el.Name
-	}
-	TagNames := make([]string, len(IdsToTagNames))
-	for key, value := range IdsToTagNames {
-		TagNames[key] = value
+		return nil, err
 	}
 
-	return tpTpTags, TagNames, nil
+	IdsToTags := make(map[int][]int)
+	for _, el := range tpTpTags {
+		_, ok := IdsToTags[el.TravelPlanId]
+		if !ok {
+			IdsToTags[el.TravelPlanId] = make([]int, 0)
+			IdsToTags[el.TravelPlanId] = append(IdsToTags[el.TravelPlanId], el.TravelPlanTagId)
+			continue
+		}
+		IdsToTags[el.TravelPlanId] = append(IdsToTags[el.TravelPlanId], el.TravelPlanTagId)
+	}
+
+	for key, _ := range IdsToTags {
+		sort.Ints(IdsToTags[key])
+	}
+	return IdsToTags, nil
 }
 
 func CreateTpTag(ctx context.Context, input CreateTPTagInput) (*TravelPlanTag, error) {
