@@ -5,15 +5,17 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-height: 100vh;
+    height: 100vh;
     background-color: var(--tg-theme-bg-color);
+    overflow-y: auto;
 }
 
 .container {
     display: flex;
     flex-direction: column;
     gap: 18px;
-    overflow: hidden;
+    flex-grow: 1;
+    overflow: auto;
 }
 
 .header {
@@ -65,9 +67,12 @@
 
 .description {
     font-size: 16px;
+    max-height: 100px;
     color: var(--tg-theme-text-color);
     font-family: 'San Francisco', sans-serif;
     line-height: 1.5;
+    overflow-y: auto; 
+    padding-right: 8px;
 }
 
 .section {
@@ -121,4 +126,31 @@
     font-size: 14px;
     font-family: 'San Francisco', sans-serif;
     white-space: nowrap;
+}
+
+.leaveButton {
+    background-color: #1241a5;
+    color: white;
+    border: none;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-family: 'San Francisco', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.3s;
+    flex-shrink: 0;
+    max-width: 95%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.participants-container {
+    max-height: 350px;
+    overflow-y: auto; 
+    padding-right: 8px; 
+}
+
+.leaveButton:hover {
+    background-color: #1c64d7;
 }

@@ -5,13 +5,14 @@ import { PhotoCarousel } from "@/components/PhotoCarousel/PhotoCarousel.tsx";
 import { TravelPlan } from "@/models/TravelPlan";
 import "./TravelPlanViewPage.css";
 import { ParticipantsList } from "@/components/ParticipantList/ParticipantList.tsx";
-import { fetchTravelPlan } from "@/services/travelPlanService";
+import { fetchTravelPlan, joinTravelPlan, deleteParticipant, fetchCurrentUser } from "@/services/travelPlanService";
 
 export const TravelPlanViewPage: FC = () => {
     const { travelPlanId } = useParams<{ travelPlanId: string }>();
     const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [isJoined, setIsJoined] = useState<boolean>(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,6 +26,11 @@ export const TravelPlanViewPage: FC = () => {
             try {
                 const plan = await fetchTravelPlan(Number(travelPlanId));
                 setTravelPlan(plan);
+                if (plan) { 
+                    const currentUser = await fetchCurrentUser();
+                    const isParticipant = plan.participants.some(p => p.id === currentUser.id);
+                    setIsJoined(isParticipant);
+                }
             } catch (err) {
                 setError("Ошибка при загрузке данных");
                 console.error(err);
@@ -39,6 +45,31 @@ export const TravelPlanViewPage: FC = () => {
         navigate(`/profile/${participantId}`);
     };
 
+    const handleJoinClick = async () => {
+        if (!travelPlanId) return;
+
+        try {
+            await joinTravelPlan(Number(travelPlanId));
+            setIsJoined(true);
+        } catch (err) {
+            setError("Ошибка при присоединении к путешествию");
+            console.error(err);
+        }
+    };
+
+    const handleLeaveClick = async () => {
+        if (!travelPlanId) return;
+
+        try {
+            const currentUser = await fetchCurrentUser();
+            await deleteParticipant(Number(travelPlanId), currentUser.id);
+            setIsJoined(false);
+        } catch (err) {
+            setError("Ошибка при выходе из путешествия");
+            console.error(err);
+        }
+    };
+
     if (isLoading) {
         return <Page>Загрузка...</Page>;
     }
@@ -50,13 +81,14 @@ export const TravelPlanViewPage: FC = () => {
     if (!travelPlan) {
         return <Page>Путешествие не найдено</Page>;
     }
+
     const photoUrls = travelPlan.photos.map(photo => photo.getAbsoluteUrl());
     const participants = travelPlan.participants.map(user => ({
         id: user.id,
         name: user.name || "Unknown",
         avatarUrl: user.avatarUrl || "default-avatar-url",
     }));
-    
+
     return (
         <Page>
             <PhotoCarousel photos={photoUrls} />
@@ -78,11 +110,18 @@ export const TravelPlanViewPage: FC = () => {
                         </div>
                     </div>
                     <p className="description">{travelPlan.description}</p>
-                    <ParticipantsList
-                        participants={participants}
-                        onParticipantClick={handleParticipantClick}
-                    />
-                    <button className="joinButton">Присоединиться</button>
+                    <div className="participants-container">
+                        <ParticipantsList
+                            participants={participants}
+                            onParticipantClick={handleParticipantClick}
+                        />
+                    </div>
+                    <button 
+                        className={isJoined ? "leaveButton" : "joinButton"} 
+                        onClick={isJoined ? handleLeaveClick : handleJoinClick}
+                    >
+                        {isJoined ? "Вы уже присоединились" : "Присоединиться"}
+                    </button>
                 </div>
             </div>
         </Page>
