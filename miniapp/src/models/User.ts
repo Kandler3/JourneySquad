@@ -5,9 +5,6 @@ export interface User {
     age?: number;
     bio?: string;
     gender?: string;
-    preferredCountries?: string[];
-    hobbies?: string[];
-    interests?: string[];
     avatarUrl?: string;
     activeTravelPlans?: TravelPlan[];
   }
