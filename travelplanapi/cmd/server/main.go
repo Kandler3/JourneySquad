@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Kandler3/JourneySquad/api/internal/handlers"
 	"github.com/Kandler3/JourneySquad/api/pkg/db"
 	"github.com/Kandler3/JourneySquad/api/pkg/middlewares"
 	"github.com/gin-gonic/gin"
@@ -28,11 +27,6 @@ func main() {
 			"message": "pong",
 		})
 	})
-	r.GET("/users", handlers.GetUsersHandler)
-	r.POST("/users", handlers.CreateUserHandler)
-	r.GET("/users/:id", handlers.GetUserHandler)
-	r.PATCH("/users/:id", handlers.UpdateUserHandler)
-	r.DELETE("/users/:id", handlers.DeleteUserHandler)
 
 	r.Run()
 }

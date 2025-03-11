@@ -10,66 +10,66 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Kandler3/JourneySquad/api/internal/db"
+	"github.com/Kandler3/JourneySquad/api/pkg/db"
 )
 
 type TravelPlanParticipant struct {
 	ID           int       `json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	EditedAt     time.Time `json:"edited_at"`
-	TravelPlanId int `json:"travel_plan_id"`
-	User_id int `json:"user_id"`
+	TravelPlanId int       `json:"travel_plan_id"`
+	User_id      int       `json:"user_id"`
 }
 
 type TravelPlan struct {
-	ID           int       `json:"id"`
-	CreatedAt    time.Time `json:"created_at"`
-	EditedAt     time.Time `json:"edited_at"`
-	Title string `json:"title"`
-	StartDate time.Time `json:"start_date"`
-	EndDate time.Time `json:"end_date"`
-	Description string `json:"description"`
-	AuthorId int `json:"author"`
+	ID          int       `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	EditedAt    time.Time `json:"edited_at"`
+	Title       string    `json:"title"`
+	StartDate   time.Time `json:"start_date"`
+	EndDate     time.Time `json:"end_date"`
+	Description string    `json:"description"`
+	AuthorId    int       `json:"author"`
 }
 
 type TravelPlanTravelPlanTag struct {
-	ID           int       `json:"id"`
-	CreatedAt    time.Time `json:"created_at"`
-	EditedAt     time.Time `json:"edited_at"`
-	TravelPlanId int `json:"travel_plan_id"`
-	TravelPlanTagId int `json:"travel_plan_tag_id"`
+	ID              int       `json:"id"`
+	CreatedAt       time.Time `json:"created_at"`
+	EditedAt        time.Time `json:"edited_at"`
+	TravelPlanId    int       `json:"travel_plan_id"`
+	TravelPlanTagId int       `json:"travel_plan_tag_id"`
 }
 
 type TravelPlanTag struct {
-	ID           int       `json:"id"`
-	CreatedAt    time.Time `json:"created_at"`
-	EditedAt     time.Time `json:"edited_at"`
-	Name string `json:"name"`
+	ID        int       `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	EditedAt  time.Time `json:"edited_at"`
+	Name      string    `json:"name"`
 }
 
 type TravelPlanPhoto struct {
 	ID           int       `json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	EditedAt     time.Time `json:"edited_at"`
-	URL string `json:"url"`
-	TravelPlanId int `json:"travel_plan_id"`
+	URL          string    `json:"url"`
+	TravelPlanId int       `json:"travel_plan_id"`
 }
 
 type CreateTPInput struct {
-	ID           int       `json:"id"`
-	Title string `json:"title"`
-	StartDate time.Time `json:"start_date"`
-	EndDate time.Time `json:"end_date"`
-	Description string `json:"description"`
-	AuthorId int `json:"author"`
+	ID          int       `json:"id"`
+	Title       string    `json:"title"`
+	StartDate   time.Time `json:"start_date"`
+	EndDate     time.Time `json:"end_date"`
+	Description string    `json:"description"`
+	AuthorId    int       `json:"author"`
 }
 
 type UpdateTPInput struct {
-	Title string `json:"title"`
-	StartDate time.Time `json:"start_date"`
-	EndDate time.Time `json:"end_date"`
-	Description string `json:"description"`
-	AuthorId int `json:"author"`
+	Title       string    `json:"title"`
+	StartDate   time.Time `json:"start_date"`
+	EndDate     time.Time `json:"end_date"`
+	Description string    `json:"description"`
+	AuthorId    int       `json:"author"`
 }
 
 type UpdateTpTagInput struct {
@@ -77,30 +77,29 @@ type UpdateTpTagInput struct {
 }
 
 type UpdateTPTPtagInput struct {
-	TravelPlanId int `json:"travel_plan_id"`
+	TravelPlanId    int `json:"travel_plan_id"`
 	TravelPlanTagId int `json:"travel_plan_tag_id"`
 }
 
 type CreateTPTagInput struct {
-	ID           int       `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type CreateTPTPTagInput struct {
-	ID           int       `json:"id"`
-	TravelPlanId int `json:"travel_plan_id"`
+	ID              int `json:"id"`
+	TravelPlanId    int `json:"travel_plan_id"`
 	TravelPlanTagId int `json:"travel_plan_tag_id"`
 }
 
 type TPParticipantInput struct {
-	ID           int       `json:"id"`
-	CreatedAt    time.Time `json:"created_at"`
-	User_id int `json:"user_id"`
+	ID        int       `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	User_id   int       `json:"user_id"`
 }
 
-
 // travel_plans/ - get
-func GetAllTravelPlans(ctx context.Context) ([]TravelPlan, error){
+func GetAllTravelPlans(ctx context.Context) ([]TravelPlan, error) {
 	query := `
 		SELECT id, created_at, edited_at, title, start_date, end_date, description, author_id
 		FROM travel_plans
@@ -179,9 +178,9 @@ func UserCreateTravelPlan(ctx context.Context, UserID int, input CreateTPInput) 
 	return &tp, err
 }
 
-// sort by и ascending не реализовано!!!! ДОДЕЛАТЬ ДО СДАЧИ 
+// sort by и ascending не реализовано!!!! ДОДЕЛАТЬ ДО СДАЧИ
 func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParams map[string]interface{}) ([]TravelPlan, error) {
-	filteredTravelPlans := make([]TravelPlan, 0) 
+	filteredTravelPlans := make([]TravelPlan, 0)
 	var UserID = queryParams["user_id"].(int)
 	var Query = queryParams["query"].(string)
 	var TagIDs = queryParams["tag_id"].([]int)
@@ -199,7 +198,7 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 	} else {
 		if Query != "" {
 			newFiltered := make([]TravelPlan, 0)
-			var oldFiltered []TravelPlan 
+			var oldFiltered []TravelPlan
 			if len(filteredTravelPlans) == 0 {
 				oldFiltered = TravelPlans
 			} else {
@@ -237,7 +236,7 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 		ok5 := (endDate == time.Time{})
 		if ok4 || ok5 {
 			newFiltered := make([]TravelPlan, 0)
-			var oldFiltered []TravelPlan 
+			var oldFiltered []TravelPlan
 			if len(filteredTravelPlans) == 0 {
 				oldFiltered = TravelPlans
 			} else {
@@ -247,7 +246,7 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 				if ok4 && ok5 && (el.StartDate.After(startDate) || el.StartDate.Equal(startDate)) && (el.EndDate.After(endDate) || el.EndDate.Equal(endDate)) {
 					newFiltered = append(newFiltered, el)
 				}
-				if ok4 && !ok5 && (el.StartDate.After(startDate) || el.StartDate.Equal(startDate)){
+				if ok4 && !ok5 && (el.StartDate.After(startDate) || el.StartDate.Equal(startDate)) {
 					newFiltered = append(newFiltered, el)
 				}
 				if !ok4 && ok5 && (el.EndDate.After(endDate) || el.EndDate.Equal(endDate)) {
@@ -262,7 +261,7 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 					return filteredTravelPlans[i].Title < filteredTravelPlans[j].Title
 				})
 			} else if sortBy == "start_date" {
-				sort.Slice(filteredTravelPlans, func (i, j int) bool {
+				sort.Slice(filteredTravelPlans, func(i, j int) bool {
 					return filteredTravelPlans[i].StartDate.Before(filteredTravelPlans[j].StartDate)
 				})
 			}
@@ -271,7 +270,7 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 			slices.Reverse(filteredTravelPlans)
 		}
 	}
-	
+
 	return filteredTravelPlans, nil
 }
 
@@ -319,7 +318,7 @@ func UpdateTravelPlan(ctx context.Context, TravelPlanID int, input UpdateTPInput
 }
 
 // travel_plans/{id} - delete
-func DeleteTravelPlan(ctx context.Context, TravelPlanID int) (error) {
+func DeleteTravelPlan(ctx context.Context, TravelPlanID int) error {
 	query := `
 		DELETE FROM travel_plans
 		WHERE id = $1
@@ -382,7 +381,7 @@ func GetAllTPTPTags(ctx context.Context) (map[int][]int, error) {
 		}
 		tpTpTags = append(tpTpTags, tpTpTag)
 	}
-	
+
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
@@ -427,7 +426,7 @@ func CreateTpTag(ctx context.Context, input CreateTPTagInput) (*TravelPlanTag, e
 
 	tpTag.CreatedAt, tpTag.EditedAt = time.Now(), time.Now()
 	return &tpTag, err
-} 
+}
 
 // travel_plan_tags - post
 func CreateTPTPTag(ctx context.Context, input CreateTPTPTagInput) (*TravelPlanTravelPlanTag, error) {
@@ -456,9 +455,7 @@ func CreateTPTPTag(ctx context.Context, input CreateTPTPTagInput) (*TravelPlanTr
 	return &tpTpTag, err
 }
 
-
-
-func GetTPTagByID(ctx context.Context, TPTagID int) (*TravelPlanTag, error){
+func GetTPTagByID(ctx context.Context, TPTagID int) (*TravelPlanTag, error) {
 	query := `
 	SELECT id, created_at, edited_at, name
 	FROM tp_tags
@@ -473,10 +470,10 @@ func GetTPTagByID(ctx context.Context, TPTagID int) (*TravelPlanTag, error){
 		return nil, err
 	}
 
-	return &tpTag,  nil
+	return &tpTag, nil
 }
 
-//travel_plan_tags/{id} - get
+// travel_plan_tags/{id} - get
 func GetTPTPTagByID(ctx context.Context, TPTPTagID int) (*TravelPlanTravelPlanTag, error) {
 	query := `
 		SELECT id, created_at, edited_at, title, travel_plan_id, travel_plan_tag_id
@@ -496,7 +493,7 @@ func GetTPTPTagByID(ctx context.Context, TPTPTagID int) (*TravelPlanTravelPlanTa
 	return &tpTpTag, nil
 }
 
-//travel_plan_tags/{id} - patch
+// travel_plan_tags/{id} - patch
 func UpdateTPTagByID(ctx context.Context, TPTagID int, input UpdateTpTagInput) error {
 	query := `
 		UPDATE tp_tags
@@ -542,8 +539,8 @@ func UpdateTPTPTagByID(ctx context.Context, TPTagID int, input UpdateTPTPtagInpu
 	return nil
 }
 
-//travel_plan_tags/{id} - delete
-func DeleteTPTagByID(ctx context.Context, TPTagID int) (error) {
+// travel_plan_tags/{id} - delete
+func DeleteTPTagByID(ctx context.Context, TPTagID int) error {
 	query := `
 		DELETE FROM tp_tags
 		WHERE id = $1
@@ -556,7 +553,7 @@ func DeleteTPTagByID(ctx context.Context, TPTagID int) (error) {
 	return nil
 }
 
-func DeleteTPTPTagByID(ctx context.Context, TPTPTagID int) (error) {
+func DeleteTPTPTagByID(ctx context.Context, TPTPTagID int) error {
 	query := `
 		DELETE FROM tp_tp_tags
 		WHERE id = $1
