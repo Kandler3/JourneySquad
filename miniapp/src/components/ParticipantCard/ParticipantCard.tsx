@@ -7,9 +7,10 @@ type ParticipantCardProps = {
   name: string;
   photoUrl: string;
   onDelete?: () => void;
+  badge?: string;
 };
 
-export const ParticipantCard: FC<ParticipantCardProps> = ({ name, photoUrl, onDelete }) => {
+export const ParticipantCard: FC<ParticipantCardProps> = ({ name, photoUrl, onDelete, badge }) => {
     return (
       <div className="participant-card-wrapper">
         <div className="participant-card">
@@ -17,6 +18,7 @@ export const ParticipantCard: FC<ParticipantCardProps> = ({ name, photoUrl, onDe
             <img src={photoUrl} alt={name} />
           </div>
             <Text>{name}</Text>
+            {badge && <span className="participant-badge">{badge}</span>}
             {onDelete ? <Icon24Cancel onClick={onDelete}/> : <></> }
         </div>
       </div>
