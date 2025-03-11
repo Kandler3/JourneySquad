@@ -1,0 +1,18 @@
+.reset-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 40px;
+    border-radius: 40px !important;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none;
+    text-decoration: none;
+}
+
+.reset-button:hover {
+    background-color: red;
+}

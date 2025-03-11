@@ -1,0 +1,45 @@
+networks:
+  journey-squad-network:
+    driver: bridge
+
+services:
+  react-app:
+    build: .
+    image: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_FILE_SERVER_URL=http://host.docker.internal:4000
+    networks:
+      - journey-squad-network
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "http"
+      - "http://host.docker.internal:3000"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+
+  simple-file-server:
+    build: ../file-server
+    image: file-server
+    ports:
+      - "4000:4000"
+    volumes:
+      - file-server-volume:/files
+    networks:
+      - journey-squad-network
+  
+  bot:
+    build: ../bot
+    image: bot
+    env_file: ../bot/.env
+    environment:
+      API_URL: "http://your-api-url.com"
+    restart: always
+
+volumes:
+  file-server-volume:

@@ -1,0 +1,65 @@
+.travel-plan-filter-modal{
+    height: 50%;
+}
+
+.travel-plan-filter-content {
+    /* Content */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 16px;
+
+    width: calc(100% - 20px);
+    height: 100%;
+    margin-bottom: 60px;
+}
+
+.dates-content-part {
+    /* Start Date */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 4px;
+
+    width: calc(100% - 20px);
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.input {
+    display: block;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    outline: 0;
+    padding: 8px;
+    resize: none;
+    background: transparent;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    color: var(--tg-theme-text-color);
+}
+
+.lower-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    width: calc(100% - 40px);
+    height: fit-content;
+    position: fixed;
+    bottom: 10px;
+}

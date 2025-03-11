@@ -1,0 +1,77 @@
+.travel-plan-sort-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 38px;
+    width: 98%;
+    height: 50%;
+}
+
+.sort-columns {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.sort-section {
+    display: flex;
+    flex-direction: column; 
+    gap: 10px;
+    align-items: center; 
+    width: 100%; 
+    max-width: 320px
+}
+
+.sort-section-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    width: 100%;
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 10px;
+}
+
+.sort-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 4px;
+    width: 100%;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column; 
+    gap: 10px; 
+    align-items: center; 
+    width: 100%; 
+}
+
+.button-group button {
+    width: 60%; 
+    height: 40px; 
+    padding: 0; 
+    text-align: center; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+}
+
+@media (max-width: 768px) {
+    .sort-columns {
+        flex-direction: column;
+        align-items: center; 
+    }
+
+    .sort-section {
+        max-width: 100%; 
+    }
+}
+
+

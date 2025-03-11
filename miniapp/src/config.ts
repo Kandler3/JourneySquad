@@ -1,1 +1,1 @@
-export const FILES_BASE_URL = "https://example.com/travel-plan/photos";
+export const FILES_BASE_URL = "";

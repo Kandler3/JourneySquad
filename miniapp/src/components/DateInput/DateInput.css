@@ -1,0 +1,33 @@
+.date-input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    padding: 8px;
+}
+
+.date-input-field {
+    position: relative;
+    background: transparent;
+    color: transparent; /* текст невидим, но его размеры сохраняются */
+    border: none;
+    outline: none;
+    caret-color: var(--tg-theme-text-color);
+    z-index: 3; /* выше маски */
+    width: 100%;
+}
+
+/* Маска, отображающая форматированное значение */
+.date-input-mask {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    z-index: 2; /* ниже поля ввода */
+    width: 100%;
+    pointer-events: none;
+    font-size: inherit;
+    font-family: inherit;
+    color: var(--tg-theme-hint-color);
+    display: flex;
+    align-items: center;
+    height: 100%;
+}

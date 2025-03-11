@@ -1,0 +1,76 @@
+.title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px;
+
+    width: 100%;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+
+    width: 110px;
+    height: 16px;
+}
+
+.travel-plan-card-content {
+    /* Content */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    padding: 8px;
+
+    width: calc(100% - 16px);
+    height: 50px;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.travel-plan-card-horizontal {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0px;
+
+    width: 100%;
+    height: 200px;
+    left: 20px;
+    top: 20px;
+
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+.image {
+    /* Image */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 10px;
+
+    width: 100%;
+    height: 150px;
+
+    background-size: cover;
+
+}

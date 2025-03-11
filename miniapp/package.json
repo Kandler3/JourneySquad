@@ -1,9 +1,9 @@
 {
-  "name": "reactjs-template",
+  "name": "journey-squad-frontend",
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://telegram-mini-apps.github.io/reactjs-template",
+  "homepage": "https://github.com/Kandler3/JourneySquad",
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",

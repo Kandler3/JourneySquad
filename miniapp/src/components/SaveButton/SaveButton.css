@@ -1,0 +1,19 @@
+.save-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 40px;
+    border-radius: 40px !important;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none;
+    text-decoration: none;
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}

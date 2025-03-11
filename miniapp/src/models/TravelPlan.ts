@@ -1,26 +1,28 @@
-import {TravelPlanPhoto, TravelPlanTag, User} from "@/models/types.ts";
+import {TravelPlanTag, User} from "@/models/types.ts";
+import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
+import { DifferentYearsFormat, DifferentMonthsFormat, SameMonthsFormat } from "@/utils/DateFormats.ts";
 
 export class TravelPlan {
-    id : number;
-    title: string;
-    description: string;
-    startDate: Date;
-    endDate: Date;
-    author: User;
-    tags: TravelPlanTag[];
-    photos: TravelPlanPhoto[];
-    participants: User[];
+    id : number | undefined = undefined;
+    title: string | undefined = undefined;
+    description: string | undefined = undefined;
+    startDate: Date | undefined = undefined;
+    endDate: Date | undefined = undefined;
+    author: User | undefined = undefined;
+    tags: TravelPlanTag[] = [];
+    photos: TravelPlanPhoto[] = [];
+    participants: User[] = [];
 
     constructor(
-        id: number,
-        title: string,
-        description: string,
-        startDate: Date,
-        endDate: Date,
-        author: User,
-        tags: TravelPlanTag[],
-        photos: TravelPlanPhoto[],
-        participants: User[]
+        id?: number,
+        title?: string,
+        description?: string,
+        startDate?: Date,
+        endDate?: Date,
+        author?: User,
+        tags: TravelPlanTag[] = [],
+        photos: TravelPlanPhoto[] = [],
+        participants: User[] = []
     ) {
         this.id = id;
         this.title = title;
@@ -33,19 +35,60 @@ export class TravelPlan {
         this.participants = participants;
     }
 
-    getDatesString(): string {
-        if (this.startDate.getYear() !== this.endDate.getFullYear())
+    getDatesString(): string | undefined {
+        if (!this.startDate || !this.endDate) {
+            return undefined;
+        }
+
+        if (this.startDate.getFullYear() !== this.endDate.getFullYear())
         {
-            const options = { year: "2-digit", month: "long", day: "numeric" }
-            return this.startDate.toLocaleDateString("ru-RU", options) + " - " + this.endDate.toLocaleDateString("ru-RU", options);
+            return DifferentYearsFormat(this.startDate, this.endDate);
         }
 
         if (this.startDate.getMonth() !== this.endDate.getMonth())
         {
-            const options = { month: "long", day: "numeric" }
-            return this.startDate.toLocaleDateString("ru-RU", options) + " - " + this.endDate.toLocaleDateString("ru-RU", options);
+            return DifferentMonthsFormat(this.startDate, this.endDate);
         }
 
-        return `${this.startDate.getDay()} - ${this.endDate.getDay} ${this.startDate.toLocaleDateString("ru-Ru", { month: "long" })}`
+        return SameMonthsFormat(this.startDate, this.endDate);
     }
+
+    getStartDateString(): string | undefined {
+        if (!this.startDate)
+            return undefined;
+
+        return this.startDate.toLocaleDateString("ru-Ru");
+    }
+
+    getEndDateString(): string | undefined {
+        if (!this.endDate)
+            return undefined;
+
+        return this.endDate.toLocaleDateString("ru-Ru");
+    }
+
+    isValid(): boolean {
+        return (
+            (this.title !== undefined && this.title.length > 0)
+            && this.startDate !== undefined
+            && this.endDate !== undefined
+            && this.author !== undefined
+        )
+    }
+
+    static fromJSON(json: any): TravelPlan {
+        const tp = new TravelPlan();
+        tp.id = json.id;
+        tp.title = json.title;
+        tp.description = json.description;
+        tp.startDate = new Date(json.startDate) ?? undefined;
+        tp.endDate = new Date(json.endDate) ?? undefined;
+        tp.author = json.author;
+        tp.tags = json.tags;
+        tp.photos = json.photos.map((photo: any) => TravelPlanPhoto.fromJSON(photo));
+        tp.participants = json.participants;
+
+        return tp;
+    }
+
 }

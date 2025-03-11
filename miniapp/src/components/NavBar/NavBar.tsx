@@ -1,8 +1,8 @@
 import { Icon28AddCircle } from "@telegram-apps/telegram-ui/dist/icons/28/add_circle";
-import { Icon28Home } from "@/iclons/Home";
-import { Icon28Search } from "@/iclons/Search"
-import { Icon28Profile } from "@/iclons/Profile";
-import {NavLink} from "react-router-dom";
+import { Icon28Home } from "@/icons/Home";
+import { Icon28Search } from "@/icons/Search"
+import { Icon28Profile } from "@/icons/Profile";
+import { NavLink } from "react-router-dom";
 
 import "./NavBar.css"
 
