@@ -1,4 +1,8 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.23 AS builder
+
+ENV HOME /app
+ENV CGO_ENABLED 0
+ENV GOOS linux
 
 # Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
