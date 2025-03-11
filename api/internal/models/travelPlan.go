@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"slices"
 	"sort"
 
 	//"fmt"
@@ -184,8 +185,8 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 	var UserID = queryParams["user_id"].(int)
 	var Query = queryParams["query"].(string)
 	var TagIDs = queryParams["tag_id"].([]int)
-	//var sortBy = queryParams["sort_by"].(string)
-	//var ascending = queryParams["ascending"].(bool)
+	var sortBy = queryParams["sort_by"].(string)
+	var ascending = queryParams["ascending"].(bool)
 	var startDate = queryParams["start_date"].(time.Time)
 	var endDate = queryParams["end_date"].(time.Time)
 	if UserID != -1 {
@@ -254,6 +255,20 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 				}
 			}
 			filteredTravelPlans = newFiltered
+		}
+		if sortBy != "" {
+			if sortBy == "title" {
+				sort.Slice(filteredTravelPlans, func(i, j int) bool {
+					return filteredTravelPlans[i].Title < filteredTravelPlans[j].Title
+				})
+			} else if sortBy == "start_date" {
+				sort.Slice(filteredTravelPlans, func (i, j int) bool {
+					return filteredTravelPlans[i].StartDate.Before(filteredTravelPlans[j].StartDate)
+				})
+			}
+		}
+		if !ascending {
+			slices.Reverse(filteredTravelPlans)
 		}
 	}
 	

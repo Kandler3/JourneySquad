@@ -27,7 +27,7 @@ func GetQueryParam(c *gin.Context, s string) (int, error) {
 func GetBoolQueryParam(c *gin.Context, s string) (bool, error) {
 	ParamStr := c.Param(s)
 	if ParamStr == "" {
-		return false, nil
+		return true, nil
 	}
 	Param, err := strconv.ParseBool(ParamStr)
 	if err != nil {
