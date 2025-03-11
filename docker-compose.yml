@@ -1,8 +1,18 @@
 services:
-  app:
-    build: .
+  userapi:
+    build: ./api
     ports:
       - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=host=db port=5432 user=postgres password=password dbname=mydb sslmode=disable
+    restart: unless-stopped
+
+  travelplanapi:
+    build: ./travelplanapi
+    ports:
+      - "8080:8081"
     depends_on:
       - db
     environment:
