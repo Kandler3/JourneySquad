@@ -180,7 +180,7 @@ func DeleteTPHandler(c *gin.Context) {
 }
 
 // GET /travel_plan_tags
-func GetAllPlanTags(c *gin.Context) {
+func GetTravelPlanTags(c *gin.Context) {
 	ctx := c.Request.Context()
 	TravelPlanTags, err := models.GetAllTPTags(ctx)
 	if err != nil {
