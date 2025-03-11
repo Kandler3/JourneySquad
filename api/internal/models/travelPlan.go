@@ -184,8 +184,8 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 	var UserID = queryParams["user_id"].(int)
 	var Query = queryParams["query"].(string)
 	var TagIDs = queryParams["tag_id"].([]int)
-	//var sortBy, ok2 = queryParams["sort_by"].(string)
-	//var ascending, ok3 = queryParams["ascending"].(bool)
+	//var sortBy = queryParams["sort_by"].(string)
+	//var ascending = queryParams["ascending"].(bool)
 	var startDate = queryParams["start_date"].(time.Time)
 	var endDate = queryParams["end_date"].(time.Time)
 	if UserID != -1 {
