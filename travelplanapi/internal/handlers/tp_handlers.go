@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Kandler3/JourneySquad/api/pkg/models"
+	"github.com/Kandler3/JourneySquad/travelplanapi/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
