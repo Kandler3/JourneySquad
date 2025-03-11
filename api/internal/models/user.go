@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Kandler3/JourneySquad/api/internal/db"
+	"github.com/Kandler3/JourneySquad/api/pkg/db"
 )
 
 type User struct {
