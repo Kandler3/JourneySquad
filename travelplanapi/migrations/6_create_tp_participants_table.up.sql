@@ -3,5 +3,5 @@ CREATE TABLE tp_participants (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     edited_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     travel_plan_id INT NOT NULL,
-    user_id INT NOT NULL,
+    user_id INT NOT NULL
 );

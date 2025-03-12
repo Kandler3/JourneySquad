@@ -6,5 +6,5 @@ CREATE TABLE travel_plans (
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,
     description TEXT,
-    author INT NOT NULL,
+    author INT NOT NULL
 );
