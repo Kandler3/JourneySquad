@@ -1,7 +1,7 @@
-CREATE tp_photos (
+CREATE TABLE tp_photos (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     edited_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     url TEXT NOT NULL,
     travel_plan_id INT NOT NULL
-)
+);

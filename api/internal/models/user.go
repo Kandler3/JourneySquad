@@ -55,7 +55,7 @@ type UpdateUserInput struct {
 func GetUserByID(ctx context.Context, userID int) (*User, error) {
 	query := "SELECT id, email, name, avatar, profile_id FROM users WHERE id = $1"
 
-	row := db.QueryRow(ctx, query, userID)
+	row := db.QueryRow(1, ctx, query, userID)
 
 	var user User
 	if err := row.Scan(&user.ID, &user.Email, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
@@ -71,7 +71,7 @@ func GetUserByID(ctx context.Context, userID int) (*User, error) {
 func GetAllUsers(ctx context.Context) ([]User, error) {
 	query := "SELECT id, email, name, avatar, profile_id FROM users"
 
-	rows, err := db.Query(ctx, query)
+	rows, err := db.Query(1, ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func CreateUser(ctx context.Context, input CreateUserInput) (*User, error) {
 	`
 
 	// TODO: password hashing
-	row := db.QueryRow(ctx, query, input.Email, input.Password, input.IsAdmin, input.Name, input.Avatar, profile.ID)
+	row := db.QueryRow(1, ctx, query, input.Email, input.Password, input.IsAdmin, input.Name, input.Avatar, profile.ID)
 	var user User
 	if err := row.Scan(&user.ID, &user.Email, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
 		return nil, err
@@ -146,20 +146,20 @@ func UpdateUser(ctx context.Context, userID int, input UpdateUserInput) error {
 	query := fmt.Sprintf("UPDATE users SET %s WHERE id = $%d", strings.Join(fields, ", "), argID)
 	args = append(args, userID)
 
-	_, err := db.Exec(ctx, query, args...)
+	_, err := db.Exec(1, ctx, query, args...)
 	return err
 }
 
 func DeleteUser(ctx context.Context, userID int) error {
 	query := "DELETE FROM users WHERE id = $1"
-	_, err := db.Exec(ctx, query, userID)
+	_, err := db.Exec(1, ctx, query, userID)
 	return err
 }
 
 func GetProfileByID(ctx context.Context, profileID int) (*Profile, error) {
 	query := "SELECT id, created_at, edited_at, age, gender FROM profiles WHERE id = $1"
 
-	row := db.QueryRow(ctx, query, profileID)
+	row := db.QueryRow(1, ctx, query, profileID)
 	var profile Profile
 	if err := row.Scan(&profile.ID, &profile.CreatedAt, &profile.EditedAt, &profile.Age, &profile.Gender); err != nil {
 		if err == sql.ErrNoRows {
@@ -178,7 +178,7 @@ func createProfile(ctx context.Context, input CreateUserInput) (*Profile, error)
 		RETURNING id, age, gender
 	`
 
-	row := db.QueryRow(ctx, query, input.Age, input.Gender)
+	row := db.QueryRow(1, ctx, query, input.Age, input.Gender)
 	var profile Profile
 	if err := row.Scan(&profile.ID, &profile.Age, &profile.Gender); err != nil {
 		return nil, err
