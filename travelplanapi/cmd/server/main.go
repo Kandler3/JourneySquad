@@ -43,11 +43,11 @@ func main() {
 	r.PATCH("/travel_plan_tags/:id", handlers.UpdateTPTagHandler) //
 	r.DELETE("/travel_plan_tags/:id", handlers.DeleteTPTagHandler) //
 
-	r.POST("travel_plans/:id/participants", handlers.AddParticipantHandler)
-	r.DELETE("travel_plans/:id/participants/:participant_id", handlers.DeleteParticipant) //
+	r.POST("/travel_plans/:id/participants", handlers.AddParticipantHandler)
+	r.DELETE("/travel_plans/:id/participants/:participant_id", handlers.DeleteParticipant) //
 
-	r.POST("travel_plan/:id/photos", handlers.CreateTpPhotoHandler) //
-	r.DELETE("travel_plan/:id/photos/:photo_id", handlers.DeleteTPPhotoHandler) //
+	r.POST("/travel_plan/:id/photos", handlers.CreateTpPhotoHandler) //
+	r.DELETE("/travel_plan/:id/photos/:photo_id", handlers.DeleteTPPhotoHandler) //
 
 	r.Run()
 }
