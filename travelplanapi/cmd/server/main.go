@@ -12,10 +12,10 @@ import (
 )
 
 func main() {
-	if err := db.InitDB(2); err != nil {
+	if err := db.InitDB(); err != nil {
 		log.Printf("Error initializing db: %v", err)
 	}
-	defer db.CloseDB(2)
+	defer db.CloseDB()
 
 	r := initServer()
 
@@ -33,20 +33,20 @@ func main() {
 	r.POST("/travel_plans/", handlers.CreateTravelPlan)
 
 	r.GET("/travel_plans/:id", handlers.GetTPByIdHandler)
-	r.PATCH("/travel_plans/:id", handlers.GetTPByIdHandler) //
+	r.PATCH("/travel_plans/:id", handlers.GetTPByIdHandler)  //
 	r.DELETE("/travel_plans/:id", handlers.GetTPByIdHandler) //
 
-	r.GET("/travel_plan_tags", handlers.GetTravelPlanTags) 
+	r.GET("/travel_plan_tags", handlers.GetTravelPlanTags)
 	r.POST("/travel_plan_tags", handlers.CreateTPTagHandler) //
 
 	r.GET("/travel_plan_tags/:id", handlers.GetTPTagByID)
-	r.PATCH("/travel_plan_tags/:id", handlers.UpdateTPTagHandler) //
+	r.PATCH("/travel_plan_tags/:id", handlers.UpdateTPTagHandler)  //
 	r.DELETE("/travel_plan_tags/:id", handlers.DeleteTPTagHandler) //
 
 	r.POST("/travel_plans/:id/participants", handlers.AddParticipantHandler)
 	r.DELETE("/travel_plans/:id/participants/:participant_id", handlers.DeleteParticipant) //
 
-	r.POST("/travel_plan/:id/photos", handlers.CreateTpPhotoHandler) //
+	r.POST("/travel_plan/:id/photos", handlers.CreateTpPhotoHandler)             //
 	r.DELETE("/travel_plan/:id/photos/:photo_id", handlers.DeleteTPPhotoHandler) //
 
 	r.Run()
