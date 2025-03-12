@@ -12,10 +12,10 @@ import (
 )
 
 func main() {
-	if err := db.InitDB(); err != nil {
+	if err := db.InitDB(1); err != nil {
 		log.Printf("Error initializing db: %v", err)
 	}
-	defer db.CloseDB()
+	defer db.CloseDB(1)
 
 	r := initServer()
 
