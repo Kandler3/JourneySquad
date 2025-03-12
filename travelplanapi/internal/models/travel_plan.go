@@ -102,7 +102,7 @@ func GetAllTravelPlans(ctx context.Context) ([]TravelPlan, error) {
 		SELECT id, created_at, edited_at, title, start_date, end_date, description, author_id
 		FROM travel_plans
 	`
-	rows, err := db.Query(ctx, query)
+	rows, err := db.Query(2, ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func GetTravelPlanByID(ctx context.Context, TravelPLanId int) (*TravelPlan, erro
 	`
 
 	var tp TravelPlan
-	err := db.QueryRow(ctx, query, TravelPLanId).Scan(&tp.ID, &tp.CreatedAt, &tp.EditedAt, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &tp.AuthorId)
+	err := db.QueryRow(2, ctx, query, TravelPLanId).Scan(&tp.ID, &tp.CreatedAt, &tp.EditedAt, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &tp.AuthorId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -155,7 +155,7 @@ func UserCreateTravelPlan(ctx context.Context, UserID int, input CreateTPInput) 
 		RETURNING id, title, start_date, end_date, description, author_id
 	`
 
-	err := db.QueryRow(
+	err := db.QueryRow(2, 
 		ctx,
 		query,
 		UserID,
@@ -298,7 +298,8 @@ func UpdateTravelPlan(ctx context.Context, TravelPlanID int, input UpdateTPInput
 			author_id = COALESCE($6, author_id)
 		WHERE id = $7
 	`
-	_, err := db.Exec(ctx,
+	_, err := db.Exec(2,
+		ctx,
 		query,
 		time.Now(),
 		input.Title,
@@ -321,7 +322,7 @@ func DeleteTravelPlan(ctx context.Context, TravelPlanID int) error {
 		DELETE FROM travel_plans
 		WHERE id = $1
 	`
-	_, err := db.Exec(ctx, query, TravelPlanID)
+	_, err := db.Exec(2, ctx, query, TravelPlanID)
 	if err != nil {
 		return err
 	}
@@ -335,7 +336,7 @@ func GetAllTPTags(ctx context.Context) ([]TravelPlanTag, error) {
 		FROM tp_tags
 	`
 
-	rows, err := db.Query(ctx, query)
+	rows, err := db.Query(2, ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -364,7 +365,7 @@ func GetAllTPTPTags(ctx context.Context) (map[int][]int, error) {
 		SELECT id, created_at, edited_at, title, travel_plan_id, travel_plan_tag_id
 		FROM tp_tp_tags
 	`
-	rows, err := db.Query(ctx, query)
+	rows, err := db.Query(2, ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -409,7 +410,7 @@ func CreateTpTag(ctx context.Context, input CreateTPTagInput) (*TravelPlanTag, e
 		RETURNING id, name
 	`
 
-	err := db.QueryRow(
+	err := db.QueryRow(2, 
 		ctx,
 		query,
 		input.ID,
@@ -435,7 +436,7 @@ func CreateTPTPTag(ctx context.Context, input CreateTPTPTagInput) (*TravelPlanTr
 		RETURNING id, travel_plan_id, travel_plan_tag_id
 	`
 
-	err := db.QueryRow(
+	err := db.QueryRow(2, 
 		ctx,
 		query,
 		input.ID,
@@ -460,7 +461,7 @@ func GetTPTagByID(ctx context.Context, TPTagID int) (*TravelPlanTag, error) {
 	WHERE id = $1
 	`
 	var tpTag TravelPlanTag
-	err := db.QueryRow(ctx, query, TPTagID).Scan(&tpTag.ID, &tpTag.CreatedAt, &tpTag.EditedAt, &tpTag.Name)
+	err := db.QueryRow(2, ctx, query, TPTagID).Scan(&tpTag.ID, &tpTag.CreatedAt, &tpTag.EditedAt, &tpTag.Name)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -480,7 +481,7 @@ func GetTPTPTagByID(ctx context.Context, TPTPTagID int) (*TravelPlanTravelPlanTa
 	`
 
 	var tpTpTag TravelPlanTravelPlanTag
-	err := db.QueryRow(ctx, query, TPTPTagID).Scan(&tpTpTag.ID, &tpTpTag.CreatedAt, &tpTpTag.EditedAt, &tpTpTag.TravelPlanId, &tpTpTag.TravelPlanTagId)
+	err := db.QueryRow(2, ctx, query, TPTPTagID).Scan(&tpTpTag.ID, &tpTpTag.CreatedAt, &tpTpTag.EditedAt, &tpTpTag.TravelPlanId, &tpTpTag.TravelPlanTagId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -500,7 +501,8 @@ func UpdateTPTagByID(ctx context.Context, TPTagID int, input UpdateTpTagInput) e
 			name = COALESCE($2, name),
 		WHERE id = $3
 	`
-	_, err := db.Exec(ctx,
+	_, err := db.Exec(2,
+		ctx,
 		query,
 		time.Now(),
 		input.Name,
@@ -523,7 +525,8 @@ func UpdateTPTPTagByID(ctx context.Context, TPTagID int, input UpdateTPTPtagInpu
 
 		WHERE id = $4
 	`
-	_, err := db.Exec(ctx,
+	_, err := db.Exec(2,
+		ctx,
 		query,
 		time.Now(),
 		input.TravelPlanId,
@@ -543,7 +546,7 @@ func DeleteTPTagByID(ctx context.Context, TPTagID int) error {
 		DELETE FROM tp_tags
 		WHERE id = $1
 	`
-	_, err := db.Exec(ctx, query, TPTagID)
+	_, err := db.Exec(2, ctx, query, TPTagID)
 	if err != nil {
 		return err
 	}
@@ -556,7 +559,7 @@ func DeleteTPTPTagByID(ctx context.Context, TPTPTagID int) error {
 		DELETE FROM tp_tp_tags
 		WHERE id = $1
 	`
-	_, err := db.Exec(ctx, query, TPTPTagID)
+	_, err := db.Exec(2, ctx, query, TPTPTagID)
 	if err != nil {
 		return err
 	}
@@ -570,7 +573,7 @@ func GetAllTPParticipants(ctx context.Context) ([]TravelPlanParticipant, error) 
 		FROM tp_participants
 	`
 
-	rows, err := db.Query(ctx, query)
+	rows, err := db.Query(2, ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -599,7 +602,7 @@ func AddParticipantToTP(ctx context.Context, TpId int, input TPParticipantInput)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, travel_plan_id, user_id
 	`
-	err := db.QueryRow(
+	err := db.QueryRow(2,
 		ctx,
 		query,
 		input.ID,
@@ -622,7 +625,7 @@ func DeleteParticipantfromTP(ctx context.Context, TPid int, Participanttag int) 
 		DELETE FROM tp_participants
 		WHERE travel_plan_id = $1 AND user_id = $2
 	`
-	_, err := db.Exec(ctx, query, TPid, Participanttag)
+	_, err := db.Exec(2, ctx, query, TPid, Participanttag)
 	if err != nil {
 		return err
 	}
@@ -636,7 +639,7 @@ func GetAllTpPhotos(ctx context.Context) ([]TravelPlanPhoto, error) {
 		FROM tp_photos
 	`
 
-	rows, err := db.Query(ctx, query)
+	rows, err := db.Query(2, ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -665,7 +668,7 @@ func CreateTpPhoto(ctx context.Context, tpID int, ID int, url string) (*TravelPl
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, travel_plan_id, url
 	`
-	err := db.QueryRow(
+	err := db.QueryRow(2,
 		ctx,
 		query,
 		ID,
@@ -687,7 +690,7 @@ func DeleteTpPhoto(ctx context.Context, tpId int, photoId int) error {
 		DELETE FROM tp_photos
 		WHERE id = $1 AND travel_plan_id = $2
 	`
-	_, err := db.Exec(ctx, query, photoId, tpId)
+	_, err := db.Exec(2, ctx, query, photoId, tpId)
 	if err != nil {
 		return err
 	}
