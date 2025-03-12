@@ -76,7 +76,7 @@ func GetTPsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, TravelPlans)
 }
 
-// POST /travel_plans/:user_id
+// POST /travel_plans/
 func CreateTravelPlan(c *gin.Context) {
 	userID, err := GetQueryParam(c, "user_id")
 	if err != nil {
@@ -96,7 +96,7 @@ func CreateTravelPlan(c *gin.Context) {
 	c.JSON(http.StatusOK, travelPlan)
 }
 
-// GET /travel_plans/:user_id
+// GET /travel_plans/?query={string}&user_id={id}&sort_by={parameter}&ascending={bool}&start_date={date}&end_date={date}&tag={tag_id}&(tag={tag_id}){n}
 func UserGetTPHandler(c *gin.Context) {
 	ctx := c.Request.Context()
 	userID, err := GetQueryParam(c, "user_id")
@@ -180,7 +180,7 @@ func DeleteTPHandler(c *gin.Context) {
 }
 
 // GET /travel_plan_tags
-func GetAllPlanTags(c *gin.Context) {
+func GetTravelPlanTags(c *gin.Context) {
 	ctx := c.Request.Context()
 	TravelPlanTags, err := models.GetAllTPTags(ctx)
 	if err != nil {
