@@ -7,7 +7,7 @@ services:
       db1:
         condition: service_healthy
     environment:
-      - DATABASE_URL=host=db port=5432 user=postgres password=password dbname=mydb sslmode=disable
+      - DATABASE_URL=host=db1 port=5432 user=postgres password=password dbname=mydb sslmode=disable
     restart: unless-stopped
 
   travelplanapi:
@@ -18,7 +18,7 @@ services:
       db2:
         condition: service_healthy
     environment:
-      - DATABASE_URL=host=db port=5432 user=postgres password=password dbname=mydb sslmode=disable
+      - DATABASE_URL=host=db2 port=5432 user=postgres password=password dbname=mydb sslmode=disable
     restart: unless-stopped
 
   db1:
