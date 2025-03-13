@@ -10,7 +10,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GET /users
+// GetUsersHandler godoc
+//
+//	@Summary		Получить список всех пользователей
+//	@Description	Возвращает список всех пользователей.
+//	@Tags			users
+//
+//	@Security		ApiKeyAuth
+//
+//	@Produce		json
+//	@Success		200	{array}		models.UserView
+//
+//	@Failure		401	{object}	models.UnauthorisedResponse	"Неавторизованный запрос"
+//
+//	@Failure		500	{object}	models.ErrorResponse		"Ошибка сервера"
+//	@Router			/users [get]
 func GetUsersHandler(c *gin.Context) {
 	ctx := c.Request.Context()
 	users, err := models.GetAllUsers(ctx)
@@ -21,7 +35,18 @@ func GetUsersHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-// POST /users
+// CreateUserHandler godoc
+//
+//	@Summary		Создать нового пользователя
+//	@Description	Создает пользователя с предоставленными данными.
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			input	body		models.CreateUserInput	true	"Данные для создания пользователя"
+//	@Success		201		{object}	models.UserView
+//	@Failure		400		{object}	models.ErrorResponse	"Неверный запрос"
+//	@Failure		500		{object}	models.ErrorResponse	"Ошибка сервера"
+//	@Router			/users [post]
 func CreateUserHandler(c *gin.Context) {
 	var input models.CreateUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -39,7 +64,24 @@ func CreateUserHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, user)
 }
 
-// GET /users/:id
+// GetUserHandler godoc
+//
+//	@Summary		Получить пользователя по ID в telegram
+//	@Description	Возвращает пользователя по его telegram ID.
+//	@Tags			users
+//
+//	@Security		ApiKeyAuth
+//
+//	@Produce		json
+//	@Param			id	path		int	true	"Telegram ID пользователя"
+//	@Success		200	{object}	models.UserView
+//	@Failure		400	{object}	models.ErrorResponse		"Неверный запрос"
+//
+//	@Failure		401	{object}	models.UnauthorisedResponse	"Неавторизованный запрос"
+//
+//	@Failure		404	{object}	models.ErrorResponse		"Пользователь не найден"
+//	@Failure		500	{object}	models.ErrorResponse		"Ошибка сервера"
+//	@Router			/users/{id} [get]
 func GetUserHandler(c *gin.Context) {
 	idStr := c.Param("id")
 	telegramID, err := strconv.ParseInt(idStr, 10, 64)
@@ -62,7 +104,23 @@ func GetUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// GET /users/login
+// LoginUserHandler godoc
+//
+//	@Summary		Возвращает текущего авторизованного пользователя
+//	@Description	Авторизует пользователя, используя telegram ID из контекста.
+//	@Tags			users
+//
+//	@Security		ApiKeyAuth
+//
+//	@Produce		json
+//	@Success		200	{object}	models.UserView
+//	@Failure		400	{object}	models.ErrorResponse		"Неверный запрос"
+//
+//	@Failure		401	{object}	models.UnauthorisedResponse	"Неавторизованный запрос"
+//
+//	@Failure		404	{object}	models.ErrorResponse		"Пользователь не найден"
+//	@Failure		500	{object}	models.ErrorResponse		"Ошибка сервера"
+//	@Router			/users/login [get]
 func LoginUserHandler(c *gin.Context) {
 	ctx := c.Request.Context()
 	telegramID, ok := getTelegramIdFromCtx(ctx)
@@ -84,7 +142,24 @@ func LoginUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// PATCH /users/:id
+// UpdateUserHandler godoc
+//
+//	@Summary		Обновить данные пользователя
+//	@Description	Обновляет информацию о пользователе по telegram ID.
+//	@Tags			users
+//
+//	@Security		ApiKeyAuth
+//
+//	@Accept			json
+//	@Param			id		path	int						true	"Telegram ID пользователя"
+//	@Param			input	body	models.UpdateUserInput	true	"Данные для обновления пользователя"
+//	@Success		204		"No Content"
+//	@Failure		400		{object}	models.ErrorResponse		"Неверный запрос"
+//
+//	@Failure		401		{object}	models.UnauthorisedResponse	"Неавторизованный запрос"
+//
+//	@Failure		500		{object}	models.ErrorResponse		"Ошибка сервера"
+//	@Router			/users/{id} [patch]
 func UpdateUserHandler(c *gin.Context) {
 	idStr := c.Param("id")
 	telegramID, err := strconv.ParseInt(idStr, 10, 64)
@@ -117,7 +192,22 @@ func UpdateUserHandler(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// DELETE /users/:id
+// DeleteUserHandler godoc
+//
+//	@Summary		Удалить пользователя
+//	@Description	Удаляет пользователя по telegram ID.
+//	@Tags			users
+//
+//	@Security		ApiKeyAuth
+//
+//	@Param			id	path	int	true	"Telegram ID пользователя"
+//	@Success		204	"No Content"
+//	@Failure		400	{object}	models.ErrorResponse		"Неверный запрос"
+//
+//	@Failure		401	{object}	models.UnauthorisedResponse	"Неавторизованный запрос"
+//
+//	@Failure		500	{object}	models.ErrorResponse		"Ошибка сервера"
+//	@Router			/users/{id} [delete]
 func DeleteUserHandler(c *gin.Context) {
 	idStr := c.Param("id")
 	telegramID, err := strconv.ParseInt(idStr, 10, 64)
