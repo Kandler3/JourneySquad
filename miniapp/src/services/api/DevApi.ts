@@ -50,7 +50,7 @@ export class DevApi implements ApiService {
     async updateTravelPlan(id: number, updates: Partial<TravelPlanPhoto>): Promise<void> {
         const url = `/api/travel_plans/${id}`;
         const resp = await fetch(url, {
-            method: "PUT",
+            method: "PATCH",
             headers: {...this.headers, "Content-Type": "application/json"},
             body: JSON.stringify(updates),
         });
@@ -104,7 +104,7 @@ export class DevApi implements ApiService {
     async updateUser(id: number, updates: Partial<User>): Promise<void> {
         const url = `/api/users/${id}`;
         const resp = await fetch(url, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 ...this.headers,
                 "Content-Type": "application/json",
