@@ -11,6 +11,7 @@ from aiogram import Router
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 API_URL = os.getenv("API_URL")
 FILE_SERVER_URL = os.getenv("FILE_SERVER_URL")
+MINIAPP_URL = os.getenv("MINIAPP_URL")
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN)
@@ -33,6 +34,9 @@ async def start_handler(message: types.Message, state):
 async def process_age(message: types.Message, state):
     try:
         age = int(message.text)
+        if age < 0:
+            raise ValueError()
+
     except ValueError:
         await message.answer("Возраст должен быть числом. Повтори попытку:")
         return
@@ -64,11 +68,20 @@ async def process_bio(message: types.Message, state):
     }
     try:
         resp = requests.post(API_URL + "/users", json=payload)
+        logging.info(f"miniapp url: {MINIAPP_URL}")
         if resp.status_code in [200, 201]:
-            await message.answer("Регистрация прошла успешно! Перейдите в миниапп")
+            keyboard = types.InlineKeyboardMarkup(inline_keyboard=[
+                [types.InlineKeyboardButton(
+                    text="Открыть миниапп",
+                    web_app=types.WebAppInfo(url=MINIAPP_URL),
+                    url=MINIAPP_URL
+                )]
+            ])
+            await message.answer("Регистрация прошла успешно! Перейдите в миниапп", reply_markup=keyboard)
         else:
             await message.answer("Ошибка регистрации. Попробуйте позже.")
-    except Exception:
+    except Exception as e:
+        logging.error(e)
         await message.answer("Ошибка соединения с сервером.")
     await state.clear()
 
