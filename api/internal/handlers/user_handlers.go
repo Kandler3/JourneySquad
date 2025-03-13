@@ -30,12 +30,6 @@ func CreateUserHandler(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	telegramID, ok := getTelegramIdFromCtx(ctx)
-	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid init data: there is no telegram id"})
-		return
-	}
-	input.TelegramID = telegramID
 
 	user, err := models.CreateUser(ctx, input)
 	if err != nil {

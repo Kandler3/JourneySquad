@@ -24,13 +24,13 @@ func main() {
 			"message": "pong",
 		})
 	})
-	r.GET("/users", handlers.GetUsersHandler)
+	r.POST("/users", handlers.CreateUserHandler)
 
 	token := os.Getenv("BOT_TOKEN") // secret bot token
 	authorized := r.Group("/")
 	authorized.Use(middlewares.AuthMiddleware(token))
 
-	authorized.POST("/users", handlers.CreateUserHandler)
+	authorized.GET("/users", handlers.GetUsersHandler)
 	authorized.GET("/users/login", handlers.LoginUserHandler)
 	authorized.GET("/users/:id", handlers.GetUserHandler)
 	authorized.PATCH("/users/:id", handlers.UpdateUserHandler)
