@@ -32,6 +32,8 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 3s
+      retries: 5
+      start_period: 10s
     volumes:
       - db_data1:/var/lib/postgresql/data
     restart: unless-stopped
@@ -46,6 +48,8 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 3s
+      retries: 5
+      start_period: 10s
     volumes:
       - db_data2:/var/lib/postgresql/data
     restart: unless-stopped

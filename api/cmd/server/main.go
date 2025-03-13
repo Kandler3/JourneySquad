@@ -19,20 +19,22 @@ func main() {
 
 	r := initServer()
 
-	// secret bot token.
-	token := os.Getenv("BOT_TOKEN")
-	r.Use(middlewares.AuthMiddleware(token))
-
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
 	r.GET("/users", handlers.GetUsersHandler)
-	r.POST("/users", handlers.CreateUserHandler)
-	r.GET("/users/:id", handlers.GetUserHandler)
-	r.PATCH("/users/:id", handlers.UpdateUserHandler)
-	r.DELETE("/users/:id", handlers.DeleteUserHandler)
+
+	token := os.Getenv("BOT_TOKEN") // secret bot token
+	authorized := r.Group("/")
+	authorized.Use(middlewares.AuthMiddleware(token))
+
+	authorized.POST("/users", handlers.CreateUserHandler)
+	authorized.GET("/users/login", handlers.LoginUserHandler)
+	authorized.GET("/users/:id", handlers.GetUserHandler)
+	authorized.PATCH("/users/:id", handlers.UpdateUserHandler)
+	authorized.DELETE("/users/:id", handlers.DeleteUserHandler)
 
 	r.Run()
 }
