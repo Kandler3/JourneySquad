@@ -56,6 +56,14 @@ type UpdateUserInput struct {
 	IsAdmin *bool   `json:"is_admin,omitempty"`
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type UnauthorisedResponse struct {
+	Message string `json:"message"`
+}
+
 func GetUserByTelegramID(ctx context.Context, telegramID int64) (*UserView, error) {
 	query := "SELECT telegram_id, name, avatar, profile_id FROM users WHERE telegram_id = $1"
 
