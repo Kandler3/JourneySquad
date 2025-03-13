@@ -97,31 +97,34 @@ export class DevApi implements ApiService {
     }
 
     async updateUser(id: number, updates: Partial<User>): Promise<void> {
-        const url = `/api/edit-profile/${id}`;
+        const url = `/api/users/${id}`;
         const resp = await fetch(url, {
             method: "PUT",
-            headers: {...this.headers, "Content-Type": "application/json"},
+            headers: {
+                ...this.headers,
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify(updates),
         });
-
+    
         if (!resp.ok) {
             throw new Error(resp.statusText);
         }
     }
-
-    async getUser(id: number): Promise<User> {
-        const url = `/api/profile/${id}`;
+    
+    async getUser(id: number, getProfile: boolean = true): Promise<User> {
+        const url = `/api/users/${id}?get_profile=${getProfile}`;
         const resp = await fetch(url, {
             method: "GET",
             headers: this.headers,
-        })
-
+        });
+    
         if (!resp.ok) {
             throw new Error(resp.statusText);
         }
         return resp.json();
     }
-
+    
     async joinTravelPlan(travelPlanId: number): Promise<void> {
         const currentUser = await this.getCurrentUser(); 
         const url = `/api/travel_plans/${travelPlanId}/participants`;
@@ -173,4 +176,17 @@ export class DevApi implements ApiService {
         }
         return resp.json();
     }
+
+    async deleteUser(id: number): Promise<void> {
+        const url = `/api/users/${id}`;
+        const resp = await fetch(url, {
+            method: "DELETE",
+            headers: this.headers,
+        });
+    
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+    }
+    
 }
