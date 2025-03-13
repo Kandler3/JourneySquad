@@ -3,11 +3,9 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/Kandler3/JourneySquad/api/internal/handlers"
 	"github.com/Kandler3/JourneySquad/api/pkg/db"
-	"github.com/Kandler3/JourneySquad/api/pkg/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,8 +18,8 @@ func main() {
 	r := initServer()
 
 	// secret bot token.
-	token := os.Getenv("BOT_TOKEN")
-	r.Use(middlewares.AuthMiddleware(token))
+	//token := os.Getenv("BOT_TOKEN")
+	//r.Use(middlewares.AuthMiddleware(token))
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

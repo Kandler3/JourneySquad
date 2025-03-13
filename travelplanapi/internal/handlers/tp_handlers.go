@@ -3,7 +3,11 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"log"
+
+	//"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -11,47 +15,44 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetQueryParam(c *gin.Context, s string) (int, error) {
-	ParamStr := c.Param(s)
+func GetQueryParam(c *gin.Context, ParamStr string) (int, error) {
 	if ParamStr == "" {
 		return -1, nil
 	}
 	Param, err := strconv.Atoi(ParamStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid %s", s)})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid %s", ParamStr)})
 		return 0, errors.New("smth wrong with query param")
 	}
 	return Param, nil
 }
 
-func GetBoolQueryParam(c *gin.Context, s string) (bool, error) {
-	ParamStr := c.Param(s)
-	if ParamStr == "" {
+func GetBoolQueryParam(c *gin.Context, ParamStr string) (bool, error) {
+	if ParamStr == ""{
 		return true, nil
 	}
 	Param, err := strconv.ParseBool(ParamStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid %s", s)})
-		return false, errors.New("smth wrong with query param")
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid %s", ParamStr)})
+		return true, errors.New("smth wrong with query param")
 	}
 	return Param, nil
 }
 
-func GetDateQueryParam(c *gin.Context, s string) (time.Time, error) {
-	ParamStr := c.Param(s)
+func GetDateQueryParam(c *gin.Context, ParamStr string) (time.Time, error) {
 	if ParamStr == "" {
 		return time.Time{}, nil
 	}
 	Param, err := time.Parse("2006-01-01", ParamStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid %s", s)})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid %s", ParamStr)})
 		return time.Time{}, errors.New("smth wrong with query param")
 	}
 	return Param, nil
 }
 
-func GetArrayQueryParam(c *gin.Context, s string) ([]int, error) {
-	ParamStrArr := c.QueryArray(s)
+func GetArrayQueryParam(c *gin.Context, mp *url.Values, s string) ([]int, error) {
+	ParamStrArr := (*mp)[s]
 	ParamArr := make([]int, 0)
 	for _, el := range ParamStrArr {
 		elem, err := strconv.Atoi(el)
@@ -78,17 +79,13 @@ func GetTPsHandler(c *gin.Context) {
 
 // POST /travel_plans/
 func CreateTravelPlan(c *gin.Context) {
-	userID, err := GetQueryParam(c, "user_id")
-	if err != nil {
-		return
-	}
 	var input models.CreateTPInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	ctx := c.Request.Context()
-	travelPlan, err := models.UserCreateTravelPlan(ctx, userID, input)
+	travelPlan, err := models.UserCreateTravelPlan(ctx, input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -99,26 +96,29 @@ func CreateTravelPlan(c *gin.Context) {
 // GET /travel_plans/?query={string}&user_id={id}&sort_by={parameter}&ascending={bool}&start_date={date}&end_date={date}&tag={tag_id}&(tag={tag_id}){n}
 func UserGetTPHandler(c *gin.Context) {
 	ctx := c.Request.Context()
-	userID, err := GetQueryParam(c, "user_id")
+	queryParams := c.Request.URL.Query()
+	//log.Println(queryParams.Get("query"))
+	userID, err := GetQueryParam(c, queryParams.Get("user_id"))
 	if err != nil {
 		return
 	}
-	query := c.Param("query")
-	sortBy := c.Param("sort_by")
-	ascending, err := GetBoolQueryParam(c, "ascending")
+	query := queryParams.Get("query")
+	//log.Println(query)
+	sortBy := queryParams.Get("sort_by")
+	ascending, err := GetBoolQueryParam(c, queryParams.Get("ascending"))
 	if err != nil {
 		return
 	}
-	startDate, err := GetDateQueryParam(c, "start_date")
+	startDate, err := GetDateQueryParam(c, queryParams.Get("start_date"))
 	if err != nil {
 		return
 	}
-	endDate, err := GetDateQueryParam(c, "end_date")
+	endDate, err := GetDateQueryParam(c, queryParams.Get("end_date"))
 	if err != nil {
 		return
 	}
 
-	tags, err := GetArrayQueryParam(c, "tag")
+	tags, err := GetArrayQueryParam(c, &queryParams, "tag")
 	if err != nil {
 		return
 	}
@@ -134,7 +134,7 @@ func UserGetTPHandler(c *gin.Context) {
 // GET /travel_plans/:id
 func GetTPByIdHandler(c *gin.Context) {
 	ctx := c.Request.Context()
-	ID, err := GetQueryParam(c, "id")
+	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
@@ -148,7 +148,7 @@ func GetTPByIdHandler(c *gin.Context) {
 
 // PATCH /travel_plans/:id
 func UpdateTPHandler(c *gin.Context) {
-	ID, err := GetQueryParam(c, "id")
+	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
@@ -157,6 +157,7 @@ func UpdateTPHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Println(input)
 	ctx := c.Request.Context()
 	if err := models.UpdateTravelPlan(ctx, ID, input); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -167,7 +168,7 @@ func UpdateTPHandler(c *gin.Context) {
 
 // DELETE /travel_plan/:id
 func DeleteTPHandler(c *gin.Context) {
-	ID, err := GetQueryParam(c, "id")
+	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
@@ -208,7 +209,7 @@ func CreateTPTagHandler(c *gin.Context) {
 
 // GET /travel_plan_tags/:id
 func GetTPTagByID(c *gin.Context) {
-	ID, err := GetQueryParam(c, "id")
+	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
@@ -223,7 +224,7 @@ func GetTPTagByID(c *gin.Context) {
 
 // PATCH /travel_plan_tags/:id
 func UpdateTPTagHandler(c *gin.Context) {
-	ID, err := GetQueryParam(c, "id")
+	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
@@ -242,7 +243,7 @@ func UpdateTPTagHandler(c *gin.Context) {
 
 // DELETE /travel_plan_tag/:id
 func DeleteTPTagHandler(c *gin.Context) {
-	ID, err := GetQueryParam(c, "id")
+	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
@@ -256,7 +257,7 @@ func DeleteTPTagHandler(c *gin.Context) {
 
 // POST /travel_plans/{id}/participants
 func AddParticipantHandler(c *gin.Context) {
-	tpID, err := GetQueryParam(c, "id")
+	tpID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
@@ -278,11 +279,11 @@ func AddParticipantHandler(c *gin.Context) {
 
 // DELETE /travel_plans/{id}/participants/{participant_id}
 func DeleteParticipant(c *gin.Context) {
-	ID, err := GetQueryParam(c, "id")
+	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
-	participantID, err := GetQueryParam(c, "participant_id")
+	participantID, err := GetQueryParam(c, c.Param("participant_id"))
 	if err != nil {
 		return
 	}
@@ -297,7 +298,7 @@ func DeleteParticipant(c *gin.Context) {
 
 // POST /travel_plans/{id}/photos
 func CreateTpPhotoHandler(c *gin.Context) {
-	tpId, err := GetQueryParam(c, "id")
+	tpId, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
@@ -323,11 +324,11 @@ func CreateTpPhotoHandler(c *gin.Context) {
 
 // DELETE /travel_plans/{id}/photos/{photo_id}
 func DeleteTPPhotoHandler(c *gin.Context) {
-	ID, err := GetQueryParam(c, "id")
+	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
-	photoID, err := GetQueryParam(c, "photo_id")
+	photoID, err := GetQueryParam(c, c.Param("photo_id"))
 	if err != nil {
 		return
 	}

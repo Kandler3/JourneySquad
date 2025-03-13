@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"log"
 	"slices"
 	"sort"
 	"strings"
@@ -99,7 +100,7 @@ type TPParticipantInput struct {
 // travel_plans/ - get
 func GetAllTravelPlans(ctx context.Context) ([]TravelPlan, error) {
 	query := `
-		SELECT id, created_at, edited_at, title, start_date, end_date, description, author_id
+		SELECT id, created_at, edited_at, title, start_date, end_date, description, author
 		FROM travel_plans
 	`
 	rows, err := db.Query(2, ctx, query)
@@ -128,7 +129,7 @@ func GetAllTravelPlans(ctx context.Context) ([]TravelPlan, error) {
 // travel_plans/{id} - get
 func GetTravelPlanByID(ctx context.Context, TravelPLanId int) (*TravelPlan, error) {
 	query := `
-		SELECT id, created_at, edited_at, title, start_date, end_date, description, author_id
+		SELECT id, created_at, edited_at, title, start_date, end_date, description, author
 		FROM travel_plans
 		WHERE id = $1
 	`
@@ -145,20 +146,20 @@ func GetTravelPlanByID(ctx context.Context, TravelPLanId int) (*TravelPlan, erro
 	return &tp, nil
 }
 
-// travel_plans/?user_id={id} - post
-func UserCreateTravelPlan(ctx context.Context, UserID int, input CreateTPInput) (*TravelPlan, error) {
+// travel_plans/ - post
+func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan, error) {
 	var tp TravelPlan
 
 	query := `
-		INSERT INTO travel_plans (id, created_at, edited_at, title, start_date, end_date, description, author_id)
+		INSERT INTO travel_plans (id, created_at, edited_at, title, start_date, end_date, description, author)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-		RETURNING id, title, start_date, end_date, description, author_id
+		RETURNING id, title, start_date, end_date, description, author
 	`
 
 	err := db.QueryRow(2, 
 		ctx,
 		query,
-		UserID,
+		input.ID,
 		time.Now(),
 		time.Now(),
 		input.Title,
@@ -176,8 +177,8 @@ func UserCreateTravelPlan(ctx context.Context, UserID int, input CreateTPInput) 
 	return &tp, err
 }
 
-// sort by и ascending не реализовано!!!! ДОДЕЛАТЬ ДО СДАЧИ
 func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParams map[string]interface{}) ([]TravelPlan, error) {
+	log.Println(queryParams)
 	filteredTravelPlans := make([]TravelPlan, 0)
 	var UserID = queryParams["user_id"].(int)
 	var Query = queryParams["query"].(string)
@@ -230,8 +231,8 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 				}
 			}
 		}
-		ok4 := (startDate == time.Time{})
-		ok5 := (endDate == time.Time{})
+		ok4 := (startDate != time.Time{})
+		ok5 := (endDate != time.Time{})
 		if ok4 || ok5 {
 			newFiltered := make([]TravelPlan, 0)
 			var oldFiltered []TravelPlan
@@ -241,13 +242,13 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 				oldFiltered = filteredTravelPlans
 			}
 			for _, el := range oldFiltered {
-				if ok4 && ok5 && (el.StartDate.After(startDate) || el.StartDate.Equal(startDate)) && (el.EndDate.After(endDate) || el.EndDate.Equal(endDate)) {
+				if ok4 && ok5 && (el.StartDate.After(startDate) || el.StartDate.Equal(startDate)) && (el.EndDate.Before(endDate) || el.EndDate.Equal(endDate)) {
 					newFiltered = append(newFiltered, el)
 				}
 				if ok4 && !ok5 && (el.StartDate.After(startDate) || el.StartDate.Equal(startDate)) {
 					newFiltered = append(newFiltered, el)
 				}
-				if !ok4 && ok5 && (el.EndDate.After(endDate) || el.EndDate.Equal(endDate)) {
+				if !ok4 && ok5 && (el.EndDate.Before(endDate) || el.EndDate.Equal(endDate)) {
 					newFiltered = append(newFiltered, el)
 				}
 			}
@@ -295,7 +296,7 @@ func UpdateTravelPlan(ctx context.Context, TravelPlanID int, input UpdateTPInput
 			start_date = COALESCE($3, start_date),
 			end_date = COALESCE($4, end_date),
 			description = COALESCE($5, description),
-			author_id = COALESCE($6, author_id)
+			author = COALESCE($6, author)
 		WHERE id = $7
 	`
 	_, err := db.Exec(2,
