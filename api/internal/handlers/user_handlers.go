@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
 	"github.com/Kandler3/JourneySquad/api/internal/models"
+	"github.com/Kandler3/JourneySquad/api/pkg/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,6 +30,13 @@ func CreateUserHandler(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
+	telegramID, ok := getTelegramIdFromCtx(ctx)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid init data: there is no telegram id"})
+		return
+	}
+	input.TelegramID = telegramID
+
 	user, err := models.CreateUser(ctx, input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -39,14 +48,14 @@ func CreateUserHandler(c *gin.Context) {
 // GET /users/:id
 func GetUserHandler(c *gin.Context) {
 	idStr := c.Param("id")
-	userID, err := strconv.Atoi(idStr)
+	telegramID, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user's telegram id"})
 		return
 	}
 
 	ctx := c.Request.Context()
-	user, err := models.GetUserByID(ctx, userID)
+	user, err := models.GetUserByTelegramID(ctx, telegramID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -56,27 +65,35 @@ func GetUserHandler(c *gin.Context) {
 		return
 	}
 
-	getProfile := c.Query("get_profile")
-	var profile *models.Profile
-	if getProfile == "true" && user.ProfileID != 0 {
-		profile, err = models.GetProfileByID(ctx, user.ProfileID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+	c.JSON(http.StatusOK, user)
+}
+
+// GET /users/login
+func LoginUserHandler(c *gin.Context) {
+	ctx := c.Request.Context()
+	telegramID, ok := getTelegramIdFromCtx(ctx)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid init data: there is no telegram id"})
+		return
 	}
 
-	response := models.UserResponse{
-		User:    user,
-		Profile: profile,
+	user, err := models.GetUserByTelegramID(ctx, telegramID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
-	c.JSON(http.StatusOK, response)
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
 
 // PATCH /users/:id
 func UpdateUserHandler(c *gin.Context) {
 	idStr := c.Param("id")
-	userID, err := strconv.Atoi(idStr)
+	telegramID, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
 		return
@@ -89,7 +106,17 @@ func UpdateUserHandler(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	if err := models.UpdateUser(ctx, userID, input); err != nil {
+	senderTelegramId, ok := getTelegramIdFromCtx(ctx)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user's telegram id"})
+		return
+	}
+	if senderTelegramId != telegramID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user can't update another user"})
+		return
+	}
+
+	if err := models.UpdateUser(ctx, telegramID, input); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -99,16 +126,34 @@ func UpdateUserHandler(c *gin.Context) {
 // DELETE /users/:id
 func DeleteUserHandler(c *gin.Context) {
 	idStr := c.Param("id")
-	userID, err := strconv.Atoi(idStr)
+	telegramID, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
 		return
 	}
 
 	ctx := c.Request.Context()
-	if err := models.DeleteUser(ctx, userID); err != nil {
+	senderTelegramId, ok := getTelegramIdFromCtx(ctx)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user's telegram id"})
+		return
+	}
+	if senderTelegramId != telegramID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user can't delete another user"})
+		return
+	}
+
+	if err := models.DeleteUser(ctx, telegramID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.Status(http.StatusNoContent)
+}
+
+func getTelegramIdFromCtx(ctx context.Context) (int64, bool) {
+	initData, ok := middlewares.CtxInitData(ctx)
+	if !ok {
+		return 0, false
+	}
+	return initData.User.ID, initData.User.ID != 0
 }
