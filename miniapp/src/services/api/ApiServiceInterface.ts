@@ -11,7 +11,7 @@ export interface ApiService {
     deleteTravelPlan(id: number): Promise<void>;
     getTravelPlanTags(): Promise<TravelPlanTag[]>;
     getTravelPlanTag(id: number): Promise<TravelPlanTag | null>;
-    getUser(id: number): Promise<User>;
+    getUser(id: number, getProfile?: boolean): Promise<User>;
     updateUser(id: number, updates: Partial<User>): Promise<void>;
     getCurrentUser(): Promise<User>;
     joinTravelPlan(travelPlanId: number): Promise<void>
