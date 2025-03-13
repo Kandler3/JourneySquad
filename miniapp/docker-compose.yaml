@@ -10,6 +10,8 @@ services:
       - "3000:3000"
     environment:
       - VITE_FILE_SERVER_URL=http://host.docker.internal:4000
+      - VITE_API_URL=
+      - VITE_USE_MOCK_API=true
     networks:
       - journey-squad-network
 
