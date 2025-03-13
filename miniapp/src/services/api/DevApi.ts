@@ -1,14 +1,19 @@
 import {ApiService} from "@/services/api/ApiServiceInterface.ts";
 import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
 import {TravelPlan} from "@/models/TravelPlan.ts";
-import {initDataRaw} from "@telegram-apps/sdk-react";
 import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 import {User} from "@/models/User.ts";
 import {TravelPlanTag} from "@/models/types.ts";
+import {retrieveLaunchParams} from "@telegram-apps/sdk-react";
 
 export class DevApi implements ApiService {
-    headers = {
-        Authorization: `tma ${initDataRaw}`
+    headers;
+
+    constructor() {
+        const { initDataRaw } = retrieveLaunchParams();
+        this.headers = {
+            Authorization: `tma ${initDataRaw}`
+        }
     }
 
     async getTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]> {
