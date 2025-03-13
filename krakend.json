@@ -1,0 +1,277 @@
+{
+    "$schema": "https://www.krakend.io/schema/v3.json",
+    "version": 3,
+    "name": "KrakenD API Gateway",
+    "port": 8080,
+    "cache_ttl": "3600s",
+    "timeout": "3s",
+    "endpoints": [
+        {
+        "endpoint": "/api/users/swagger/{any}",
+        "method": "GET",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8082"
+            ],
+            "url_pattern": "/users/swagger/{any}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/users",
+        "method": "POST",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8082"
+            ],
+            "url_pattern": "/users"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/users/{id}",
+        "method": "PATCH",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8082"
+            ],
+            "url_pattern": "/users/{id}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/users/{id}",
+        "method": "DELETE",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8082"
+            ],
+            "url_pattern": "/users/{id}"
+            }
+        ]
+        },
+        
+
+
+        {
+        "endpoint": "/api/users",
+        "method": "GET",
+        "output_encoding": "json",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8082"
+            ],
+            "url_pattern": "/users"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/users/login",
+        "method": "GET",
+        "output_encoding": "json",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8082"
+            ],
+            "url_pattern": "/users/login"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/users/{id}",
+        "method": "GET",
+        "output_encoding": "json",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8082"
+            ],
+            "url_pattern": "/users/{id}"
+            },
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plans?query=&user_id={id}&sort_by=&ascending=&start_date=&end_date=&tag="
+            }
+        ]
+        },
+        
+
+
+        {
+        "endpoint": "/api/travel_plans",
+        "method": "GET",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plans"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plans",
+        "method": "POST",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plans"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plans/{id}",
+        "method": "GET",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plans/{id}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plans/{id}",
+        "method": "PATCH",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plans/{id}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plans/{id}",
+        "method": "DELETE",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plans/{id}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plan_tags",
+        "method": "GET",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plan_tags"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plan_tags",
+        "method": "POST",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plan_tags"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plan_tags/{id}",
+        "method": "GET",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plan_tags/{id}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plan_tags/{id}",
+        "method": "PATCH",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plan_tags/{id}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plan_tags/{id}",
+        "method": "DELETE",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plan_tags/{id}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plans/{id}/participants",
+        "method": "POST",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plans/{id}/participants"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plans/{id}/participants/{participant_id}",
+        "method": "DELETE",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plans/{id}/participants/{participant_id}"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plan/{id}/photos",
+        "method": "POST",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plan/{id}/photos"
+            }
+        ]
+        },
+        {
+        "endpoint": "/api/travel_plan/{id}/photos/{photo_id}",
+        "method": "DELETE",
+        "backend": [
+            {
+            "host": [
+                "http://localhost:8081"
+            ],
+            "url_pattern": "/travel_plan/{id}/photos/{photo_id}"
+            }
+        ]
+        }
+    ]
+  }
