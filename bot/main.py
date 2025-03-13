@@ -10,6 +10,7 @@ from aiogram import Router
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 API_URL = os.getenv("API_URL")
+FILE_SERVER_URL = os.getenv("FILE_SERVER_URL")
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN)
@@ -56,6 +57,7 @@ async def process_bio(message: types.Message, state):
     payload = {
         "telegram_id": message.from_user.id,
         "name": message.from_user.first_name,
+        "avatar": await get_avatar_url(message.from_user),
         "age": data["age"],
         "gender": data["gender"],
         "bio": bio_text
@@ -69,6 +71,37 @@ async def process_bio(message: types.Message, state):
     except Exception:
         await message.answer("Ошибка соединения с сервером.")
     await state.clear()
+
+async def get_avatar_url(user: types.User):
+    try:
+        photos = await bot.get_user_profile_photos(user.id)
+    except Exception as e:
+        logging.error(f"Ошибка получения фотографий пользователя {user.id}: {e}")
+        return ""
+    if photos.total_count == 0:
+        return ""
+    try:
+        photo = photos.photos[0][-1]
+        file_info = await bot.get_file(photo.file_id)
+        file_bytes = await bot.download_file(file_info.file_path)
+    except Exception as e:
+        logging.error(f"Ошибка обработки аватарки пользователя {user.id}: {e}")
+        return ""
+    def upload_file():
+        files = {"file": ("avatar.jpg", file_bytes, "image/jpeg")}
+        try:
+            resp = requests.post(FILE_SERVER_URL + "/files/upload/avatars", files=files)
+            if resp.status_code in [200, 201]:
+                return resp.json().get("path", "")
+            else:
+                logging.error(f"Ошибка загрузки аватарки: статус {resp.status_code}, ответ: {resp.text}")
+                return ""
+        except Exception as e:
+            logging.error(f"Исключение при загрузке аватарки: {e}")
+            return ""
+    avatar_path = await asyncio.to_thread(upload_file)
+    return avatar_path
+
 
 dp.include_router(router)
 
