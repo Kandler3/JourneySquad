@@ -46,4 +46,14 @@
   max-width: calc(100% - 36px);
   flex-shrink: 0;
   width: calc(100% - 94px);
+  margin-right: 8px;
+}
+
+.participant-badge {
+  font-size: 14px;
+  color: white;
+  background-color: #1241a5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 12px; 
 }

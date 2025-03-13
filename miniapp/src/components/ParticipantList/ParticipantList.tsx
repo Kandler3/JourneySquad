@@ -14,7 +14,7 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ participants
         <div className="headerContainer">
             <h2 className="participantsTitle">Участники</h2>
             <ContentSection>
-                {participants.map((participant) => (
+                {participants.map((participant, index) => (
                     <div
                         key={participant.id}
                         onClick={() => onParticipantClick(participant.id)}
@@ -23,6 +23,7 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ participants
                         <ParticipantCard
                             name={participant.name}
                             photoUrl={participant.avatarUrl || ""}
+                            badge={index === 0 ? "Автор" : undefined}
                         />
                     </div>
                 ))}

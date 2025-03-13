@@ -96,7 +96,12 @@ export const UserProfilePage: FC = () => {
                     <Divider className="customDivider" />
                 </div>
                 <h2 className="sectionTitle"> Активные поездки</h2>
-                <TravelPlansCarousel travelPlans={user.activeTravelPlans || []} />
+                {user.activeTravelPlans && user.activeTravelPlans.length > 0 && (
+                    <>
+                        <h2 className="sectionTitle">Активные поездки</h2>
+                        <TravelPlansCarousel travelPlans={user.activeTravelPlans} />
+                    </>
+                )}
             </div>
         </Page>
     );

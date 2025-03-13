@@ -4,6 +4,7 @@ import {TravelPlan} from "@/models/TravelPlan.ts";
 import {initDataRaw} from "@telegram-apps/sdk-react";
 import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 import {User} from "@/models/User.ts";
+import {TravelPlanTag} from "@/models/types.ts";
 
 export class DevApi implements ApiService {
     headers = {
@@ -145,5 +146,31 @@ export class DevApi implements ApiService {
         if (!resp.ok) {
             throw new Error(resp.statusText);
         }
+    }
+
+    async getTravelPlanTag(id: number): Promise<TravelPlanTag> {
+        const url = `/api/travel_plan_tags/${id}`;
+        const resp = await fetch(url, {
+            method: "GET",
+            headers: this.headers,
+        })
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+        return resp.json();
+    }
+
+    async getTravelPlanTags(): Promise<TravelPlanTag[]> {
+        const url = `/api/travel_plan_tags`;
+        const resp = await fetch(url, {
+            method: "GET",
+            headers: this.headers,
+        })
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+        return resp.json();
     }
 }

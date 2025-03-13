@@ -29,6 +29,7 @@ export default defineConfig(({mode} ) => {
       allowedHosts: [".ngrok-free.app"],
       proxy: {
         '/files': process.env.VITE_FILE_SERVER_URL,
+        '/api': process.env.VITE_API_URL,
       }
     },
     define: {'process.env': env}
