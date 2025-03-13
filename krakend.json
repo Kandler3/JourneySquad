@@ -5,15 +5,22 @@
     "port": 8080,
     "cache_ttl": "3600s",
     "timeout": "3s",
+    "extra_config": {
+        "router": {
+            "return_error_msg": true
+        }
+    },
     "endpoints": [
         {
         "endpoint": "/api/users/swagger/{any}",
         "method": "GET",
+        "output_encoding": "no-op",
         "backend": [
             {
             "host": [
-                "http://localhost:8082"
+                "http://userapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/users/swagger/{any}"
             }
         ]
@@ -24,7 +31,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8082"
+                "http://userapi:8080"
             ],
             "url_pattern": "/users"
             }
@@ -36,7 +43,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8082"
+                "http://userapi:8080"
             ],
             "url_pattern": "/users/{id}"
             }
@@ -48,7 +55,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8082"
+                "http://userapi:8080"
             ],
             "url_pattern": "/users/{id}"
             }
@@ -64,7 +71,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8082"
+                "http://userapi:8080"
             ],
             "url_pattern": "/users"
             }
@@ -77,7 +84,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8082"
+                "http://userapi:8080"
             ],
             "url_pattern": "/users/login"
             }
@@ -90,13 +97,13 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8082"
+                "http://userapi:8080"
             ],
             "url_pattern": "/users/{id}"
             },
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans?query=&user_id={id}&sort_by=&ascending=&start_date=&end_date=&tag="
             }
@@ -111,7 +118,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans"
             }
@@ -123,7 +130,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans"
             }
@@ -135,7 +142,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans/{id}"
             }
@@ -147,7 +154,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans/{id}"
             }
@@ -159,7 +166,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans/{id}"
             }
@@ -171,7 +178,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plan_tags"
             }
@@ -183,7 +190,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plan_tags"
             }
@@ -195,7 +202,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plan_tags/{id}"
             }
@@ -207,7 +214,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plan_tags/{id}"
             }
@@ -219,7 +226,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plan_tags/{id}"
             }
@@ -231,7 +238,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans/{id}/participants"
             }
@@ -243,7 +250,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans/{id}/participants/{participant_id}"
             }
@@ -255,7 +262,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plan/{id}/photos"
             }
@@ -267,7 +274,7 @@
         "backend": [
             {
             "host": [
-                "http://localhost:8081"
+                "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plan/{id}/photos/{photo_id}"
             }
