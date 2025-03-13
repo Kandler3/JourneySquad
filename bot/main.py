@@ -45,8 +45,7 @@ async def process_gender(message: types.Message, state):
     if gender_text not in ["м", "ж"]:
         await message.answer("Введите корректное значение: м или ж:")
         return
-    gender = True if gender_text == "м" else False
-    await state.update_data(gender=gender)
+    await state.update_data(gender=gender_text)
     await message.answer("Расскажите немного о себе:")
     await state.set_state(Registration.waiting_for_bio)
 
@@ -56,19 +55,20 @@ async def process_bio(message: types.Message, state):
     data = await state.get_data()
     payload = {
         "telegram_id": message.from_user.id,
+        "name": message.from_user.first_name,
         "age": data["age"],
         "gender": data["gender"],
         "bio": bio_text
     }
     try:
-        resp = requests.post(API_URL + "/api/users", json=payload)
+        resp = requests.post(API_URL + "/users", json=payload)
         if resp.status_code in [200, 201]:
             await message.answer("Регистрация прошла успешно! Перейдите в миниапп")
         else:
             await message.answer("Ошибка регистрации. Попробуйте позже.")
     except Exception:
         await message.answer("Ошибка соединения с сервером.")
-    await state.clear_state()
+    await state.clear()
 
 dp.include_router(router)
 
