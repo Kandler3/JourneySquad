@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import {FC, useEffect, useMemo, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { PhotoCarousel } from "@/components/PhotoCarousel/PhotoCarousel.tsx";
@@ -50,19 +50,35 @@ export const TravelPlanViewPage: FC = () => {
         loadTravelPlan();
     }, [travelPlanId]);
 
-    const [participants, setParticipants] = useState<User[]>([])
     useEffect(() => {
-        if (travelPlan === null)
-            return
-        setParticipants([
+        if (travelPlan && currentUser) {
+            const isUserAuthor = travelPlan.author?.id === currentUser.id;
+            setIsAuthor(isUserAuthor);
+
+            const isParticipant = travelPlan.participants.some(p => p.id === currentUser.id);
+            setIsJoined(isParticipant || isUserAuthor);
+        }
+    }, [travelPlan?.participants, currentUser]);
+
+    const participants = useMemo(() => {
+        if (!travelPlan || !currentUser) return [];
+
+        return [
             ...travelPlan.participants
+                .filter(p => p.id !== currentUser.id)
                 .map(user => ({
                     id: user.id,
                     name: user.name || "Unknown",
                     avatarUrl: user.avatarUrl || "default-avatar-url",
                 })),
-        ])
-    }, [travelPlan, isJoined]);
+            ...(travelPlan.participants.some(p => p.id === currentUser.id) ? [{
+                id: currentUser.id,
+                name: currentUser.name || "Unknown",
+                avatarUrl: currentUser.avatarUrl || "default-avatar-url",
+            }] : []),
+        ];
+    }, [travelPlan, currentUser]);
+
 
     const handleParticipantClick = (participantId: number) => {
         navigate(`/profile/${participantId}`);
@@ -77,6 +93,8 @@ export const TravelPlanViewPage: FC = () => {
 
         try {
             await joinTravelPlan(Number(travelPlanId));
+            const updatedPlan = await fetchTravelPlan(Number(travelPlanId));
+            setTravelPlan(updatedPlan);
             setIsJoined(true);
         } catch (err) {
             setError("Ошибка при присоединении к путешествию");
@@ -90,6 +108,8 @@ export const TravelPlanViewPage: FC = () => {
         try {
             const currentUser = await fetchCurrentUser();
             await deleteParticipant(Number(travelPlanId), currentUser.id);
+            const updatedPlan = await fetchTravelPlan(Number(travelPlanId));
+            setTravelPlan(updatedPlan);
             setIsJoined(false);
         } catch (err) {
             setError("Ошибка при выходе из путешествия");
