@@ -89,14 +89,20 @@ export const UserProfilePage: FC = () => {
                 </div>
                 <div className="additionalInfo">
                 <Divider className="customDivider" />
-                    <div className="infoItem">
-                        <strong>Пол:</strong>
-                        <div>{user.gender}</div>
+                <div className="infoItem">
+                    <strong>Пол:</strong>
+                    <div>
+                        {user.gender === 'ж' ? 'Женский' : user.gender === 'м' ? 'Мужской' : 'Не указан'}
                     </div>
-                    <Divider className="customDivider" />
                 </div>
-                <h2 className="sectionTitle"> Активные поездки</h2>
-                <TravelPlansCarousel travelPlans={user.activeTravelPlans || []} />
+            <Divider className="customDivider" />
+                </div>
+                {user.activeTravelPlans && user.activeTravelPlans.length > 0 && (
+                    <>
+                        <h2 className="sectionTitle">Активные поездки</h2>
+                        <TravelPlansCarousel travelPlans={user.activeTravelPlans} />
+                    </>
+                )}
             </div>
         </Page>
     );

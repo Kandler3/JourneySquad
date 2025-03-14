@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { PhotoCarousel } from "@/components/PhotoCarousel/PhotoCarousel.tsx";
 import { TravelPlan } from "@/models/TravelPlan";
+import {User} from "@/models/User";
 import "./TravelPlanViewPage.css";
 import { ParticipantsList } from "@/components/ParticipantList/ParticipantList.tsx";
 import { fetchTravelPlan, joinTravelPlan, deleteParticipant, fetchCurrentUser } from "@/services/travelPlanService";
@@ -13,6 +14,8 @@ export const TravelPlanViewPage: FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [isJoined, setIsJoined] = useState<boolean>(false);
+    const [isAuthor, setIsAuthor] = useState<boolean>(false);
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,8 +31,11 @@ export const TravelPlanViewPage: FC = () => {
                 setTravelPlan(plan);
                 if (plan) { 
                     const currentUser = await fetchCurrentUser();
+                    setCurrentUser(currentUser); 
+                    const isUserAuthor = plan.author?.id === currentUser.id;
+                    setIsAuthor(isUserAuthor);
                     const isParticipant = plan.participants.some(p => p.id === currentUser.id);
-                    setIsJoined(isParticipant);
+                    setIsJoined(isParticipant || isUserAuthor);
                 }
             } catch (err) {
                 setError("Ошибка при загрузке данных");
@@ -83,11 +89,26 @@ export const TravelPlanViewPage: FC = () => {
     }
 
     const photoUrls = travelPlan.photos.map(photo => photo.getAbsoluteUrl());
-    const participants = travelPlan.participants.map(user => ({
-        id: user.id,
-        name: user.name || "Unknown",
-        avatarUrl: user.avatarUrl || "default-avatar-url",
-    }));
+    const participants = [
+        ...(travelPlan.author ? [{
+            id: travelPlan.author.id,
+            name: travelPlan.author.name || "Unknown",
+            avatarUrl: travelPlan.author.avatarUrl || "default-avatar-url",
+            badge: "Автор",
+        }] : []),
+        ...travelPlan.participants
+            .filter(p => !currentUser || p.id !== currentUser.id)
+            .map(user => ({
+                id: user.id,
+                name: user.name || "Unknown",
+                avatarUrl: user.avatarUrl || "default-avatar-url",
+            })),
+        ...(currentUser && travelPlan.participants.some(p => p.id === currentUser.id) ? [{
+            id: currentUser.id,
+            name: currentUser.name || "Unknown",
+            avatarUrl: currentUser.avatarUrl || "default-avatar-url",
+        }] : []),
+    ];
 
     return (
         <Page>
@@ -116,12 +137,14 @@ export const TravelPlanViewPage: FC = () => {
                             onParticipantClick={handleParticipantClick}
                         />
                     </div>
-                    <button 
-                        className={isJoined ? "leaveButton" : "joinButton"} 
-                        onClick={isJoined ? handleLeaveClick : handleJoinClick}
-                    >
-                        {isJoined ? "Вы уже присоединились" : "Присоединиться"}
-                    </button>
+                    {!isAuthor && (
+                        <button 
+                            className={isJoined ? "leaveButton" : "joinButton"} 
+                            onClick={isJoined ? handleLeaveClick : handleJoinClick}
+                        >
+                            {isJoined ? "Вы уже присоединились" : "Присоединиться"}
+                        </button>
+                    )}
                 </div>
             </div>
         </Page>

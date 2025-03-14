@@ -17,7 +17,7 @@ export async function fetchTravelPlans(query?: TravelPlanQuery): Promise<TravelP
 
 export async function fetchUser(id: number): Promise<User> {
     try {
-        return await apiService.getUser(id);
+        return await apiService.getUser(id, true);
     } catch (error) {
         console.error('Ошибка при загрузке пользователя:', error);
         throw error;

@@ -156,14 +156,14 @@ export const EditProfilePage: FC = () => {
                     <ContentInlineSection title="Пол">
                         <div className="button-group">
                             <Button
-                                mode={selectedGender === "Мужской" ? "filled" : "outline"}
-                                onClick={() => handleGenderSelect("Мужской")}
+                                mode={selectedGender === "м" ? "filled" : "outline"}
+                                onClick={() => handleGenderSelect("м")}
                             >
                                 Мужской
                             </Button>
                             <Button
-                                mode={selectedGender === "Женский" ? "filled" : "outline"}
-                                onClick={() => handleGenderSelect("Женский")}
+                                mode={selectedGender === "ж" ? "filled" : "outline"}
+                                onClick={() => handleGenderSelect("ж")}
                             >
                                 Женский
                             </Button>

@@ -11,15 +11,14 @@ import (
 )
 
 type User struct {
-	ID           int       `json:"id"`
-	CreatedAt    time.Time `json:"created_at"`
-	EditedAt     time.Time `json:"edited_at"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"password"`
-	IsAdmin      bool      `json:"is_admin"`
-	Name         string    `json:"name"`
-	Avatar       string    `json:"avatar"`
-	ProfileID    int       `json:"profile_id"`
+	ID         int       `json:"id"`
+	CreatedAt  time.Time `json:"created_at"`
+	EditedAt   time.Time `json:"edited_at"`
+	TelegramID int64     `json:"telegram_id"`
+	IsAdmin    bool      `json:"is_admin"`
+	Name       string    `json:"name"`
+	Avatar     string    `json:"avatar"`
+	ProfileID  int       `json:"profile_id"`
 }
 
 type Profile struct {
@@ -27,100 +26,121 @@ type Profile struct {
 	CreatedAt time.Time `json:"created_at"`
 	EditedAt  time.Time `json:"edited_at"`
 	Age       int       `json:"age"`
-	Gender    bool      `json:"gender"`
+	Gender    string    `json:"gender"`
+	Bio       string    `json:"bio"`
 }
 
-type UserResponse struct {
-	User    *User    `json:"user"`
-	Profile *Profile `json:"profile,omitempty"`
+type UserView struct {
+	TelegramID int64  `json:"id"`
+	Name       string `json:"name"`
+	Age        int    `json:"age"`
+	Gender     string `json:"gender"`
+	Bio        string `json:"bio"`
+	Avatar     string `json:"avatarUrl"`
 }
 
 type CreateUserInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	IsAdmin  bool   `json:"is_admin"`
-	Name     string `json:"name"`
-	Avatar   string `json:"avatar"`
-	Age      int    `json:"age"`
-	Gender   bool   `json:"gender"`
+	TelegramID int64  `json:"telegram_id"`
+	IsAdmin    bool   `json:"is_admin"`
+	Name       string `json:"name"`
+	Avatar     string `json:"avatar"`
+	Age        int    `json:"age"`
+	Gender     string `json:"gender"`
+	Bio        string `json:"bio"`
 }
 
 type UpdateUserInput struct {
-	Email   *string `json:"email,omitempty"`
 	Name    *string `json:"name,omitempty"`
 	Avatar  *string `json:"avatar,omitempty"`
+	Bio     *string `json:"bio"`
 	IsAdmin *bool   `json:"is_admin,omitempty"`
 }
 
-func GetUserByID(ctx context.Context, userID int) (*User, error) {
-	query := "SELECT id, email, name, avatar, profile_id FROM users WHERE id = $1"
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
 
-	row := db.QueryRow(1, ctx, query, userID)
+type UnauthorisedResponse struct {
+	Message string `json:"message"`
+}
+
+func GetUserByTelegramID(ctx context.Context, telegramID int64) (*UserView, error) {
+	query := "SELECT telegram_id, name, avatar, profile_id FROM users WHERE telegram_id = $1"
+
+	row := db.QueryRow(ctx, query, telegramID)
 
 	var user User
-	if err := row.Scan(&user.ID, &user.Email, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
+	if err := row.Scan(&user.TelegramID, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("error retrieving user: %w", err)
+		return nil, fmt.Errorf("error retrieving user by telegram_id: %w", err)
+	}
+	userView, err := buildUserView(ctx, user)
+	if err != nil {
+		return nil, err
 	}
 
-	return &user, nil
+	return userView, nil
 }
 
-func GetAllUsers(ctx context.Context) ([]User, error) {
-	query := "SELECT id, email, name, avatar, profile_id FROM users"
+func GetAllUsers(ctx context.Context) ([]UserView, error) {
+	query := "SELECT telegram_id, name, avatar, profile_id FROM users"
 
-	rows, err := db.Query(1, ctx, query)
+	rows, err := db.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var users []User
+	var users []UserView
 	for rows.Next() {
 		var user User
-		if err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
+		if err := rows.Scan(&user.TelegramID, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
 			return nil, err
 		}
-		users = append(users, user)
+
+		userView, err := buildUserView(ctx, user)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, *userView)
 	}
 
 	return users, nil
 }
 
-func CreateUser(ctx context.Context, input CreateUserInput) (*User, error) {
+func CreateUser(ctx context.Context, input CreateUserInput) (*UserView, error) {
 	profile, err := createProfile(ctx, input)
 	if err != nil {
 		return nil, err
 	}
 
 	query := `
-		INSERT INTO users (email, password, is_admin, name, avatar, profile_id, created_at, edited_at)
-		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-		RETURNING id, email, name, avatar, profile_id
+		INSERT INTO users (is_admin, name, avatar, profile_id, telegram_id, created_at, edited_at)
+		VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+		RETURNING telegram_id, name, avatar, profile_id
 	`
 
 	// TODO: password hashing
-	row := db.QueryRow(1, ctx, query, input.Email, input.Password, input.IsAdmin, input.Name, input.Avatar, profile.ID)
+	row := db.QueryRow(ctx, query, input.IsAdmin, input.Name, input.Avatar, profile.ID, input.TelegramID)
 	var user User
-	if err := row.Scan(&user.ID, &user.Email, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
+	if err := row.Scan(&user.TelegramID, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
+		return nil, err
+	}
+	userView, err := buildUserView(ctx, user)
+	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return userView, nil
 }
 
-func UpdateUser(ctx context.Context, userID int, input UpdateUserInput) error {
+func UpdateUser(ctx context.Context, telegramID int64, input UpdateUserInput) error {
 	var fields []string
-	var args []interface{}
+	var args []any
 	argID := 1
 
-	if input.Email != nil {
-		fields = append(fields, fmt.Sprintf("email = $%d", argID))
-		args = append(args, *input.Email)
-		argID++
-	}
 	if input.Name != nil {
 		fields = append(fields, fmt.Sprintf("name = $%d", argID))
 		args = append(args, *input.Name)
@@ -129,6 +149,11 @@ func UpdateUser(ctx context.Context, userID int, input UpdateUserInput) error {
 	if input.Avatar != nil {
 		fields = append(fields, fmt.Sprintf("avatar = $%d", argID))
 		args = append(args, *input.Avatar)
+		argID++
+	}
+	if input.Bio != nil {
+		fields = append(fields, fmt.Sprintf("bio = $%d", argID))
+		args = append(args, *input.Bio)
 		argID++
 	}
 	if input.IsAdmin != nil {
@@ -143,25 +168,25 @@ func UpdateUser(ctx context.Context, userID int, input UpdateUserInput) error {
 
 	// Update edited_at field
 	fields = append(fields, "edited_at = NOW()")
-	query := fmt.Sprintf("UPDATE users SET %s WHERE id = $%d", strings.Join(fields, ", "), argID)
-	args = append(args, userID)
+	query := fmt.Sprintf("UPDATE users SET %s WHERE telegram_id = $%d", strings.Join(fields, ", "), argID)
+	args = append(args, telegramID)
 
-	_, err := db.Exec(1, ctx, query, args...)
+	_, err := db.Exec(ctx, query, args...)
 	return err
 }
 
-func DeleteUser(ctx context.Context, userID int) error {
-	query := "DELETE FROM users WHERE id = $1"
-	_, err := db.Exec(1, ctx, query, userID)
+func DeleteUser(ctx context.Context, telegramID int64) error {
+	query := "DELETE FROM users WHERE telegram_id = $1"
+	_, err := db.Exec(ctx, query, telegramID)
 	return err
 }
 
 func GetProfileByID(ctx context.Context, profileID int) (*Profile, error) {
-	query := "SELECT id, created_at, edited_at, age, gender FROM profiles WHERE id = $1"
+	query := "SELECT id, created_at, edited_at, age, gender, bio FROM profiles WHERE id = $1"
 
-	row := db.QueryRow(1, ctx, query, profileID)
+	row := db.QueryRow(ctx, query, profileID)
 	var profile Profile
-	if err := row.Scan(&profile.ID, &profile.CreatedAt, &profile.EditedAt, &profile.Age, &profile.Gender); err != nil {
+	if err := row.Scan(&profile.ID, &profile.CreatedAt, &profile.EditedAt, &profile.Age, &profile.Gender, &profile.Bio); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -171,16 +196,31 @@ func GetProfileByID(ctx context.Context, profileID int) (*Profile, error) {
 	return &profile, nil
 }
 
+func buildUserView(ctx context.Context, user User) (*UserView, error) {
+	profile, err := GetProfileByID(ctx, user.ProfileID)
+	if err != nil {
+		return nil, err
+	}
+	return &UserView{
+		user.TelegramID,
+		user.Name,
+		profile.Age,
+		profile.Gender,
+		profile.Bio,
+		user.Avatar,
+	}, nil
+}
+
 func createProfile(ctx context.Context, input CreateUserInput) (*Profile, error) {
 	query := `
-		INSERT INTO profiles (age, gender, created_at, edited_at)
-		VALUES ($1, $2, NOW(), NOW())
-		RETURNING id, age, gender
+		INSERT INTO profiles (age, gender, bio, created_at, edited_at)
+		VALUES ($1, $2, $3, NOW(), NOW())
+		RETURNING id, age, gender, bio
 	`
 
-	row := db.QueryRow(1, ctx, query, input.Age, input.Gender)
+	row := db.QueryRow(ctx, query, input.Age, input.Gender, input.Bio)
 	var profile Profile
-	if err := row.Scan(&profile.ID, &profile.Age, &profile.Gender); err != nil {
+	if err := row.Scan(&profile.ID, &profile.Age, &profile.Gender, &profile.Bio); err != nil {
 		return nil, err
 	}
 

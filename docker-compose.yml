@@ -1,8 +1,21 @@
 services:
+  krakend_ce:
+    # The :watch image restarts the service automatically when the configuration files change.
+    # Do not use this image in production, it's meant to speed up your testing and development.
+    image: devopsfaith/krakend:watch
+    volumes:
+      - .:/etc/krakend
+    ports:
+      - "8080:8080"
+    command: ["run", "-d", "-c", "krakend.json"]
+    depends_on:
+      - userapi
+      - travelplanapi
+
   userapi:
     build: ./api
     ports:
-      - "8080:8080"
+      - "8082:8080"
     depends_on:
       db1:
         condition: service_healthy
@@ -31,10 +44,13 @@ services:
       - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 2s
+      interval: 3s
+      retries: 5
+      start_period: 10s
     volumes:
       - db_data1:/var/lib/postgresql/data
     restart: unless-stopped
+
   db2:
     image: postgres:13-alpine
     environment:
@@ -46,6 +62,8 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 3s
+      retries: 5
+      start_period: 10s
     volumes:
       - db_data2:/var/lib/postgresql/data
     restart: unless-stopped

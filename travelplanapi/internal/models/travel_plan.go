@@ -422,7 +422,7 @@ func GetAllTPTags(ctx context.Context) ([]TravelPlanTag, error) {
 		FROM tp_tags
 	`
 
-	rows, err := db.Query( ctx, query)
+	rows, err := db.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}

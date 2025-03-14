@@ -14,10 +14,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var instance1 *sql.DB
-var instance2 *sql.DB
+var instance *sql.DB
 
-func InitDB(num byte) error {
+func InitDB() error {
 	dsn := os.Getenv("DATABASE_URL")
 
 	db, err := sql.Open("postgres", dsn)
@@ -39,11 +38,7 @@ func InitDB(num byte) error {
 		return fmt.Errorf("migration error: %w", err)
 	}
 
-	if num == 1 {
-		instance1 = db
-	} else {
-		instance2 = db
-	}
+	instance = db
 	log.Println("✅ Database connection successfully established")
 	return nil
 }
@@ -69,13 +64,7 @@ func runMigrations(db *sql.DB) error {
 	return nil
 }
 
-func CloseDB(num byte) {
-	var instance *sql.DB
-	if num == 1 {
-		instance = instance1
-	} else {
-		instance = instance2
-	}
+func CloseDB() {
 	if instance != nil {
 		if err := instance.Close(); err != nil {
 			log.Printf("Error closing database connection: %v", err)
@@ -85,26 +74,14 @@ func CloseDB(num byte) {
 	}
 }
 
-func Query(num byte, ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
-	if num == 1 {
-		return instance1.QueryContext(ctx, query, args...)
-	} else {
-		return instance2.QueryContext(ctx, query, args...)
-	}
+func Query(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
+	return instance.QueryContext(ctx, query, args...)
 }
 
-func QueryRow(num byte, ctx context.Context, query string, args ...interface{}) *sql.Row {
-	if num == 1 {
-		return instance1.QueryRowContext(ctx, query, args...)
-	} else {
-		return instance2.QueryRowContext(ctx, query, args...)
-	}
+func QueryRow(ctx context.Context, query string, args ...interface{}) *sql.Row {
+	return instance.QueryRowContext(ctx, query, args...)
 }
 
-func Exec(num byte, ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	if num == 1 {
-		return instance1.ExecContext(ctx, query, args...)
-	} else {
-		return instance2.ExecContext(ctx, query, args...)
-	}
+func Exec(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+	return instance.ExecContext(ctx, query, args...)
 }
