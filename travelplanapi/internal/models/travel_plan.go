@@ -427,22 +427,46 @@ func UpdateTravelPlan(ctx context.Context, TravelPlanID int, input UpdateTPInput
 		UPDATE travel_plans
 		SET
 			edited_at = $1,
-			title = COALESCE($2, title),
-			start_date = COALESCE($3, start_date),
-			end_date = COALESCE($4, end_date),
-			description = COALESCE($5, description),
-			author = COALESCE($6, author)
-		WHERE id = $7
+			title = COALESCE($2, travel_plans.title),
+			start_date = COALESCE($3, travel_plans.start_date),
+			end_date = COALESCE($4, travel_plans.end_date),
+			description = COALESCE($5, travel_plans.description)
+		WHERE id = $6
 	`
+	var startDate, endDate *time.Time
+	var title *string
+	var desc *string
+	if input.StartDate.Equal(time.Time{}) {
+		startDate = nil
+	} else {
+		startDate = &input.StartDate
+	}
+
+	if input.EndDate.Equal(time.Time{}) {
+		endDate = nil
+	} else {
+		endDate = &input.EndDate
+	}
+
+	if input.Title == "" {
+		title = nil
+	} else {
+		title = &input.Title
+	}
+
+	if input.Description == "" {
+		desc = nil
+	} else {
+		desc = &input.Description
+	}
 	_, err := db.Exec(
 		ctx,
 		query,
 		time.Now(),
-		input.Title,
-		input.StartDate,
-		input.EndDate,
-		input.Description,
-		input.AuthorId,
+		title,
+		startDate,
+		endDate,
+		desc,
 		TravelPlanID,
 	)
 	if err != nil {
