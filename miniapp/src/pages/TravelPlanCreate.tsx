@@ -32,8 +32,11 @@ export const TravelPlanCreatePage : FC = () => {
         travelPlan.photos = photos;
         travelPlan.participants = participants;
 
-        setTravelPlan(await createTravelPlan(travelPlan))
-        navigate(`/travel-plans/${travelPlan.id}`)
+        const newTravelPlan = await createTravelPlan(travelPlan);
+        console.log("new travel plan", newTravelPlan)
+        setTravelPlan(newTravelPlan)
+        console.log("navigating to ", newTravelPlan.id)
+        navigate(`/travel-plans/${newTravelPlan.id}`)
     }
 
     const handleDelete = () => {navigate("/travel-plans")}

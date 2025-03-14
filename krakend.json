@@ -3,7 +3,7 @@
     "version": 3,
     "name": "KrakenD API Gateway",
     "port": 8080,
-    "cache_ttl": "3600s",
+    "cache_ttl": "0s",
     "timeout": "3s",
     "extra_config": {
         "router": {

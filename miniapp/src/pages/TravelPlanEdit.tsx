@@ -3,7 +3,12 @@ import {Page} from "@/components/Page.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 
 import {TravelPlan} from "@/models/TravelPlan.ts";
-import {fetchTravelPlan, updateTravelPlan, deleteTravelPlan} from "@/services/travelPlanService.ts";
+import {
+    fetchTravelPlan,
+    updateTravelPlan,
+    deleteTravelPlan,
+    createTravelPlanPhoto, deleteTravelPlanPhoto, deleteParticipant
+} from "@/services/travelPlanService.ts";
 import {NotFoundPage} from "@/pages/NotFound.tsx";
 import {LoadingPage} from "@/pages/Loading.tsx";
 import {TravelPlanTag, User} from "@/models/types.ts";
@@ -84,8 +89,24 @@ const TravelPlanEditPage : FC<TravelPlanEditPageProps> = ({editingTravelPlan}) =
         if (startDate !== travelPlan.startDate) updates.startDate = startDate;
         if (endDate !== travelPlan.endDate) updates.endDate = endDate;
         if (!areSetsEqual(getIdSet(activeTags), getIdSet(travelPlan.tags))) updates.tags = activeTags;
-        if (!areSetsEqual(getIdSet(photos), getIdSet(travelPlan.photos))) updates.photos = photos;
-        if (!areSetsEqual(getIdSet(participants), getIdSet(travelPlan.participants))) updates.participants = participants;
+        if (!areSetsEqual(getIdSet(photos), getIdSet(travelPlan.photos))) {
+            photos.map(photo => {
+                if (travelPlan.id && !travelPlan.photos.some(p => photo.url === p.url))
+                    createTravelPlanPhoto(travelPlan.id, photo)
+            })
+
+            travelPlan.photos?.map(photo => {
+                if (travelPlan.id && !photos.some(p => p.url === photo.url))
+                    deleteTravelPlanPhoto(travelPlan.id, photo.id)
+            })
+        }
+        if (!areSetsEqual(getIdSet(participants), getIdSet(travelPlan.participants))) {
+            travelPlan.participants.map(user => {
+                if (travelPlan.id && !participants.some(p => p.id === user.id)) {
+                    deleteParticipant(travelPlan.id, user.id)
+                }
+            })
+        }
 
         if (Object.keys(updates).length === 0) {
             return;

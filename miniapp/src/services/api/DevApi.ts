@@ -4,6 +4,7 @@ import {TravelPlan} from "@/models/TravelPlan.ts";
 import {User} from "@/models/User.ts";
 import {TravelPlanTag} from "@/models/types.ts";
 import {retrieveLaunchParams} from "@telegram-apps/sdk-react";
+import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 
 export class DevApi implements ApiService {
     headers;
@@ -226,5 +227,29 @@ export class DevApi implements ApiService {
             throw new Error(resp.statusText);
         }
     }
-    
+
+    async createTravelPlanPhoto(id: number, photo: TravelPlanPhoto): Promise<void> {
+        const url = `/api/travel_plan/${id}/photos`;
+        const resp = await fetch(url, {
+            method: "POST",
+            headers: this.headers,
+            body: JSON.stringify(photo),
+        });
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+    }
+
+    async deleteTravelPlanPhoto(id: number, photoID: number): Promise<void> {
+        const url = `/api/travel_plan/${id}/photos/${photoID}`;
+        const resp = await fetch(url, {
+            method: "DELETE",
+            headers: this.headers
+        });
+
+        if (!resp.ok) {
+            throw new Error(resp.statusText);
+        }
+    }
 }

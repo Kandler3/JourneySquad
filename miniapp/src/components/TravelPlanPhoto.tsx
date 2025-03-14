@@ -1,6 +1,6 @@
 import {FC} from "react";
 
-import { TravelPlanPhoto } from "@/models/types.ts";
+import { TravelPlanPhoto } from "@/models/TravelPlanPhoto.ts";
 
 type TravelPlanPhotoProps = {
     photo : TravelPlanPhoto;
