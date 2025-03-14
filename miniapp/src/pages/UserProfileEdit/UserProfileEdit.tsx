@@ -9,6 +9,7 @@ import { ContentInlineSection } from "@/components/ContentInlineSection/ContentI
 import { Button } from "@telegram-apps/telegram-ui";
 import "./UserProfileEdit.css";
 import {UserContext} from "@/contexts/UserContext.ts";
+import {uploadAvatar} from "@/services/fileService.ts";
 
 export const EditProfilePage: FC = () => {
     const currentUser = useContext(UserContext);
@@ -65,22 +66,21 @@ export const EditProfilePage: FC = () => {
         }
     };
 
-    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const result = event.target?.result;
-                if (typeof result === "string" && user) {
-                    setUser((prevUser) => ({
-                        ...prevUser!,
-                        avatarUrl: result,
-                    }));
-                }
-            };
-            reader.readAsDataURL(file);
+        if (file && user) {
+            try {
+                const url = await uploadAvatar(file);
+                setUser((prevUser) => ({
+                    ...prevUser!,
+                    avatarUrl: url,
+                }));
+            } catch (error) {
+                console.error("Ошибка загрузки аватара:", error);
+            }
         }
     };
+
 
     const handleGenderSelect = (gender: string) => {
         setSelectedGender((prevGender) => (prevGender === gender ? "" : gender));

@@ -24,10 +24,9 @@ export const TravelPlanCard: FC<TravelPlanCardProps> = ({travelPlan, style}) => 
                 </div>
             {style === "horizontal" ?
                 <AvatarStack>
-                <Avatar acronym="A"/>
-                <Avatar acronym="A"/>
-                <Avatar acronym="A"/>
-                <Avatar acronym="A"/>
+                    {travelPlan.participants.slice(0, 4).map(user =>
+                        <Avatar key={`avatar-${user.id}`} src={user.avatarUrl} acronym={user.name.at(0) ?? "A"}/>
+                    )}
                 </AvatarStack>
                 :
                 <></>

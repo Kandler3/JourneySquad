@@ -10,7 +10,7 @@ import "./NavBar.css"
 export function NavBar() {
     return (
       <div className="nav-bar">
-        <NavLink className="nav-link" to='/home'>
+        <NavLink className="nav-link" to='/'>
           <Icon28Home />
         </NavLink>
         <NavLink className="nav-link" to='/travel-plans'>

@@ -150,8 +150,15 @@ export class MockApiService implements ApiService {
     }
 
     async getCurrentUser(): Promise<User> {
-        return users[0];
+        const user = users[0];
+        user.activeTravelPlans = travelPlans.filter(
+            tp =>
+                tp.author?.id === user.id
+                || tp.participants.map(p => p.id).includes(user.id)
+        );
+        return Promise.resolve(user);
     }
+
 
     async joinTravelPlan(travelPlanId: number): Promise<void> {
         const travelPlan = travelPlans.find(tp => tp.id === travelPlanId);
