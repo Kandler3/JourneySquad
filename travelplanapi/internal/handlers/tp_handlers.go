@@ -256,7 +256,7 @@ func DeleteTPTagHandler(c *gin.Context) {
 }
 
 // POST /travel_plans/{id}/participants
-func AddParticipantHandler(c *gin.Context) {
+func AddParticipanToTPtHandler(c *gin.Context) {
 	tpID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
@@ -287,7 +287,7 @@ func DeleteParticipant(c *gin.Context) {
 	if err != nil {
 		return
 	}
-
+	log.Println(ID, participantID)
 	ctx := c.Request.Context()
 	if err := models.DeleteParticipantfromTP(ctx, ID, participantID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

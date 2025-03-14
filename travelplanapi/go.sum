@@ -4,6 +4,8 @@ github.com/Kandler3/JourneySquad/api v1.0.0 h1:04xWy0BCF1oacZBoDwSn10rhjoGb6WXfM
 github.com/Kandler3/JourneySquad/api v1.0.0/go.mod h1:x5IdiKeKmMGsEXSh44k0AECqlUVtBDM1Bz41FIJbp0k=
 github.com/Kandler3/JourneySquad/api v1.0.1 h1:fSehBrlfw3af38hwMYQeyXI16pXZe0PYDiEjpjzEMgw=
 github.com/Kandler3/JourneySquad/api v1.0.1/go.mod h1:hBmbNONLxthC7EjYxXCasFtIRGg4ywpo1nqR+yQ0FVY=
+github.com/Kandler3/JourneySquad/api v1.0.2 h1:O+A3qZbulZ6MS6c+uDJXKi1xbn6htUUuce1HtD1LpWw=
+github.com/Kandler3/JourneySquad/api v1.0.2/go.mod h1:hBmbNONLxthC7EjYxXCasFtIRGg4ywpo1nqR+yQ0FVY=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/bytedance/sonic v1.12.8 h1:4xYRVRlXIgvSZ4e8iVTlMF5szgpXd4AfvuWgA8I8lgs=
