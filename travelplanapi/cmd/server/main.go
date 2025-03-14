@@ -3,8 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/Kandler3/JourneySquad/api/pkg/db"
+	"github.com/Kandler3/JourneySquad/api/pkg/middlewares"
 	"github.com/Kandler3/JourneySquad/travelplanapi/internal/handlers"
 	"github.com/gin-gonic/gin"
 )
@@ -18,8 +20,8 @@ func main() {
 	r := initServer()
 
 	// secret bot token.
-	//token := os.Getenv("BOT_TOKEN")
-	//r.Use(middlewares.AuthMiddleware(token))
+	token := os.Getenv("BOT_TOKEN")
+	r.Use(middlewares.AuthMiddleware(token))
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -27,8 +29,8 @@ func main() {
 		})
 	})
 
-	r.GET("/travel_plans", handlers.UserGetTPHandler)
-	r.POST("/travel_plans", handlers.CreateTravelPlanHandler)
+	r.GET("/travel_plans", handlers.UserGetTPHandler) 
+	r.POST("/travel_plans", handlers.CreateTravelPlanHandler) //
 
 	r.GET("/travel_plans/:id", handlers.GetTPByIdHandler)
 
@@ -48,6 +50,8 @@ func main() {
 
 	r.POST("/travel_plan/:id/photos", handlers.CreateTpPhotoHandler)             //
 	r.DELETE("/travel_plan/:id/photos/:photo_id", handlers.DeleteTPPhotoHandler) //
+
+	r.GET("/travel_plans/login", handlers.GetActiveTPsByIdHandler)
 
 	r.Run()
 }

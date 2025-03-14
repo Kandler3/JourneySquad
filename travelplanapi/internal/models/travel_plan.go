@@ -206,7 +206,7 @@ func GetUserByTgId(ctx context.Context, telegramId int64) (*UserView, error){
 	return &author, nil
 }
 
-func getTelegramIdFromCtx(ctx context.Context) (int64, bool) {
+func GetTelegramIdFromCtx(ctx context.Context) (int64, bool) {
 	initData, ok := middlewares.CtxInitData(ctx)
 	if !ok {
 		return 0, false
@@ -250,16 +250,19 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 		return nil, err
 	}
 	log.Println(tp.StartDate, tp.EndDate)
-	// user, err := GetUserByTgId(strconv.Itoa(authorId))
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// if (*user).TelegramID != tp.AuthorId.TelegramID {
-	// 	return nil, fmt.Errorf("wrong telegram")
-	// }
-	// tp.AuthorId = *user
-	//tpPtcpt, err := AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: int(user.TelegramID)})
-	tp.Participants = input.Participants//[]TravelPlanParticipant{*tpPtcpt}
+	user, err := GetUserByTgId(ctx, int64(authorId))
+	if err != nil {
+		return nil, err
+	}
+	if (*user).TelegramID != tp.AuthorId.TelegramID {
+		return nil, fmt.Errorf("wrong telegram")
+	}
+	tp.AuthorId = *user
+	tpPtcpt, err := AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: int(user.TelegramID)})
+	if err != nil {
+		return nil, err
+	}
+	tp.Participants = []TravelPlanParticipant{*tpPtcpt}
 	_, err = AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: authorId})
 	if err != nil {
 		return nil, err
@@ -973,4 +976,35 @@ func GetTpPhotoById(ctx context.Context, Id int) (*TravelPlanPhoto, error) {
 	}
 
 	return &tpPhoto, nil
+}
+
+func GetActiveTPsById(ctx context.Context) ([]TravelPlan, error) {
+	query := `
+		SELECT * FROM travel_plans
+		WHERE author = $1
+	`
+	authorId, ok := GetTelegramIdFromCtx(ctx)
+	if !ok {
+		return nil, fmt.Errorf("wrong tg")
+	}
+	user, err := GetUserByTgId(ctx, int64(authorId))
+	if err != nil {
+		return nil, err
+	}
+	activeTps := make([]TravelPlan, 0)
+	rows, err := db.Query(ctx, query, user.TelegramID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var tp TravelPlan
+		err := rows.Scan(&tp.ID, &tp.CreatedAt, &tp.EditedAt, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &tp.AuthorId.TelegramID)
+		if err != nil {
+			return nil, err
+		}
+		activeTps = append(activeTps, tp)
+		tp.AuthorId = *user
+	}
+	return activeTps, nil
 }

@@ -380,3 +380,14 @@ func DeleteTPPhotoHandler(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+
+// GET /travel_plans/login
+func GetActiveTPsByIdHandler(c *gin.Context) {
+	ctx := c.Request.Context()
+	Tps, err := models.GetActiveTPsById(ctx)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return 
+	}
+	c.JSON(http.StatusOK, Tps)
+}
