@@ -43,7 +43,7 @@ type CreateUserInput struct {
 	TelegramID int64  `json:"telegram_id"`
 	IsAdmin    bool   `json:"is_admin"`
 	Name       string `json:"name"`
-	Avatar     string `json:"avatar"`
+	Avatar     string `json:"avatarUrl"`
 	Age        int    `json:"age"`
 	Gender     string `json:"gender"`
 	Bio        string `json:"bio"`
@@ -51,8 +51,10 @@ type CreateUserInput struct {
 
 type UpdateUserInput struct {
 	Name    *string `json:"name,omitempty"`
-	Avatar  *string `json:"avatar,omitempty"`
-	Bio     *string `json:"bio"`
+	Age     *int    `json:"age,omitempty"`
+	Gender  *string `json:"gender,omitempty"`
+	Avatar  *string `json:"avatarUrl,omitempty"`
+	Bio     *string `json:"bio,omitempty"`
 	IsAdmin *bool   `json:"is_admin,omitempty"`
 }
 
@@ -62,6 +64,22 @@ type ErrorResponse struct {
 
 type UnauthorisedResponse struct {
 	Message string `json:"message"`
+}
+
+func getRawUserByTelegramID(ctx context.Context, telegramID int64) (*User, error) {
+	query := "SELECT telegram_id, name, avatar, profile_id FROM users WHERE telegram_id = $1"
+
+	row := db.QueryRow(ctx, query, telegramID)
+
+	var user User
+	if err := row.Scan(&user.TelegramID, &user.Name, &user.Avatar, &user.ProfileID); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error retrieving user by telegram_id: %w", err)
+	}
+
+	return &user, nil
 }
 
 func GetUserByTelegramID(ctx context.Context, telegramID int64) (*UserView, error) {
@@ -138,8 +156,11 @@ func CreateUser(ctx context.Context, input CreateUserInput) (*UserView, error) {
 
 func UpdateUser(ctx context.Context, telegramID int64, input UpdateUserInput) error {
 	var fields []string
+	var profileFields []string
 	var args []any
+	var profileArgs []any
 	argID := 1
+	profileArgID := 1
 
 	if input.Name != nil {
 		fields = append(fields, fmt.Sprintf("name = $%d", argID))
@@ -152,9 +173,19 @@ func UpdateUser(ctx context.Context, telegramID int64, input UpdateUserInput) er
 		argID++
 	}
 	if input.Bio != nil {
-		fields = append(fields, fmt.Sprintf("bio = $%d", argID))
-		args = append(args, *input.Bio)
-		argID++
+		profileFields = append(profileFields, fmt.Sprintf("bio = $%d", profileArgID))
+		profileArgs = append(profileArgs, *input.Bio)
+		profileArgID++
+	}
+	if input.Gender != nil {
+		profileFields = append(profileFields, fmt.Sprintf("gender = $%d", profileArgID))
+		profileArgs = append(profileArgs, *input.Gender)
+		profileArgID++
+	}
+	if input.Age != nil {
+		profileFields = append(profileFields, fmt.Sprintf("age = $%d", profileArgID))
+		profileArgs = append(profileArgs, *input.Age)
+		profileArgID++
 	}
 	if input.IsAdmin != nil {
 		fields = append(fields, fmt.Sprintf("is_admin = $%d", argID))
@@ -172,6 +203,18 @@ func UpdateUser(ctx context.Context, telegramID int64, input UpdateUserInput) er
 	args = append(args, telegramID)
 
 	_, err := db.Exec(ctx, query, args...)
+	if err != nil {
+		return err
+	}
+
+	user, err := getRawUserByTelegramID(ctx, telegramID)
+	if err != nil {
+		return err
+	}
+	profileFields = append(profileFields, "edited_at = NOW()")
+	query = fmt.Sprintf("UPDATE profiles SET %s WHERE id = $%d", strings.Join(profileFields, ", "), profileArgID)
+	profileArgs = append(profileArgs, user.ProfileID)
+	_, err = db.Exec(ctx, query, profileArgs...)
 	return err
 }
 
