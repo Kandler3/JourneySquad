@@ -50,6 +50,20 @@ export const TravelPlanViewPage: FC = () => {
         loadTravelPlan();
     }, [travelPlanId]);
 
+    const [participants, setParticipants] = useState<User[]>([])
+    useEffect(() => {
+        if (travelPlan === null)
+            return
+        setParticipants([
+            ...travelPlan.participants
+                .map(user => ({
+                    id: user.id,
+                    name: user.name || "Unknown",
+                    avatarUrl: user.avatarUrl || "default-avatar-url",
+                })),
+        ])
+    }, [travelPlan, isJoined]);
+
     const handleParticipantClick = (participantId: number) => {
         navigate(`/profile/${participantId}`);
     };
@@ -95,14 +109,6 @@ export const TravelPlanViewPage: FC = () => {
         return <Page>Путешествие не найдено</Page>;
     }
     const photoUrls = travelPlan.photos.map(photo => photo.getAbsoluteUrl());
-    const participants = [
-        ...travelPlan.participants
-            .map(user => ({
-                id: user.id,
-                name: user.name || "Unknown",
-                avatarUrl: user.avatarUrl || "default-avatar-url",
-            })),
-    ];
 
     return (
         <Page>
