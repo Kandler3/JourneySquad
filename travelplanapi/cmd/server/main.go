@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+
 	"os"
 
 	"github.com/Kandler3/JourneySquad/api/pkg/db"

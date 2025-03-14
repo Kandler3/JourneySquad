@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"slices"
 
 	//"log"
 	"net/http"
@@ -179,31 +178,39 @@ func UpdateTPHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if err := models.UpdateTravelPlan(ctx, ID, input); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+	mp := make(map[int]struct{})
+	for _, el := range prevTags {
+		mp[el.ID] = struct{}{}
 	}
 
-	for _, tag := range body.Tags {
-		if !slices.Contains(prevTags, tag) {
-			_, err := models.CreateTPTPTag(ctx, models.CreateTPTPTagInput{TravelPlanId: ID, TravelPlanTagId: tag.ID})
+	for _, el := range body.Tags {
+		if _, ok := mp[el.ID]; !ok {
+			_, err := models.CreateTpTag(ctx, models.CreateTPTagInput{ID: el.ID, Name: el.Name})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return 
+			}
+			_, err = models.CreateTPTPTag(ctx, models.CreateTPTPTagInput{TravelPlanId: ID, TravelPlanTagId: el.ID})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return 
+			}
+		}
+	}
+	mp = make(map[int]struct{})
+	for _, el := range body.Tags {
+		mp[el.ID] = struct{}{}
+	}
+	log.Println(mp)
+	for _, el := range prevTags {
+		if _, ok := mp[el.ID]; !ok {
+			err := models.DeleteTPTPTagByIDs(ctx, ID, el.ID)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 		}
 	}
-
-	for _, tag := range prevTags {
-		if !slices.Contains(body.Tags, tag) {
-			err := models.DeleteTPTPTagByIDs(ctx, ID, tag.ID)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
-		}
-	}
-
 	c.Status(http.StatusNoContent)
 }
 
