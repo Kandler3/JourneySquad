@@ -3,12 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	docs "github.com/Kandler3/JourneySquad/api/cmd/docs"
 	"github.com/Kandler3/JourneySquad/api/internal/handlers"
 	"github.com/Kandler3/JourneySquad/api/pkg/db"
-	"github.com/Kandler3/JourneySquad/api/pkg/middlewares"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -31,7 +29,6 @@ func main() {
 	defer db.CloseDB()
 
 	r := initServer()
-
 	docs.SwaggerInfo.BasePath = "/"
 	r.GET("/users/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.GET("/users/ping", func(c *gin.Context) {
