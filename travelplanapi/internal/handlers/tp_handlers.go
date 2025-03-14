@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"slices"
 
 	//"log"
 	"net/http"
@@ -29,7 +28,7 @@ func GetQueryParam(c *gin.Context, ParamStr string) (int, error) {
 }
 
 func GetBoolQueryParam(c *gin.Context, ParamStr string) (bool, error) {
-	if ParamStr == "" {
+	if ParamStr == ""{
 		return true, nil
 	}
 	Param, err := strconv.ParseBool(ParamStr)
@@ -149,57 +148,21 @@ func GetTPByIdHandler(c *gin.Context) {
 
 // PATCH /travel_plans/:id
 func UpdateTPHandler(c *gin.Context) {
-	type UpdateTPBody struct {
-		models.UpdateTPInput
-		Tags []models.TravelPlanTag `json:"tags"`
-	}
-
 	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
-
 	var input models.UpdateTPInput
-	var body UpdateTPBody
-	if err := c.ShouldBindJSON(&body); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	input = body.UpdateTPInput
 	log.Println(input)
-
 	ctx := c.Request.Context()
 	if err := models.UpdateTravelPlan(ctx, ID, input); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	prevTags, err := models.GetTpTagsByID(ctx, ID)
-	if err := models.UpdateTravelPlan(ctx, ID, input); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	for _, tag := range body.Tags {
-		if !slices.Contains(prevTags, tag) {
-			_, err := models.CreateTPTPTag(ctx, models.CreateTPTPTagInput{ID, tag.ID})
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
-		}
-	}
-
-	for _, tag := range prevTags {
-		if !slices.Contains(body.Tags, tag) {
-			err := models.DeleteTPTPTagByIDs(ctx, ID, tag.ID)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
-		}
-	}
-
 	c.Status(http.StatusNoContent)
 }
 
