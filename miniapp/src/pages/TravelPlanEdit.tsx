@@ -9,8 +9,6 @@ import {LoadingPage} from "@/pages/Loading.tsx";
 import {TravelPlanTag, User} from "@/models/types.ts";
 import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 import {areSetsEqual, getIdSet} from "@/utils/Sets.ts";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
 import {TravelPlanForm} from "@/components/TravelPlanForm/TravelPlanForm.tsx";
 
 export const TravelPlanValidateEditPage : FC = () => {
@@ -74,8 +72,10 @@ const TravelPlanEditPage : FC<TravelPlanEditPageProps> = ({editingTravelPlan}) =
         photos: TravelPlanPhoto[],
         participants: User[],
     ) => {
-        if (!travelPlan.id)
-            throw error
+        if (travelPlan.id === undefined) {
+            console.log(travelPlan)
+            throw Error("travel plan has no id")
+        }
 
         const updates: Partial<TravelPlan> = {};
 
@@ -100,8 +100,9 @@ const TravelPlanEditPage : FC<TravelPlanEditPageProps> = ({editingTravelPlan}) =
     };
 
     const handleDelete = async (tp: TravelPlan) => {
-        if (!tp.id) {
-            throw error
+        if (tp.id === undefined) {
+            console.log(tp)
+            throw Error("travel plan has no id")
         }
 
         await deleteTravelPlan(tp.id);

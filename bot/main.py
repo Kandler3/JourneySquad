@@ -58,10 +58,12 @@ async def process_gender(message: types.Message, state):
 async def process_bio(message: types.Message, state):
     bio_text = message.text
     data = await state.get_data()
+    avatar = await get_avatar_url(message.from_user)
+    logging.info(f"Аватарка загружена на {avatar}")
     payload = {
         "telegram_id": message.from_user.id,
         "name": message.from_user.first_name,
-        "avatar": await get_avatar_url(message.from_user),
+        "avatarUrl": avatar,
         "age": data["age"],
         "gender": data["gender"],
         "bio": bio_text
@@ -88,31 +90,45 @@ async def process_bio(message: types.Message, state):
 async def get_avatar_url(user: types.User):
     try:
         photos = await bot.get_user_profile_photos(user.id)
+        if photos.total_count == 0:
+            logging.warning(f"Пользователь {user.id} не имеет аватарки.")
+            return ""
     except Exception as e:
         logging.error(f"Ошибка получения фотографий пользователя {user.id}: {e}")
         return ""
-    if photos.total_count == 0:
-        return ""
+
     try:
-        photo = photos.photos[0][-1]
+        photo = photos.photos[0][-1]  # Берем самое большое фото
         file_info = await bot.get_file(photo.file_id)
         file_bytes = await bot.download_file(file_info.file_path)
+        logging.info(f"Фото пользователя {user.id} загружено")
     except Exception as e:
-        logging.error(f"Ошибка обработки аватарки пользователя {user.id}: {e}")
+        logging.error(f"Ошибка скачивания аватарки пользователя {user.id}: {e}")
         return ""
+
+    # Функция для загрузки файла на сервер
     def upload_file():
         files = {"file": ("avatar.jpg", file_bytes, "image/jpeg")}
         try:
             resp = requests.post(FILE_SERVER_URL + "/files/upload/avatars", files=files)
             if resp.status_code in [200, 201]:
-                return resp.json().get("path", "")
+                url = resp.json().get("path", "")
+                if not url:
+                    logging.warning(f"Сервер загрузки файлов вернул пустой путь для пользователя {user.id}.")
+                return url
             else:
                 logging.error(f"Ошибка загрузки аватарки: статус {resp.status_code}, ответ: {resp.text}")
                 return ""
         except Exception as e:
             logging.error(f"Исключение при загрузке аватарки: {e}")
             return ""
+
     avatar_path = await asyncio.to_thread(upload_file)
+    logging.info(f"Аватарка пользователя {user.id} отправлена на сервер")
+
+    if not avatar_path:
+        logging.warning(f"Не удалось загрузить аватарку пользователя {user.id}, возвращаю пустую строку.")
+
     return avatar_path
 
 

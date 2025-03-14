@@ -94,6 +94,7 @@ export class DevApi implements ApiService {
 
     async createTravelPlan(travelPlan: TravelPlan): Promise<TravelPlan> {
         const url = `/api/travel_plans`;
+        console.log("sending travel plan", travelPlan);
         const resp = await fetch(url, {
             method: "POST",
             headers: {...this.headers, "Content-Type": "application/json"},
