@@ -1,0 +1,10 @@
+.home 
+{
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'San Francisco', sans-serif;
+}
+
+.home h1 {
+    margin-bottom: 20px;
+}
