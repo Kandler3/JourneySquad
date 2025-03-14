@@ -76,12 +76,13 @@
         "endpoint": "/api/users",
         "input_headers": [ "Authorization" ],
         "method": "GET",
-        "output_encoding": "json",
+        "output_encoding": "no-op",
         "backend": [
             {
             "host": [
                 "http://userapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/users"
             }
         ]
@@ -117,7 +118,10 @@
                 "http://travelplanapi:8080"
             ],
             "url_pattern": "/travel_plans?query=&user_id={id}&sort_by=&ascending=&start_date=&end_date=&tag=",
-            "group": "activeTravelPlans"
+            "is_collection": true,
+            "mapping": {
+                "collection": "activeTravelPlans"
+            }
             }
         ]
         },
@@ -130,12 +134,14 @@
         "input_query_strings":[
             "*"
         ],
+        "output_encoding": "no-op",
         "method": "GET",
         "backend": [
             {
             "host": [
                 "http://travelplanapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/travel_plans"
             }
         ]
@@ -169,12 +175,14 @@
         {
         "endpoint": "/api/travel_plans/{id}",
         "input_headers": [ "Authorization" ],
+        "output_encoding": "no-op",
         "method": "PATCH",
         "backend": [
             {
             "host": [
                 "http://travelplanapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/travel_plans/{id}"
             }
         ]
@@ -182,12 +190,14 @@
         {
         "endpoint": "/api/travel_plans/{id}",
         "input_headers": [ "Authorization" ],
+        "output_encoding": "no-op",
         "method": "DELETE",
         "backend": [
             {
             "host": [
                 "http://travelplanapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/travel_plans/{id}"
             }
         ]
@@ -195,12 +205,14 @@
         {
         "endpoint": "/api/travel_plan_tags",
         "input_headers": [ "Authorization" ],
+        "output_encoding": "no-op",
         "method": "GET",
         "backend": [
             {
             "host": [
                 "http://travelplanapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/travel_plan_tags"
             }
         ]
@@ -234,12 +246,14 @@
         {
         "endpoint": "/api/travel_plan_tags/{id}",
         "input_headers": [ "Authorization" ],
+        "output_encoding": "no-op",
         "method": "PATCH",
         "backend": [
             {
             "host": [
                 "http://travelplanapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/travel_plan_tags/{id}"
             }
         ]
@@ -247,12 +261,14 @@
         {
         "endpoint": "/api/travel_plan_tags/{id}",
         "input_headers": [ "Authorization" ],
+        "output_encoding": "no-op",
         "method": "DELETE",
         "backend": [
             {
             "host": [
                 "http://travelplanapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/travel_plan_tags/{id}"
             }
         ]
@@ -273,12 +289,14 @@
         {
         "endpoint": "/api/travel_plans/{id}/participants/{participant_id}",
         "input_headers": [ "Authorization" ],
+        "output_encoding": "no-op",
         "method": "DELETE",
         "backend": [
             {
             "host": [
                 "http://travelplanapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/travel_plans/{id}/participants/{participant_id}"
             }
         ]
@@ -299,12 +317,14 @@
         {
         "endpoint": "/api/travel_plan/{id}/photos/{photo_id}",
         "input_headers": [ "Authorization" ],
+        "output_encoding": "no-op",
         "method": "DELETE",
         "backend": [
             {
             "host": [
                 "http://travelplanapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/travel_plan/{id}/photos/{photo_id}"
             }
         ]
