@@ -21,10 +21,10 @@ export class TravelPlanQuery {
             searchParams.append("user_id", this.userId.toString());
 
         if (this.startDate)
-            searchParams.append("start_date", this.startDate.toString());
+            searchParams.append("start_date", this.startDate.toISOString().split("T")[0]);
 
         if (this.endDate)
-            searchParams.append("end_date", this.endDate.toString());
+            searchParams.append("end_date", this.endDate.toISOString().split("T")[0]);
 
         if (this.tags)
             this.tags.map(tag => searchParams.append("tag", tag.id.toString()));
