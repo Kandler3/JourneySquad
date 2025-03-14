@@ -105,7 +105,7 @@ type CreateTPTPTagInput struct {
 }
 
 type TPParticipantInput struct {
-	User_id int `json:"id"`
+	User_id int `json:"userId"`
 }
 
 type UserView struct {
@@ -882,8 +882,9 @@ func AddParticipantToTP(ctx context.Context, TpId int, input TPParticipantInput)
 func DeleteParticipantfromTP(ctx context.Context, TPid int, ParticipantId int) error {
 	query := `
 		DELETE FROM tp_participants
-		WHERE user_id = $1 AND travel_plan_id = $2
+		WHERE id = $1 AND travel_plan_id = $2
 	`
+	log.Println(TPid, ParticipantId)
 	_, err := db.Exec(ctx, query, ParticipantId, TPid)
 	if err != nil {
 		return err
