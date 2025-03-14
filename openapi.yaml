@@ -1,0 +1,371 @@
+openapi: 3.0.0
+info:
+  title: Travel Plan API
+  version: "1.0.0"
+servers:
+  - url: http://localhost
+paths:
+  /api/travel_plans:
+    get:
+      summary: Получить список планов путешествий
+      description: |
+        Возвращает список объектов TravelPlan. Поддерживаются следующие query-параметры:
+          - query: Текстовый поиск по заголовку или описанию.
+          - user_id: Идентификатор пользователя, создавшего план.
+          - start_date: Начало периода в формате даты-времени.
+          - end_date: Конец периода в формате даты-времени.
+          - tag: Идентификатор тега (может передаваться несколько раз).
+          - sort_by: Критерий сортировки (date или title).
+          - ascending: Направление сортировки (true для возрастания).
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Текстовый поиск по заголовку или описанию.
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+          description: Идентификатор пользователя.
+        - in: query
+          name: start_date
+          schema:
+            type: string
+            format: date-time
+          description: Дата начала периода.
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date-time
+          description: Дата конца периода.
+        - in: query
+          name: tag
+          schema:
+            type: integer
+          description: Идентификатор тега. Может передаваться несколько раз для фильтрации.
+          style: form
+          explode: true
+        - in: query
+          name: sort_by
+          schema:
+            type: string
+            enum: [date, title]
+          description: Критерий сортировки.
+        - in: query
+          name: ascending
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Массив объектов TravelPlan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TravelPlan'
+        default:
+          description: Ошибка запроса
+    post:
+      summary: Создать новый план путешествия
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TravelPlan'
+      responses:
+        '200':
+          description: Созданный объект TravelPlan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelPlan'
+        default:
+          description: Ошибка запроса
+  /api/travel_plans/{id}:
+    get:
+      summary: Получить план путешествия по ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор плана путешествия.
+      responses:
+        '200':
+          description: Объект TravelPlan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelPlan'
+        default:
+          description: Ошибка запроса
+    put:
+      summary: Обновить план путешествия
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор плана путешествия.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TravelPlan'
+      responses:
+        '200':
+          description: План успешно обновлён
+        default:
+          description: Ошибка запроса
+    delete:
+      summary: Удалить план путешествия
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор плана путешествия.
+      responses:
+        '200':
+          description: План успешно удалён
+        default:
+          description: Ошибка запроса
+  /api/users/login:
+    get:
+      summary: Получить текущего пользователя
+      description: Возвращает полный объект пользователя (User).
+      responses:
+        '200':
+          description: Объект User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: Ошибка запроса
+  /api/users/{id}:
+    get:
+      summary: Получить профиль пользователя по ID
+      description: Возвращает полный объект пользователя. Для получения полного профиля используется query параметр get_profile=true.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор пользователя.
+        - in: query
+          name: get_profile
+          schema:
+            type: boolean
+          description: Если true, возвращается полный профиль пользователя.
+      responses:
+        '200':
+          description: Объект User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: Ошибка запроса
+    put:
+      summary: Обновить данные пользователя
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор пользователя.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Пользователь успешно обновлён
+        default:
+          description: Ошибка запроса
+  /api/travel_plans/{travelPlanId}/participants:
+    post:
+      summary: Присоединиться к плану путешествия
+      parameters:
+        - in: path
+          name: travelPlanId
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор плана путешествия.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+              required:
+                - userId
+      responses:
+        '200':
+          description: Участник успешно добавлен
+        default:
+          description: Ошибка запроса
+  /api/travel_plans/{travelPlanId}/participants/{participantId}:
+    delete:
+      summary: Удалить участника из плана путешествия
+      parameters:
+        - in: path
+          name: travelPlanId
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор плана путешествия.
+        - in: path
+          name: participantId
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор участника.
+      responses:
+        '200':
+          description: Участник успешно удалён
+        default:
+          description: Ошибка запроса
+  /api/travel_plan_tags/{id}:
+    get:
+      summary: Получить тег плана путешествия по ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Идентификатор тега.
+      responses:
+        '200':
+          description: Объект TravelPlanTag
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelPlanTag'
+        default:
+          description: Ошибка запроса
+  /api/travel_plan_tags:
+    get:
+      summary: Получить список тегов планов путешествий
+      responses:
+        '200':
+          description: Массив объектов TravelPlanTag
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TravelPlanTag'
+        default:
+          description: Ошибка запроса
+components:
+  schemas:
+    TravelPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Путешествие в Европу"
+        description:
+          type: string
+          example: "Описание путешествия"
+        startDate:
+          type: string
+          format: date-time
+          example: "2025-06-01T00:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          example: "2025-06-10T00:00:00Z"
+        author:
+          $ref: '#/components/schemas/UserSummary'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TravelPlanTag'
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/TravelPlanPhoto'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+    TravelPlanPhoto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+        url:
+          type: string
+          example: "/uploads/photo1.jpg"
+    User:
+      type: object
+      description: Полная модель пользователя, доступная через endpoints для одного пользователя.
+      properties:
+        id:
+          type: integer
+          example: 5
+        name:
+          type: string
+          example: "Иван"
+        age:
+          type: integer
+          example: 30
+        bio:
+          type: string
+          example: "Любитель путешествий"
+        gender:
+          type: string
+          example: "male"
+        avatarUrl:
+          type: string
+          example: "/avatars/ivan.jpg"
+        activeTravelPlans:
+          type: array
+          items:
+            $ref: '#/components/schemas/TravelPlan'
+    UserSummary:
+      type: object
+      description: Сокращённая модель пользователя с необходимыми полями.
+      properties:
+        id:
+          type: integer
+          example: 5
+        name:
+          type: string
+          example: "Иван"
+        avatarUrl:
+          type: string
+          example: "/avatars/ivan.jpg"
+    TravelPlanTag:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: "Пляжный отдых"
