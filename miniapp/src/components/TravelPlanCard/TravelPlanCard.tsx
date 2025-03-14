@@ -15,7 +15,7 @@ export const TravelPlanCard: FC<TravelPlanCardProps> = ({travelPlan, style}) => 
     const navigate = useNavigate();
     const onClick = () => navigate(`/travel-plans/${travelPlan.id}`)
 
-    const image = `url('${travelPlan.photos.at(0)?.getAbsoluteUrl()}')`
+    const image = `url('${travelPlan.photos?.at(0)?.getAbsoluteUrl()}')`
     return (
         <Card style={style} image={image} onClick={onClick}>
                 <div className="title">
@@ -25,7 +25,7 @@ export const TravelPlanCard: FC<TravelPlanCardProps> = ({travelPlan, style}) => 
             {style === "horizontal" ?
                 <AvatarStack>
                     {travelPlan.participants.slice(0, 4).map(user =>
-                        <Avatar key={`avatar-${user.id}`} src={user.avatarUrl} acronym={user.name.at(0) ?? "A"}/>
+                        <Avatar key={`avatar-${user.id}`} src={user.avatarUrl} acronym={user.name?.at(0) ?? "A"}/>
                     )}
                 </AvatarStack>
                 :

@@ -120,19 +120,20 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, 
                 isActivePredicate={tagIsActive}
                 onClick={handleTagClick}
             />
-            <ContentSection title="Участники">
-                <ParticipantCard name={travelPlan.author?.name ?? ""} photoUrl={travelPlan.author?.avatarUrl ?? ""}/>
-                {
-                    participants.map(
-                        p => <ParticipantCard
-                            name={p.name}
-                            photoUrl={p.avatarUrl ?? ""}
-                            onDelete={() => handleDeleteParticipant(p)}
-                            key={`participant-${p.id}`}
-                        />
-                    )
-                }
-            </ContentSection>
+            {participants.length > 0 &&
+                <ContentSection title="Участники">
+                    {
+                        participants.map(
+                            p => <ParticipantCard
+                                name={p.name}
+                                photoUrl={p.avatarUrl ?? ""}
+                                onDelete={p.id !== travelPlan.author?.id ? () => handleDeleteParticipant(p) : undefined}
+                                key={`participant-${p.id}`}
+                            />
+                        )
+                    }
+                </ContentSection>
+            }
             <ContentSection title="Фотографии">
                 {photos.map(
                     photo =>

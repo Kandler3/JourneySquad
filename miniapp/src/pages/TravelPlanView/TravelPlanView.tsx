@@ -96,24 +96,12 @@ export const TravelPlanViewPage: FC = () => {
     }
     const photoUrls = travelPlan.photos.map(photo => photo.getAbsoluteUrl());
     const participants = [
-        ...(travelPlan.author ? [{
-            id: travelPlan.author.id,
-            name: travelPlan.author.name || "Unknown",
-            avatarUrl: travelPlan.author.avatarUrl || "default-avatar-url",
-            badge: "Автор",
-        }] : []),
         ...travelPlan.participants
-            .filter(p => !currentUser || p.id !== currentUser.id)
             .map(user => ({
                 id: user.id,
                 name: user.name || "Unknown",
                 avatarUrl: user.avatarUrl || "default-avatar-url",
             })),
-        ...(currentUser && travelPlan.participants.some(p => p.id === currentUser.id) ? [{
-            id: currentUser.id,
-            name: currentUser.name || "Unknown",
-            avatarUrl: currentUser.avatarUrl || "default-avatar-url",
-        }] : []),
     ];
 
     return (
