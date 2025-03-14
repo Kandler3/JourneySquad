@@ -13,6 +13,7 @@
     "endpoints": [
         {
         "endpoint": "/api/users/swagger/{any}",
+        "input_headers": [ "Authorization" ],
         "method": "GET",
         "output_encoding": "no-op",
         "backend": [
@@ -27,6 +28,7 @@
         },
         {
         "endpoint": "/api/users",
+        "input_headers": [ "Authorization" ],
         "method": "POST",
         "backend": [
             {
@@ -39,6 +41,7 @@
         },
         {
         "endpoint": "/api/users/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "PATCH",
         "backend": [
             {
@@ -51,6 +54,7 @@
         },
         {
         "endpoint": "/api/users/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "DELETE",
         "backend": [
             {
@@ -66,6 +70,7 @@
 
         {
         "endpoint": "/api/users",
+        "input_headers": [ "Authorization" ],
         "method": "GET",
         "output_encoding": "json",
         "backend": [
@@ -79,6 +84,7 @@
         },
         {
         "endpoint": "/api/users/login",
+        "input_headers": [ "Authorization" ],
         "method": "GET",
         "output_encoding": "json",
         "backend": [
@@ -92,6 +98,7 @@
         },
         {
         "endpoint": "/api/users/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "GET",
         "output_encoding": "json",
         "backend": [
@@ -105,7 +112,8 @@
             "host": [
                 "http://travelplanapi:8080"
             ],
-            "url_pattern": "/travel_plans?query=&user_id={id}&sort_by=&ascending=&start_date=&end_date=&tag="
+            "url_pattern": "/travel_plans?query=&user_id={id}&sort_by=&ascending=&start_date=&end_date=&tag=",
+            "group": "activeTravelPlans"
             }
         ]
         },
@@ -114,6 +122,10 @@
 
         {
         "endpoint": "/api/travel_plans",
+        "input_headers": [ "Authorization" ],
+        "input_query_strings":[
+            "*"
+        ],
         "method": "GET",
         "backend": [
             {
@@ -126,6 +138,7 @@
         },
         {
         "endpoint": "/api/travel_plans",
+        "input_headers": [ "Authorization" ],
         "method": "POST",
         "backend": [
             {
@@ -138,6 +151,7 @@
         },
         {
         "endpoint": "/api/travel_plans/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "GET",
         "backend": [
             {
@@ -150,6 +164,7 @@
         },
         {
         "endpoint": "/api/travel_plans/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "PATCH",
         "backend": [
             {
@@ -162,6 +177,7 @@
         },
         {
         "endpoint": "/api/travel_plans/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "DELETE",
         "backend": [
             {
@@ -174,6 +190,7 @@
         },
         {
         "endpoint": "/api/travel_plan_tags",
+        "input_headers": [ "Authorization" ],
         "method": "GET",
         "backend": [
             {
@@ -186,6 +203,7 @@
         },
         {
         "endpoint": "/api/travel_plan_tags",
+        "input_headers": [ "Authorization" ],
         "method": "POST",
         "backend": [
             {
@@ -198,6 +216,7 @@
         },
         {
         "endpoint": "/api/travel_plan_tags/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "GET",
         "backend": [
             {
@@ -210,6 +229,7 @@
         },
         {
         "endpoint": "/api/travel_plan_tags/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "PATCH",
         "backend": [
             {
@@ -222,6 +242,7 @@
         },
         {
         "endpoint": "/api/travel_plan_tags/{id}",
+        "input_headers": [ "Authorization" ],
         "method": "DELETE",
         "backend": [
             {
@@ -234,6 +255,7 @@
         },
         {
         "endpoint": "/api/travel_plans/{id}/participants",
+        "input_headers": [ "Authorization" ],
         "method": "POST",
         "backend": [
             {
@@ -246,6 +268,7 @@
         },
         {
         "endpoint": "/api/travel_plans/{id}/participants/{participant_id}",
+        "input_headers": [ "Authorization" ],
         "method": "DELETE",
         "backend": [
             {
@@ -258,6 +281,7 @@
         },
         {
         "endpoint": "/api/travel_plan/{id}/photos",
+        "input_headers": [ "Authorization" ],
         "method": "POST",
         "backend": [
             {
@@ -270,6 +294,7 @@
         },
         {
         "endpoint": "/api/travel_plan/{id}/photos/{photo_id}",
+        "input_headers": [ "Authorization" ],
         "method": "DELETE",
         "backend": [
             {
