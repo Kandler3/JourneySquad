@@ -98,6 +98,16 @@
                 "http://userapi:8080"
             ],
             "url_pattern": "/users/login"
+            },
+            {
+                "host": [
+                    "http://travelplanapi:8080"
+                ],
+                "url_pattern": "/travel_plans/login",
+                "is_collection": true,
+                "mapping": {
+                    "collection": "activeTravelPlans"
+                }
             }
         ]
         },
