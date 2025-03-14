@@ -1,7 +1,6 @@
 import {ApiService} from "@/services/api/ApiServiceInterface.ts";
 import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
 import {TravelPlan} from "@/models/TravelPlan.ts";
-import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 import {User} from "@/models/User.ts";
 import {TravelPlanTag} from "@/models/types.ts";
 import {retrieveLaunchParams} from "@telegram-apps/sdk-react";
@@ -30,7 +29,9 @@ export class DevApi implements ApiService {
             throw new Error(resp.statusText);
         }
 
-        return (await resp.json()).map(tp => TravelPlan.fromJSON(tp));
+        const travelPlansContent = await resp.json();
+        travelPlansContent.forEach(tp => tp.participants = tp.participants.map(p => this.getUser(p.user_id, false)))
+        return travelPlansContent.map(tp => TravelPlan.fromJSON(tp));
     }
 
     async getTravelPlan(id: number): Promise<TravelPlan> {
