@@ -28,7 +28,7 @@ func main() {
 	})
 
 	r.GET("/travel_plans", handlers.UserGetTPHandler)
-	r.POST("/travel_plans", handlers.CreateTravelPlan)
+	r.POST("/travel_plans", handlers.CreateTravelPlanHandler)
 
 	r.GET("/travel_plans/:id", handlers.GetTPByIdHandler)
 

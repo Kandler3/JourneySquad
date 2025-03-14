@@ -10,7 +10,8 @@ import (
 	"net/http"
 	"slices"
 	"sort"
-	"strconv"
+
+	//"strconv"
 	"strings"
 	"time"
 
@@ -31,8 +32,8 @@ type TravelPlan struct {
 	CreatedAt   time.Time `json:"created_at"`
 	EditedAt    time.Time `json:"edited_at"`
 	Title       string    `json:"title"`
-	StartDate   time.Time `json:"start_date"`
-	EndDate     time.Time `json:"end_date"`
+	StartDate   time.Time `json:"startDate"`
+	EndDate     time.Time `json:"endDate"`
 	Description string    `json:"description"`
 	AuthorId    UserView       `json:"author"`
 	Tags []TravelPlanTag `json:"tags"`
@@ -56,6 +57,7 @@ type TravelPlanTag struct {
 }
 
 type TravelPlanPhoto struct {
+	Photo_id int `json:"photo_id"`
 	ID           int       `json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	EditedAt     time.Time `json:"edited_at"`
@@ -66,8 +68,8 @@ type TravelPlanPhoto struct {
 type CreateTPInput struct {
 	ID          int       `json:"id"`
 	Title       string    `json:"title"`
-	StartDate   time.Time `json:"start_date"`
-	EndDate     time.Time `json:"end_date"`
+	StartDate   time.Time `json:"startDate"`
+	EndDate     time.Time `json:"endDate"`
 	Description string    `json:"description"`
 	AuthorId    UserView       `json:"author"`
 	Tags []TravelPlanTag `json:"tags"`
@@ -77,8 +79,8 @@ type CreateTPInput struct {
 
 type UpdateTPInput struct {
 	Title       string    `json:"title"`
-	StartDate   time.Time `json:"start_date"`
-	EndDate     time.Time `json:"end_date"`
+	StartDate   time.Time `json:"startDate"`
+	EndDate     time.Time `json:"endDate"`
 	Description string    `json:"description"`
 	AuthorId    int       `json:"author"`
 }
@@ -98,13 +100,12 @@ type CreateTPTagInput struct {
 }
 
 type CreateTPTPTagInput struct {
-	ID              int `json:"id"`
 	TravelPlanId    int `json:"travel_plan_id"`
 	TravelPlanTagId int `json:"travel_plan_tag_id"`
 }
 
 type TPParticipantInput struct {
-	User_id   int       `json:"user_id"`
+	User_id   int       `json:"id"`
 }
 
 type UserView struct {
@@ -131,7 +132,7 @@ func GetAllTravelPlans(ctx context.Context) ([]TravelPlan, error) {
 	var travelPlans []TravelPlan
 	for rows.Next() {
 		var tp TravelPlan
-		err := rows.Scan(&tp.ID, &tp.CreatedAt, &tp.EditedAt, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &tp.AuthorId)
+		err := rows.Scan(&tp.ID, &tp.CreatedAt, &tp.EditedAt, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &tp.AuthorId.TelegramID)
 		if err != nil {
 			return nil, err
 		}
@@ -154,21 +155,40 @@ func GetTravelPlanByID(ctx context.Context, TravelPLanId int) (*TravelPlan, erro
 	`
 
 	var tp TravelPlan
-	err := db.QueryRow(ctx, query, TravelPLanId).Scan(&tp.ID, &tp.CreatedAt, &tp.EditedAt, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &tp.AuthorId)
+	err := db.QueryRow(ctx, query, TravelPLanId).Scan(&tp.ID, &tp.CreatedAt, &tp.EditedAt, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &tp.AuthorId.TelegramID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
-
+	
+	tpPhotos, err := GetTpPhotosById(ctx, tp.ID)
+	if err != nil {
+		return nil, err
+	}
+	tp.Photos = tpPhotos
+	tpTags, err := GetTpTagsByID(ctx, tp.ID)
+	if err != nil {
+		return nil, err
+	}
+	tp.Tags = tpTags
+	tpParticipants, err := GetTpParticipantsById(ctx, tp.ID)
+	if err != nil {
+		return nil, err
+	}
+	tp.Participants = tpParticipants
 	return &tp, nil
 }
 
-func GetUserByTgId(telegramId string) (*UserView, error){
-	url := fmt.Sprintf("http://user-service.example.com/user/%s", telegramId)
-
-	resp, err := http.Get(url)
+func GetUserByTgId(ctx context.Context, telegramId int64) (*UserView, error){
+	url := fmt.Sprintf("http://userapi/user/%d", telegramId) // НУЖНО СДЕЛАТЬ ДРУГУЮ ССЫЛКУ
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	client := http.DefaultClient
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("ошибка при выполнении запроса: %v", err)
 	}
@@ -204,6 +224,7 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 		RETURNING id, title, start_date, end_date, description, author
 	`
 	var authorId int
+	var str1, str2 string
 	err := db.QueryRow( 
 		ctx,
 		query,
@@ -214,27 +235,60 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 		input.StartDate,
 		input.EndDate,
 		input.Description,
-		authorId,
-	).Scan(&tp.ID, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &tp.AuthorId)
+		input.AuthorId.TelegramID,
+	).Scan(&tp.ID, &tp.Title, &str1, &str2, &tp.Description, &authorId)
 	if err != nil {
 		return nil, err
 	}
-	telegramID, ok := getTelegramIdFromCtx(ctx)
-	if !ok {
-		return nil, err
-	}
-	user, err := GetUserByTgId(strconv.FormatInt(telegramID, 10))
+	log.Println(input.StartDate, input.EndDate) 
+	tp.StartDate, err = time.Parse("2006-01-02T15:04:05Z", str1)
 	if err != nil {
 		return nil, err
 	}
-	if (*user).TelegramID != tp.AuthorId.TelegramID {
-		return nil, fmt.Errorf("wrong telegram")
+	tp.EndDate, err = time.Parse("2006-01-02T15:04:05Z", str2)
+	if err != nil {
+		return nil, err
 	}
-	tp.AuthorId = *user
-	tpPtcpt, err := AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: int(user.TelegramID)})
-	tp.Participants = []TravelPlanParticipant{*tpPtcpt}
-	tp.Photos = input.Photos
-	tp.Tags = input.Tags
+	log.Println(tp.StartDate, tp.EndDate)
+	// user, err := GetUserByTgId(strconv.Itoa(authorId))
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if (*user).TelegramID != tp.AuthorId.TelegramID {
+	// 	return nil, fmt.Errorf("wrong telegram")
+	// }
+	// tp.AuthorId = *user
+	//tpPtcpt, err := AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: int(user.TelegramID)})
+	tp.Participants = input.Participants//[]TravelPlanParticipant{*tpPtcpt}
+	_, err = AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: int(tp.AuthorId.TelegramID)})
+	if err != nil {
+		return nil, err
+	}
+	tpPhotos := make([]TravelPlanPhoto, 0)
+	for _, el := range input.Photos {
+		tpPhoto, err := CreateTpPhoto(ctx, tp.ID, el.ID, el.URL)
+		if err != nil {
+			return nil, err
+		}
+		tpPhotos = append(tpPhotos, *tpPhoto)
+	}
+	tp.Photos = tpPhotos
+	tpTags := make([]TravelPlanTag, 0)
+	for _, el := range input.Tags {
+		_, err := CreateTpTag(ctx, CreateTPTagInput{ID: el.ID, Name : el.Name})
+		if err != nil {
+			return nil, err
+		}
+		_, err = CreateTPTPTag(ctx, CreateTPTPTagInput{TravelPlanId: input.ID, TravelPlanTagId: el.ID})
+		if err != nil {
+			return nil, err
+		}
+		tpTags = append(tpTags, el)
+	}
+	tp.Tags = tpTags
+	tp.AuthorId = input.AuthorId
+	tp.CreatedAt = time.Now()
+	tp.EditedAt = time.Now()
 	return &tp, err
 }
 
@@ -288,7 +342,7 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 		for _, el := range TravelPlans {
 			j := 0
 			k := 0
-			arr1 := TPtoTags[int(el.AuthorId.TelegramID)]
+			arr1 := TPtoTags[int(el.ID)]
 			for j < len(arr1) && k < len(TagIDs) {
 				if arr1[j] == TagIDs[k] {
 					k++
@@ -367,6 +421,11 @@ func UserGetTravelPlans(ctx context.Context, queryParams map[string]any) ([]Trav
 		filteredTravelPlans[i].Tags = tptags
 		filteredTravelPlans[i].Photos = tpphotos
 		filteredTravelPlans[i].Participants = tpparticipants
+		//user, err := GetUserByTgId(ctx, el.AuthorId.TelegramID)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		filteredTravelPlans[i].AuthorId =  el.AuthorId //*user
 	}
 	return filteredTravelPlans, nil
 }
@@ -521,11 +580,11 @@ func GetTpTagsByID(ctx context.Context, tpId int) ([]TravelPlanTag, error) {
 
 func GetTpPhotosById(ctx context.Context, tpId int) ([]TravelPlanPhoto, error) {
 	query := `
-		SELECT id, created_at, edited_at, travel_plan_id, url
+		SELECT photo_id, id, created_at, edited_at, travel_plan_id, url
 		FROM tp_photos
 		WHERE travel_plan_id = $1
 	`
-	rows, err := db.Query( ctx, query, tpId)
+	rows, err := db.Query(ctx, query, tpId)
 	if err != nil {
 		return nil, err
 	}
@@ -533,7 +592,8 @@ func GetTpPhotosById(ctx context.Context, tpId int) ([]TravelPlanPhoto, error) {
 	Photos := make([]TravelPlanPhoto, 0)
 	for rows.Next() {
 		var Photo TravelPlanPhoto
-		err := rows.Scan(&Photo.ID, &Photo.CreatedAt, &Photo.EditedAt, &Photo.TravelPlanId, &Photo.URL)
+		var phID int
+		err := rows.Scan(&phID, &Photo.ID, &Photo.CreatedAt, &Photo.EditedAt, &Photo.TravelPlanId, &Photo.URL)
 		if err != nil {
 			return nil, err
 		}
@@ -571,6 +631,7 @@ func CreateTpTag(ctx context.Context, input CreateTPTagInput) (*TravelPlanTag, e
 	query := `
 		INSERT INTO tp_tags (id, created_at, edited_at, name)
 		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (id) DO UPDATE SET name = tp_tags.name 
 		RETURNING id, name
 	`
 
@@ -584,26 +645,26 @@ func CreateTpTag(ctx context.Context, input CreateTPTagInput) (*TravelPlanTag, e
 	).Scan(&tpTag.ID, &tpTag.Name)
 
 	if err != nil {
-		return nil, err
+		tpTag.ID = input.ID
+		tpTag.Name = input.Name
 	}
 
 	tpTag.CreatedAt, tpTag.EditedAt = time.Now(), time.Now()
-	return &tpTag, err
+	return &tpTag, nil
 }
 
 // travel_plan_tags - post
 func CreateTPTPTag(ctx context.Context, input CreateTPTPTagInput) (*TravelPlanTravelPlanTag, error) {
 	var tpTpTag TravelPlanTravelPlanTag
 	query := `
-		INSERT INTO tp_tp_tags (id, created_at, edited_at, travel_plan_id, travel_plan_tag_id)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO tp_tp_tags (created_at, edited_at, travel_plan_id, travel_plan_tag_id)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id, travel_plan_id, travel_plan_tag_id
 	`
 
 	err := db.QueryRow(
 		ctx,
 		query,
-		input.ID,
 		time.Now(),
 		time.Now(),
 		input.TravelPlanId,
@@ -615,7 +676,7 @@ func CreateTPTPTag(ctx context.Context, input CreateTPTPTagInput) (*TravelPlanTr
 	}
 
 	tpTpTag.CreatedAt, tpTpTag.EditedAt = time.Now(), time.Now()
-	return &tpTpTag, err
+	return &tpTpTag, nil
 }
 
 func GetTPTagByID(ctx context.Context, TPTagID int) (*TravelPlanTag, error) {
@@ -763,13 +824,14 @@ func GetAllTPParticipants(ctx context.Context) ([]TravelPlanParticipant, error) 
 func AddParticipantToTP(ctx context.Context, TpId int, input TPParticipantInput) (*TravelPlanParticipant, error) {
 	var TpParticipant TravelPlanParticipant
 	query := `
-		INSERT INTO tp_participants (created_at, edited_at, travel_plan_id, user_id)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO tp_participants (id, created_at, edited_at, travel_plan_id, user_id)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, travel_plan_id, user_id
 	`
 	err := db.QueryRow(
 		ctx,
 		query,
+		input.User_id,
 		time.Now(),
 		time.Now(),
 		TpId,
@@ -779,9 +841,8 @@ func AddParticipantToTP(ctx context.Context, TpId int, input TPParticipantInput)
 	if err != nil {
 		return nil, err
 	}
-
 	TpParticipant.CreatedAt, TpParticipant.EditedAt = time.Now(), time.Now()
-	return &TpParticipant, err
+	return &TpParticipant, nil
 }
 
 
@@ -842,10 +903,10 @@ func CreateTpPhoto(ctx context.Context, tpID int, ID int, url string) (*TravelPl
 		tpID,
 		url,
 	).Scan(&tpPhoto.ID, &tpPhoto.TravelPlanId, &tpPhoto.URL)
-
 	if err != nil {
 		return nil, err
 	}
+	log.Println(tpPhoto.ID, tpPhoto.TravelPlanId, tpPhoto.URL)
 	tpPhoto.CreatedAt, tpPhoto.EditedAt = time.Now(), time.Now()
 	return &tpPhoto, nil
 }
@@ -861,4 +922,21 @@ func DeleteTpPhoto(ctx context.Context, tpId int, photoId int) error {
 	}
 
 	return nil
+}
+
+func GetTpPhotoById(ctx context.Context, Id int) (*TravelPlanPhoto, error){
+	query := `
+		SELECT * FROM tp_photos
+		WHERE id = $1
+	`
+	var tpPhoto TravelPlanPhoto
+	err := db.QueryRow(ctx, query, Id).Scan(&tpPhoto.ID, &tpPhoto.CreatedAt, &tpPhoto.EditedAt, &tpPhoto.URL, &tpPhoto.TravelPlanId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &tpPhoto, nil
 }

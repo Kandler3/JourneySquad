@@ -43,7 +43,7 @@ func GetDateQueryParam(c *gin.Context, ParamStr string) (time.Time, error) {
 	if ParamStr == "" {
 		return time.Time{}, nil
 	}
-	Param, err := time.Parse("2006-01-01", ParamStr)
+	Param, err := time.Parse("2006-01-02", ParamStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid %s", ParamStr)})
 		return time.Time{}, errors.New("smth wrong with query param")
@@ -78,7 +78,7 @@ func GetTPsHandler(c *gin.Context) {
 }
 
 // POST /travel_plans/
-func CreateTravelPlan(c *gin.Context) {
+func CreateTravelPlanHandler(c *gin.Context) {
 	var input models.CreateTPInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
