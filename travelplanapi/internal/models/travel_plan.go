@@ -28,16 +28,16 @@ type TravelPlanParticipant struct {
 }
 
 type TravelPlan struct {
-	ID          int       `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
-	EditedAt    time.Time `json:"edited_at"`
-	Title       string    `json:"title"`
-	StartDate   time.Time `json:"startDate"`
-	EndDate     time.Time `json:"endDate"`
-	Description string    `json:"description"`
-	AuthorId    UserView       `json:"author"`
-	Tags []TravelPlanTag `json:"tags"`
-	Photos []TravelPlanPhoto `json:"photos"`
+	ID           int                     `json:"id"`
+	CreatedAt    time.Time               `json:"created_at"`
+	EditedAt     time.Time               `json:"edited_at"`
+	Title        string                  `json:"title"`
+	StartDate    time.Time               `json:"startDate"`
+	EndDate      time.Time               `json:"endDate"`
+	Description  string                  `json:"description"`
+	AuthorId     UserView                `json:"author"`
+	Tags         []TravelPlanTag         `json:"tags"`
+	Photos       []TravelPlanPhoto       `json:"photos"`
 	Participants []TravelPlanParticipant `json:"participants"`
 }
 
@@ -57,7 +57,7 @@ type TravelPlanTag struct {
 }
 
 type TravelPlanPhoto struct {
-	Photo_id int `json:"photo_id"`
+	Photo_id     int       `json:"photo_id"`
 	ID           int       `json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	EditedAt     time.Time `json:"edited_at"`
@@ -66,14 +66,14 @@ type TravelPlanPhoto struct {
 }
 
 type CreateTPInput struct {
-	ID          int       `json:"id"`
-	Title       string    `json:"title"`
-	StartDate   time.Time `json:"startDate"`
-	EndDate     time.Time `json:"endDate"`
-	Description string    `json:"description"`
-	AuthorId    UserView       `json:"author"`
-	Tags []TravelPlanTag `json:"tags"`
-	Photos []TravelPlanPhoto `json:"photos"`
+	ID           int                     `json:"id"`
+	Title        string                  `json:"title"`
+	StartDate    time.Time               `json:"startDate"`
+	EndDate      time.Time               `json:"endDate"`
+	Description  string                  `json:"description"`
+	AuthorId     UserView                `json:"author"`
+	Tags         []TravelPlanTag         `json:"tags"`
+	Photos       []TravelPlanPhoto       `json:"photos"`
 	Participants []TravelPlanParticipant `json:"participants"`
 }
 
@@ -105,7 +105,7 @@ type CreateTPTPTagInput struct {
 }
 
 type TPParticipantInput struct {
-	User_id   int       `json:"id"`
+	User_id int `json:"id"`
 }
 
 type UserView struct {
@@ -162,7 +162,7 @@ func GetTravelPlanByID(ctx context.Context, TravelPLanId int) (*TravelPlan, erro
 		}
 		return nil, err
 	}
-	
+
 	tpPhotos, err := GetTpPhotosById(ctx, tp.ID)
 	if err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func GetTravelPlanByID(ctx context.Context, TravelPLanId int) (*TravelPlan, erro
 	return &tp, nil
 }
 
-func GetUserByTgId(ctx context.Context, telegramId int64) (*UserView, error){
+func GetUserByTgId(ctx context.Context, telegramId int64) (*UserView, error) {
 	url := fmt.Sprintf("http://userapi/user/%d", telegramId) // НУЖНО СДЕЛАТЬ ДРУГУЮ ССЫЛКУ
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
@@ -225,7 +225,7 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 	`
 	var authorId int
 	var str1, str2 string
-	err := db.QueryRow( 
+	err := db.QueryRow(
 		ctx,
 		query,
 		input.ID,
@@ -240,7 +240,7 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 	if err != nil {
 		return nil, err
 	}
-	log.Println(input.StartDate, input.EndDate) 
+	log.Println(input.StartDate, input.EndDate)
 	tp.StartDate, err = time.Parse("2006-01-02T15:04:05Z", str1)
 	if err != nil {
 		return nil, err
@@ -259,7 +259,7 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 	// }
 	// tp.AuthorId = *user
 	//tpPtcpt, err := AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: int(user.TelegramID)})
-	tp.Participants = input.Participants//[]TravelPlanParticipant{*tpPtcpt}
+	tp.Participants = input.Participants //[]TravelPlanParticipant{*tpPtcpt}
 	_, err = AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: int(tp.AuthorId.TelegramID)})
 	if err != nil {
 		return nil, err
@@ -275,7 +275,7 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 	tp.Photos = tpPhotos
 	tpTags := make([]TravelPlanTag, 0)
 	for _, el := range input.Tags {
-		_, err := CreateTpTag(ctx, CreateTPTagInput{ID: el.ID, Name : el.Name})
+		_, err := CreateTpTag(ctx, CreateTPTagInput{ID: el.ID, Name: el.Name})
 		if err != nil {
 			return nil, err
 		}
@@ -317,7 +317,7 @@ func FilterTravelPlans(ctx context.Context, TravelPlans []TravelPlan, queryParam
 			}
 		}
 		filteredTravelPlans = newFiltered
-	} 
+	}
 	if Query != "" {
 		newFiltered := make([]TravelPlan, 0)
 		var oldFiltered []TravelPlan
@@ -425,7 +425,7 @@ func UserGetTravelPlans(ctx context.Context, queryParams map[string]any) ([]Trav
 		// if err != nil {
 		// 	return nil, err
 		// }
-		filteredTravelPlans[i].AuthorId =  el.AuthorId //*user
+		filteredTravelPlans[i].AuthorId = el.AuthorId //*user
 	}
 	return filteredTravelPlans, nil
 }
@@ -553,7 +553,7 @@ func GetTpTagsByID(ctx context.Context, tpId int) ([]TravelPlanTag, error) {
 		FROM tp_tp_tags
 		WHERE travel_plan_id = $1
 	`
-	rows, err := db.Query( ctx, query, tpId)
+	rows, err := db.Query(ctx, query, tpId)
 	if err != nil {
 		return nil, err
 	}
@@ -793,6 +793,19 @@ func DeleteTPTPTagByID(ctx context.Context, TPTPTagID int) error {
 	return nil
 }
 
+func DeleteTPTPTagByIDs(ctx context.Context, TPID int, TPTagID int) error {
+	query := `
+		DELETE FROM tp_tp_tags
+		WHERE travel_plan_id = $1 and travel_plan_tag_id = $2
+	`
+	_, err := db.Exec(ctx, query, TPID, TPTagID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func GetAllTPParticipants(ctx context.Context) ([]TravelPlanParticipant, error) {
 	query := `
 		SELECT id, created_at, edited_at, travel_plan_id, user_id
@@ -844,7 +857,6 @@ func AddParticipantToTP(ctx context.Context, TpId int, input TPParticipantInput)
 	TpParticipant.CreatedAt, TpParticipant.EditedAt = time.Now(), time.Now()
 	return &TpParticipant, nil
 }
-
 
 func DeleteParticipantfromTP(ctx context.Context, TPid int, ParticipantId int) error {
 	query := `
@@ -924,7 +936,7 @@ func DeleteTpPhoto(ctx context.Context, tpId int, photoId int) error {
 	return nil
 }
 
-func GetTpPhotoById(ctx context.Context, Id int) (*TravelPlanPhoto, error){
+func GetTpPhotoById(ctx context.Context, Id int) (*TravelPlanPhoto, error) {
 	query := `
 		SELECT * FROM tp_photos
 		WHERE id = $1

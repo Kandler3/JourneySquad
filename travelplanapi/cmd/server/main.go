@@ -32,7 +32,7 @@ func main() {
 
 	r.GET("/travel_plans/:id", handlers.GetTPByIdHandler)
 
-	r.PUT("/travel_plans/:id", handlers.UpdateTPHandler) //
+	r.PATCH("/travel_plans/:id", handlers.UpdateTPHandler)  //
 	r.DELETE("/travel_plans/:id", handlers.DeleteTPHandler) //
 
 	r.GET("/travel_plan_tags", handlers.GetTravelPlanTags)
