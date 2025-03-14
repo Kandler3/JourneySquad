@@ -7,6 +7,8 @@ import {User} from "@/models/User";
 import "./TravelPlanViewPage.css";
 import { ParticipantsList } from "@/components/ParticipantList/ParticipantList.tsx";
 import { fetchTravelPlan, joinTravelPlan, deleteParticipant, fetchCurrentUser } from "@/services/travelPlanService";
+import { Icon28Pencil } from "@/icons/Edit.tsx";
+
 
 export const TravelPlanViewPage: FC = () => {
     const { travelPlanId } = useParams<{ travelPlanId: string }>();
@@ -36,6 +38,7 @@ export const TravelPlanViewPage: FC = () => {
                     setIsAuthor(isUserAuthor);
                     const isParticipant = plan.participants.some(p => p.id === currentUser.id);
                     setIsJoined(isParticipant || isUserAuthor);
+
                 }
             } catch (err) {
                 setError("Ошибка при загрузке данных");
@@ -49,6 +52,10 @@ export const TravelPlanViewPage: FC = () => {
 
     const handleParticipantClick = (participantId: number) => {
         navigate(`/profile/${participantId}`);
+    };
+
+    const handleEditTravelPlan = () => {
+        navigate(`/travel-plans/${travelPlanId}/edit`);
     };
 
     const handleJoinClick = async () => {
@@ -87,7 +94,6 @@ export const TravelPlanViewPage: FC = () => {
     if (!travelPlan) {
         return <Page>Путешествие не найдено</Page>;
     }
-
     const photoUrls = travelPlan.photos.map(photo => photo.getAbsoluteUrl());
     const participants = [
         ...(travelPlan.author ? [{
@@ -115,6 +121,15 @@ export const TravelPlanViewPage: FC = () => {
             <PhotoCarousel photos={photoUrls} />
             <div className="pageContainer">
                 <div className="container">
+                    {(Number(travelPlan.author?.id) === currentUser?.id) && (
+                        <button
+                        className="editButton"
+                        onClick={handleEditTravelPlan}
+                        style={{ background: "none", border: "none", cursor: "pointer" }}
+                        >
+                        <Icon28Pencil />
+                        </button>
+                    )}
                     <div className="header">
                         <div>
                             <div className="tags">
