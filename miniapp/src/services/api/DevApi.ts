@@ -47,7 +47,7 @@ export class DevApi implements ApiService {
         return (TravelPlan.fromJSON(await resp.json()))
     }
 
-    async updateTravelPlan(id: number, updates: Partial<TravelPlanPhoto>): Promise<void> {
+    async updateTravelPlan(id: number, updates: Partial<TravelPlan>): Promise<void> {
         const url = `/api/travel_plans/${id}`;
         const resp = await fetch(url, {
             method: "PATCH",

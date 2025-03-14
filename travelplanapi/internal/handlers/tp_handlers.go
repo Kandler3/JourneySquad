@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"slices"
 
 	//"log"
 	"net/http"
@@ -28,7 +29,7 @@ func GetQueryParam(c *gin.Context, ParamStr string) (int, error) {
 }
 
 func GetBoolQueryParam(c *gin.Context, ParamStr string) (bool, error) {
-	if ParamStr == ""{
+	if ParamStr == "" {
 		return true, nil
 	}
 	Param, err := strconv.ParseBool(ParamStr)
@@ -43,7 +44,7 @@ func GetDateQueryParam(c *gin.Context, ParamStr string) (time.Time, error) {
 	if ParamStr == "" {
 		return time.Time{}, nil
 	}
-	Param, err := time.Parse("2006-01-01", ParamStr)
+	Param, err := time.Parse("2006-01-02", ParamStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid %s", ParamStr)})
 		return time.Time{}, errors.New("smth wrong with query param")
@@ -78,7 +79,7 @@ func GetTPsHandler(c *gin.Context) {
 }
 
 // POST /travel_plans/
-func CreateTravelPlan(c *gin.Context) {
+func CreateTravelPlanHandler(c *gin.Context) {
 	var input models.CreateTPInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -148,21 +149,61 @@ func GetTPByIdHandler(c *gin.Context) {
 
 // PATCH /travel_plans/:id
 func UpdateTPHandler(c *gin.Context) {
+	type UpdateTPBody struct {
+		models.UpdateTPInput
+		Tags []models.TravelPlanTag `json:"tags"`
+	}
+
 	ID, err := GetQueryParam(c, c.Param("id"))
 	if err != nil {
 		return
 	}
+
 	var input models.UpdateTPInput
-	if err := c.ShouldBindJSON(&input); err != nil {
+	var body UpdateTPBody
+	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	input = body.UpdateTPInput
 	log.Println(input)
+
 	ctx := c.Request.Context()
 	if err := models.UpdateTravelPlan(ctx, ID, input); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	prevTags, err := models.GetTpTagsByID(ctx, ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if err := models.UpdateTravelPlan(ctx, ID, input); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	for _, tag := range body.Tags {
+		if !slices.Contains(prevTags, tag) {
+			_, err := models.CreateTPTPTag(ctx, models.CreateTPTPTagInput{TravelPlanId: ID, TravelPlanTagId: tag.ID})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+		}
+	}
+
+	for _, tag := range prevTags {
+		if !slices.Contains(body.Tags, tag) {
+			err := models.DeleteTPTPTagByIDs(ctx, ID, tag.ID)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+		}
+	}
+
 	c.Status(http.StatusNoContent)
 }
 
