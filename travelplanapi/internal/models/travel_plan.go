@@ -219,15 +219,14 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 	var tp TravelPlan
 
 	query := `
-		INSERT INTO travel_plans (id, created_at, edited_at, title, start_date, end_date, description, author)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		INSERT INTO travel_plans (created_at, edited_at, title, start_date, end_date, description, author)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id, title, start_date, end_date, description, author
 	`
 	var authorId int
 	err := db.QueryRow(
 		ctx,
 		query,
-		input.ID,
 		time.Now(),
 		time.Now(),
 		input.Title,
