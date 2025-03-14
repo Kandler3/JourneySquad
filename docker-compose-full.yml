@@ -121,7 +121,6 @@ services:
     environment:
       API_URL: "http://host.docker.internal:8080"
       FILE_SERVER_URL: "http://host.docker.internal:4000"
-      MINIAPP_URL: "https://t.me/CloudTest00Bot/miniapp"
     restart: always
     networks:
       - journey-squad-network

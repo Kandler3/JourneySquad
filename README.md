@@ -1,4 +1,36 @@
 # Как развернуть проект
+- [получить ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken) 
+
+
+- с помощью [BotFather](https://t.me/BotFather) создать бота `/newbot` и миниапп `/newapp`
+
+
+- создать файл `.env`
+
+
+- в файле указать 
+   ```
+   NGROK_AUTHTOKEN=<your_auth_token>
+   BOT_TOKEN=<your_telegram_bot_token>
+   MINIAPP_URL=https://t.me/<bot_name>/<miniapp_name>
+   ```
+
+
+- запустить проект
+
+  `docker-compose -f docker-compose-full.yml up -d --build`
+
+
+- получить публичный url в PowerShell
+
+  `(Invoke-RestMethod http://localhost:4040/api/tunnels).tunnels[0].public_url`
+
+
+- с помощью BotFather настроить Mini App URL = \<url>
+
+   - `/myapps`
+   - выберите ваш миниапп
+   - `Edit Web App URL`
 
 
 # Спецификация OpenAPI
