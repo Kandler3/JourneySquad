@@ -2,6 +2,7 @@ import {TravelPlan} from "@/models/TravelPlan.ts";
 import {TravelPlanTag} from "@/models/types.ts";
 import {User} from "@/models/types.ts";
 import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
+import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 
 export interface ApiService {
     getTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]>;
@@ -16,4 +17,6 @@ export interface ApiService {
     getCurrentUser(): Promise<User>;
     joinTravelPlan(travelPlanId: number): Promise<void>
     deleteParticipant(travelPlanId: number, participantId: number): Promise<void>
+    createTravelPlanPhoto(id: number, photo: TravelPlanPhoto): Promise<void>
+    deleteTravelPlanPhoto(id: number, photoId: number): Promise<void>
 }

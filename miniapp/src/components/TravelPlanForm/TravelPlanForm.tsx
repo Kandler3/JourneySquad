@@ -95,7 +95,7 @@ export const TravelPlanForm : FC<TravelPlanFormProps> = ({travelPlan, onSubmit, 
             for (let i = 0; i < e.target.files.length; i++)
             {
                 const resp = await uploadFile(e.target.files[i])
-                setPhotos([...photos, new TravelPlanPhoto(photos.length, resp)])
+                setPhotos([...photos, new TravelPlanPhoto(photos.length > 0 ? Math.max(...photos.map(p => p.id)) + 1 : 0, resp)])
             }
         }
     }

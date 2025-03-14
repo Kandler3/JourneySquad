@@ -15,6 +15,7 @@ export const TravelPlanViewPage: FC = () => {
     const [travelPlan, setTravelPlan] = useState<TravelPlan | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [isJoining, setIsJoining] = useState<boolean>(false);
     const [isJoined, setIsJoined] = useState<boolean>(false);
     const [isAuthor, setIsAuthor] = useState<boolean>(false);
     const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -31,9 +32,9 @@ export const TravelPlanViewPage: FC = () => {
             try {
                 const plan = await fetchTravelPlan(Number(travelPlanId));
                 setTravelPlan(plan);
-                if (plan) { 
+                if (plan) {
                     const currentUser = await fetchCurrentUser();
-                    setCurrentUser(currentUser); 
+                    setCurrentUser(currentUser);
                     const isUserAuthor = plan.author?.id === currentUser.id;
                     setIsAuthor(isUserAuthor);
                     const isParticipant = plan.participants.some(p => p.id === currentUser.id);
@@ -50,15 +51,15 @@ export const TravelPlanViewPage: FC = () => {
         loadTravelPlan();
     }, [travelPlanId]);
 
-    useEffect(() => {
-        if (travelPlan && currentUser) {
-            const isUserAuthor = travelPlan.author?.id === currentUser.id;
-            setIsAuthor(isUserAuthor);
-
-            const isParticipant = travelPlan.participants.some(p => p.id === currentUser.id);
-            setIsJoined(isParticipant || isUserAuthor);
-        }
-    }, [travelPlan?.participants, currentUser]);
+    //useEffect(() => {
+    //    if (travelPlan && currentUser) {
+    //        const isUserAuthor = travelPlan.author?.id === currentUser.id;
+    //        setIsAuthor(isUserAuthor);
+    //
+    //        const isParticipant = travelPlan.participants.some(p => p.id === currentUser.id);
+    //        setIsJoined(isParticipant || isUserAuthor);
+    //    }
+    //}, [travelPlan?.participants, currentUser]);
 
     const participants = useMemo(() => {
         if (!travelPlan || !currentUser) return [];
@@ -79,7 +80,6 @@ export const TravelPlanViewPage: FC = () => {
         ];
     }, [travelPlan, currentUser]);
 
-
     const handleParticipantClick = (participantId: number) => {
         navigate(`/profile/${participantId}`);
     };
@@ -89,8 +89,10 @@ export const TravelPlanViewPage: FC = () => {
     };
 
     const handleJoinClick = async () => {
-        if (!travelPlanId) return;
+        if (!travelPlanId || isJoining) return;
 
+
+        setIsJoining(true);
         try {
             await joinTravelPlan(Number(travelPlanId));
             const updatedPlan = await fetchTravelPlan(Number(travelPlanId));
@@ -99,12 +101,15 @@ export const TravelPlanViewPage: FC = () => {
         } catch (err) {
             setError("Ошибка при присоединении к путешествию");
             console.error(err);
+        } finally {
+            setIsJoining(false);
         }
     };
 
     const handleLeaveClick = async () => {
-        if (!travelPlanId) return;
+        if (!travelPlanId || isJoining) return;
 
+        setIsJoining(true);
         try {
             const currentUser = await fetchCurrentUser();
             await deleteParticipant(Number(travelPlanId), currentUser.id);
@@ -114,6 +119,8 @@ export const TravelPlanViewPage: FC = () => {
         } catch (err) {
             setError("Ошибка при выходе из путешествия");
             console.error(err);
+        } finally {
+            setIsJoining(false);
         }
     };
 
@@ -137,11 +144,11 @@ export const TravelPlanViewPage: FC = () => {
                 <div className="container">
                     {(Number(travelPlan.author?.id) === currentUser?.id) && (
                         <button
-                        className="editButton"
-                        onClick={handleEditTravelPlan}
-                        style={{ background: "none", border: "none", cursor: "pointer" }}
+                            className="editButton"
+                            onClick={handleEditTravelPlan}
+                            style={{ background: "none", border: "none", cursor: "pointer" }}
                         >
-                        <Icon28Pencil />
+                            <Icon28Pencil />
                         </button>
                     )}
                     <div className="header">
@@ -167,11 +174,12 @@ export const TravelPlanViewPage: FC = () => {
                         />
                     </div>
                     {!isAuthor && (
-                        <button 
-                            className={isJoined ? "leaveButton" : "joinButton"} 
+                        <button
+                            className={isJoined ? "leaveButton" : "joinButton"}
                             onClick={isJoined ? handleLeaveClick : handleJoinClick}
+                            disabled={isJoining}
                         >
-                            {isJoined ? "Вы уже присоединились" : "Присоединиться"}
+                            {isJoining ? "Обработка..." : isJoined ? "Вы уже присоединились" : "Присоединиться"}
                         </button>
                     )}
                 </div>

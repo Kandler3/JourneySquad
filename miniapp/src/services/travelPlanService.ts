@@ -3,6 +3,7 @@ import {User} from "@/models/User.ts";
 import {TravelPlan} from "@/models/TravelPlan.ts";
 import {TravelPlanTag} from "@/models/types.ts";
 import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
+import {TravelPlanPhoto} from "@/models/TravelPlanPhoto.ts";
 
 const apiService = createApiService();
 
@@ -111,6 +112,24 @@ export async function deleteParticipant(travelPlanId: number, participantId: num
         await apiService.deleteParticipant(travelPlanId, participantId);
     } catch (error) {
         console.error('Ошибка при удалении участника:', error);
+        throw error;
+    }
+}
+
+export async function createTravelPlanPhoto(travelPlanId: number, photo: TravelPlanPhoto): Promise<void> {
+    try {
+        await  apiService.createTravelPlanPhoto(travelPlanId, photo);
+    } catch (error) {
+        console.error('Ошибка при добавлении фото:', error);
+        throw error;
+    }
+}
+
+export async function deleteTravelPlanPhoto(travelPlanId: number, photoId: number): Promise<void> {
+    try {
+        await  apiService.deleteTravelPlanPhoto(travelPlanId, photoId);
+    } catch (error) {
+        console.error('Ошибка при удалении фото:', error);
         throw error;
     }
 }
