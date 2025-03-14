@@ -175,6 +175,10 @@ func UpdateTPHandler(c *gin.Context) {
 	}
 
 	prevTags, err := models.GetTpTagsByID(ctx, ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	if err := models.UpdateTravelPlan(ctx, ID, input); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -182,7 +186,7 @@ func UpdateTPHandler(c *gin.Context) {
 
 	for _, tag := range body.Tags {
 		if !slices.Contains(prevTags, tag) {
-			_, err := models.CreateTPTPTag(ctx, models.CreateTPTPTagInput{ID, tag.ID})
+			_, err := models.CreateTPTPTag(ctx, models.CreateTPTPTagInput{TravelPlanId: ID, TravelPlanTagId: tag.ID})
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
