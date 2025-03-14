@@ -181,7 +181,7 @@ func GetTravelPlanByID(ctx context.Context, TravelPLanId int) (*TravelPlan, erro
 	return &tp, nil
 }
 
-func GetUserByTgId(ctx context.Context, telegramId int64) (*UserView, error){
+func GetUserByTgId(ctx context.Context, telegramId int64) (*UserView, error) {
 	url := fmt.Sprintf("http://userapi/user/%d", telegramId)
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
@@ -224,7 +224,6 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 		RETURNING id, title, start_date, end_date, description, author
 	`
 	var authorId int
-	var str1, str2 string
 	err := db.QueryRow(
 		ctx,
 		query,
@@ -236,20 +235,10 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 		input.EndDate,
 		input.Description,
 		input.AuthorId.TelegramID,
-	).Scan(&tp.ID, &tp.Title, &str1, &str2, &tp.Description, &authorId)
+	).Scan(&tp.ID, &tp.Title, &tp.StartDate, &tp.EndDate, &tp.Description, &authorId)
 	if err != nil {
 		return nil, err
 	}
-	log.Println(input.StartDate, input.EndDate)
-	tp.StartDate, err = time.Parse("2006-01-02T15:04:05Z", str1)
-	if err != nil {
-		return nil, err
-	}
-	tp.EndDate, err = time.Parse("2006-01-02T15:04:05Z", str2)
-	if err != nil {
-		return nil, err
-	}
-	log.Println(tp.StartDate, tp.EndDate)
 	tp.Participants = input.Participants
 	_, err = AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: authorId})
 	if err != nil {
@@ -885,7 +874,7 @@ func AddParticipantToTP(ctx context.Context, TpId int, input TPParticipantInput)
 		input.User_id,
 	).Scan(&TpParticipant.ID, &TpParticipant.TravelPlanId, &TpParticipant.User_id)
 
-	log.Println(input.User_id,TpParticipant.ID)
+	log.Println(input.User_id, TpParticipant.ID)
 
 	if err != nil {
 		return nil, err
