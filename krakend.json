@@ -43,11 +43,13 @@
         "endpoint": "/api/users/{id}",
         "input_headers": [ "Authorization" ],
         "method": "PATCH",
+        "output_encoding": "no-op",
         "backend": [
             {
             "host": [
                 "http://userapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/users/{id}"
             }
         ]
@@ -56,11 +58,13 @@
         "endpoint": "/api/users/{id}",
         "input_headers": [ "Authorization" ],
         "method": "DELETE",
+        "output_encoding": "no-op",
         "backend": [
             {
             "host": [
                 "http://userapi:8080"
             ],
+            "encoding": "no-op",
             "url_pattern": "/users/{id}"
             }
         ]
