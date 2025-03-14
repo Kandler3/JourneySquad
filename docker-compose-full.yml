@@ -1,0 +1,136 @@
+services:
+  krakend_ce:
+    # The :watch image restarts the service automatically when the configuration files change.
+    # Do not use this image in production, it's meant to speed up your testing and development.
+    image: devopsfaith/krakend:watch
+    volumes:
+      - .:/etc/krakend
+    ports:
+      - "8080:8080"
+    command: ["run", "-d", "-c", "krakend.json"]
+    depends_on:
+      - userapi
+      - travelplanapi
+    networks:
+      - journey-squad-network
+
+  userapi:
+    build: ./api
+    ports:
+      - "8082:8080"
+    depends_on:
+      db1:
+        condition: service_healthy
+    env_file: ./.env
+    environment:
+      - DATABASE_URL=host=db1 port=5432 user=postgres password=password dbname=mydb sslmode=disable
+    restart: unless-stopped
+    networks:
+      - journey-squad-network
+
+  travelplanapi:
+    build: ./travelplanapi
+    ports:
+      - "8081:8080"
+    depends_on:
+      db2:
+        condition: service_healthy
+    env_file: ./.env
+    environment:
+      - DATABASE_URL=host=db2 port=5432 user=postgres password=password dbname=mydb sslmode=disable
+    restart: unless-stopped
+    networks:
+      - journey-squad-network
+
+  db1:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 3s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - db_data1:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - journey-squad-network
+
+  db2:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 3s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - db_data2:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - journey-squad-network
+
+  react-app:
+    build: ./miniapp
+    image: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_FILE_SERVER_URL: "http://host.docker.internal:4000"
+      VITE_API_URL: "http://host.docker.internal:8080"
+      VITE_USE_MOCK_API: "false"
+    networks:
+      - journey-squad-network
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "http"
+      - "http://host.docker.internal:3000"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    networks:
+      - journey-squad-network
+
+  file-server:
+    build: ./file-server
+    image: file-server
+    ports:
+      - "4000:4000"
+    volumes:
+      - file-server-volume:/files
+    networks:
+      - journey-squad-network
+  
+  bot:
+    build: ./bot
+    image: bot
+    env_file: ./.env
+    environment:
+      API_URL: "http://host.docker.internal:8080"
+      FILE_SERVER_URL: "http://host.docker.internal:4000"
+      MINIAPP_URL: "https://t.me/CloudTest00Bot/miniapp"
+    restart: always
+    networks:
+      - journey-squad-network
+
+volumes:
+  db_data1:
+  db_data2:
+  file-server-volume:
+
+networks:
+  journey-squad-network:
+    driver: bridge
