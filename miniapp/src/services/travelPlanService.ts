@@ -8,7 +8,7 @@ const apiService = createApiService();
 
 export async function fetchTravelPlans(query?: TravelPlanQuery): Promise<TravelPlan[]> {
     try {
-        return await apiService.getTravelPlans(query);
+        return (await apiService.getTravelPlans(query)) ?? [];
     } catch (error) {
         console.error('Ошибка при загрузке travel plans:', error);
         throw error;
@@ -26,7 +26,7 @@ export async function fetchUser(id: number): Promise<User> {
 
 export async function fetchTravelPlanTags(): Promise<TravelPlanTag[]> {
     try {
-        return await apiService.getTravelPlanTags();
+        return await (apiService.getTravelPlanTags()) ?? [];
     } catch (error) {
         console.error('Ошибка при за tags:', error);
         throw error;

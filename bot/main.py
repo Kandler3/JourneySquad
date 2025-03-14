@@ -67,7 +67,7 @@ async def process_bio(message: types.Message, state):
         "bio": bio_text
     }
     try:
-        resp = requests.post(API_URL + "/users", json=payload)
+        resp = requests.post(API_URL + "/api/users", json=payload)
         logging.info(f"miniapp url: {MINIAPP_URL}")
         if resp.status_code in [200, 201]:
             keyboard = types.InlineKeyboardMarkup(inline_keyboard=[

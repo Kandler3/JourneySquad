@@ -154,3 +154,15 @@
 .leaveButton:hover {
     background-color: #1c64d7;
 }
+
+.editButton {
+    padding: 0;
+    display: flex;
+    margin-left: auto;
+    margin-right: 15px;
+}
+
+.editButton svg {
+    width: 32px; 
+    height: 32px;
+}

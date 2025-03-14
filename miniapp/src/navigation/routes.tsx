@@ -20,16 +20,13 @@ interface Route {
 }
 
 export const routes: Route[] = [
-  { path: '/', Component: IndexPage },
+  { path: '/index', Component: IndexPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
-  { path: '/home', Component: HomePage, title: 'Home' },
+  { path: '/', Component: HomePage, title: 'Home' },
   { path: '/profile/:userId', Component: UserProfilePage, title: 'Profile' },
   { path: '/travel-plans', Component: TravelPlanListPage, title: 'Travel Plans' },
-  { path: '/travel-plans/:travelPlanId', Component: TravelPlanViewPage, title: 'Travel Plan' },
-  { path: '/travel-plans/:id/edit', Component: TravelPlanValidateEditPage, title: 'Travel Plan' },
-  { path: '/travel-plans/new', Component: TravelPlanCreatePage, title: 'Travel Plan Creation' },
   { path: '/travel-plans/:travelPlanId', Component: TravelPlanViewPage, title: 'Travel Plan' },
   { path: '/travel-plans/:id/edit', Component: TravelPlanValidateEditPage, title: 'Travel Plan' },
   { path: '/travel-plans/new', Component: TravelPlanCreatePage, title: 'Travel Plan Creation' },
