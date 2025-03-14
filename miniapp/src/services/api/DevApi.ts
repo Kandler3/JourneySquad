@@ -20,6 +20,7 @@ export class DevApi implements ApiService {
         if (query) {
             url += `?${query.toSearchParams().toString()}`;
         }
+
         const resp = await fetch(url, {
             method: "GET",
             headers: this.headers
@@ -30,9 +31,30 @@ export class DevApi implements ApiService {
         }
 
         const travelPlansContent = await resp.json();
-        travelPlansContent.forEach(tp => tp.participants = tp.participants.map(p => this.getUser(p.user_id, false)))
-        return travelPlansContent.map(tp => TravelPlan.fromJSON(tp));
+
+        // Обрабатываем участников (ждем загрузки всех пользователей)
+        await Promise.all(
+            travelPlansContent.map(async tp => {
+                tp.participants = await Promise.all(
+                    tp.participants.map(p => this.getUser(p.user_id, false))
+                );
+            })
+        );
+
+        // Конвертация в TravelPlan
+        const travelPlans: TravelPlan[] = travelPlansContent.map(tp => TravelPlan.fromJSON(tp));
+
+        // Обрабатываем авторов (ждем загрузки всех авторов)
+        await Promise.all(
+            travelPlans.map(async tp => {
+                if (tp.author) tp.author = await this.getUser(tp.author.id, false);
+            })
+        );
+
+        console.log(travelPlans);
+        return travelPlans;
     }
+
 
     async getTravelPlan(id: number): Promise<TravelPlan> {
         const url = `/api/travel_plans/${id}`;
@@ -44,8 +66,17 @@ export class DevApi implements ApiService {
         if (!resp.ok) {
             throw new Error(resp.statusText);
         }
+        const respJson = await resp.json()
+        if (respJson.author)
+            respJson.author = await this.getUser(respJson.author.id, false)
+        if (respJson.participants)
+            respJson.participants = await Promise.all(
+                respJson.participants.map(p => this.getUser(p.user_id, false))
+            );
 
-        return (TravelPlan.fromJSON(await resp.json()))
+        console.log(respJson)
+        console.log(TravelPlan.fromJSON(respJson))
+        return (TravelPlan.fromJSON(respJson));
     }
 
     async updateTravelPlan(id: number, updates: Partial<TravelPlan>): Promise<void> {
