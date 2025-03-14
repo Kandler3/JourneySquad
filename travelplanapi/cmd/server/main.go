@@ -51,7 +51,7 @@ func main() {
 	r.POST("/travel_plan/:id/photos", handlers.CreateTpPhotoHandler)             //
 	r.DELETE("/travel_plan/:id/photos/:photo_id", handlers.DeleteTPPhotoHandler) //
 
-	r.GET("/travel_plans/login", handlers.GetActiveTPsByIdHandler)
+	//r.GET("/travel_plans/login", handlers.GetActiveTPsByIdHandler)
 
 	r.Run()
 }

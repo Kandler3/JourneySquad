@@ -250,19 +250,7 @@ func UserCreateTravelPlan(ctx context.Context, input CreateTPInput) (*TravelPlan
 		return nil, err
 	}
 	log.Println(tp.StartDate, tp.EndDate)
-	user, err := GetUserByTgId(ctx, int64(authorId))
-	if err != nil {
-		return nil, err
-	}
-	if (*user).TelegramID != tp.AuthorId.TelegramID {
-		return nil, fmt.Errorf("wrong telegram")
-	}
-	tp.AuthorId = *user
-	tpPtcpt, err := AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: int(user.TelegramID)})
-	if err != nil {
-		return nil, err
-	}
-	tp.Participants = []TravelPlanParticipant{*tpPtcpt}
+	tp.Participants = input.Participants
 	_, err = AddParticipantToTP(ctx, tp.ID, TPParticipantInput{User_id: authorId})
 	if err != nil {
 		return nil, err
