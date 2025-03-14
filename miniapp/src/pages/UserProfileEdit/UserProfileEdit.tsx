@@ -12,7 +12,7 @@ import {UserContext} from "@/contexts/UserContext.ts";
 import {uploadAvatar} from "@/services/fileService.ts";
 
 export const EditProfilePage: FC = () => {
-    const currentUser = useContext(UserContext);
+    const {currentUser, setCurrentUser} = useContext(UserContext);
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error] = useState<string | null>(null);
@@ -42,6 +42,7 @@ export const EditProfilePage: FC = () => {
                 bio: user.bio,
                 avatarUrl: user.avatarUrl,
             });
+            setCurrentUser(user);
             navigate(`/profile/-1`);
         } catch (err) {
             console.error("Ошибка при сохранении данных:", err);

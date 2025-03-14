@@ -9,7 +9,7 @@ import {Page} from "@/components/Page.tsx";
 import {UserContext} from "@/contexts/UserContext.ts";
 
 export const TravelPlanCreatePage : FC = () => {
-    const currentUser = useContext(UserContext)
+    const {currentUser} = useContext(UserContext)
     const [travelPlan, setTravelPlan] = useState<TravelPlan>(new TravelPlan())
     const navigate = useNavigate()
 

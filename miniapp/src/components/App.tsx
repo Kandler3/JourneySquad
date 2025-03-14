@@ -27,7 +27,7 @@ export function App() {
       platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
     >
       <BrowserRouter>
-        <UserContext.Provider value={user}>
+        <UserContext.Provider value={{currentUser: user, setCurrentUser: setUser}}>
         <Routes>
           {routes.map((route) => <Route key={route.path} {...route} />)}
           <Route path="*" element={<Navigate to="/"/>}/>

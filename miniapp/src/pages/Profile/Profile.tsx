@@ -15,7 +15,8 @@ export const UserProfilePage: FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
-    const currentUser = useContext(UserContext) ?? null;
+    const ctx = useContext(UserContext);
+    const currentUser = ctx.currentUser ?? null;
 
     useEffect(() => {
         const loadUserData = async () => {
