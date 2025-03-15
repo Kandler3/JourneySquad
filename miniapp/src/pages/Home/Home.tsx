@@ -6,6 +6,7 @@ import { fetchTravelPlans } from "@/services/travelPlanService.ts";
 import { TravelPlan } from "@/models/TravelPlan.ts";
 import { useNavigate } from "react-router-dom";
 import './Home.css'
+import {TravelPlanHorizontalCardList} from "@/components/TravelPlanHorizontalCardList/TravelPlanHorizontalCardList.tsx";
 
 export const HomePage: FC = () => {
     const [travelPlans, setTravelPlans] = useState<TravelPlan[]>([]);
@@ -44,20 +45,9 @@ export const HomePage: FC = () => {
     return (
         <div className="page">
             <Page>
-                <div className="container">
-                    <div className="title">Home</div>
-                    <CardSection title={"Последние путешествия"}>
-                        {travelPlans.map((travelPlan) => (
-                            <Card
-                                key={travelPlan.id}
-                                style="vertical"
-                                image={travelPlan.photos[0]?.getAbsoluteUrl()} 
-                                onClick={() => handleCardClick(travelPlan.id)} 
-                            >
-                                <h3>{travelPlan.title}</h3>
-                            </Card>
-                        ))}
-                    </CardSection>
+                <div className="container" style={{paddingRight: "10px"}}>
+                    <div className="title">Последние путешествия</div>
+                    <TravelPlanHorizontalCardList travelPlans={travelPlans}/>
                 </div>
             </Page>
         </div>

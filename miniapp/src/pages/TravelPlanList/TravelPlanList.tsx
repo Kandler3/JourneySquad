@@ -12,6 +12,7 @@ import { TravelPlanSort } from "@/components/TravelPlanSort/TravelPlanSort.tsx";
 import {Button} from "@telegram-apps/telegram-ui";
 import {TravelPlanQuery} from "@/services/api/TravelPlanQuery.ts";
 import {useLocation, useNavigate} from "react-router-dom";
+import {TravelPlanHorizontalCardList} from "@/components/TravelPlanHorizontalCardList/TravelPlanHorizontalCardList.tsx";
 
 export const TravelPlanListPage : FC = () => {
     const location = useLocation();
@@ -113,18 +114,7 @@ export const TravelPlanListPage : FC = () => {
                         Сортировка
                     </Button>
                 </div>
-                <div className="cards">
-                {
-                    travelPlans.map(
-                        (travelPlan) =>
-                            <TravelPlanCard
-                                key={travelPlan.id}
-                                travelPlan={travelPlan}
-                                style="horizontal"
-                            />
-                    )
-                }
-                </div>
+                <TravelPlanHorizontalCardList travelPlans={travelPlans}/>
             </div>
             <TravelPlanFilter
                 isFilterOpened={isFilterOpened}
