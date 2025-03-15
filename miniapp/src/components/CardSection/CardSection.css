@@ -27,11 +27,12 @@
     flex-direction: row;
     align-items: center;
     padding: 0px;
-    gap: 8px;
-
+    gap: 20px;
+    font-size: 14px;
     width:100%;
     height: fit-content;
-    overflow-x: scroll;
+    overflow-x: hidden; 
+    flex-wrap: wrap; 
 
 
     /* Inside auto layout */

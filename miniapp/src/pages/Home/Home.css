@@ -1,10 +1,30 @@
-.home 
-{
-    font-size: 24px;
-    font-weight: bold;
-    font-family: 'San Francisco', sans-serif;
+.home {
+    overflow-x: hidden;
 }
 
-.home h1 {
-    margin-bottom: 20px;
+.Page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
+    padding: 0 15px; 
+}
+
+.title {
+    margin-left: 15px; 
+    font-size: 24px; 
+    font-weight: bold; 
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    flex-grow: 1;
+    overflow: auto;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+.page {
+    height: 140vh;
 }
