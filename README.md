@@ -1,6 +1,11 @@
 # JourneySquad
 JourneySquad – это Telegram Miniapp, предназначенное для поиска попутчиков в путешествия. Сервис позволяет найти компанию по интересам и предпочтениям. Для этого можно создать план поездки или присоединится к уже существующему. Организовать идеальное путешествие помогает возможности просматривать профили других пользователей с подробной информацией, фильтровать библиотеку поездок по таким параметрам как даты и теги.
 
+
+[Запись с демонстрацией функционала](https://drive.google.com/file/d/1HHK5P2BX4hTrFKiblCmj_EFUMPUd0CkC/view)
+
+[Презентация проекта](https://drive.google.com/file/d/1uyrQhbNcFFG5LKWJnHPhfHYRZ-Mn_Cug/view?usp=sharing)
+
 # Стэк технологий
 - Бэкенд: Go (Gin)
 - Фронтенд: React (TypeScript)
@@ -76,7 +81,7 @@ JourneySquad – это Telegram Miniapp, предназначенное для 
 
 # Архитектура приложения
 
-![image](app_architecture.jpg)
+![image](architecture.svg)
 
 # Диаграма базы данных 
 
